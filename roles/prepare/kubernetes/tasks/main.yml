@@ -48,7 +48,6 @@
     - kube-apiserver.tar
     - kube-controller-manager.tar
     - kube-scheduler.tar
-    - etcd.tar
 
   - name: 加载 kube-master 镜像
     shell: "{{ bin_dir }}/docker load -i /etc/kubernetes/images/{{ item }}"
@@ -56,7 +55,6 @@
     - kube-apiserver.tar
     - kube-controller-manager.tar
     - kube-scheduler.tar
-    - etcd.tar
     when: container_runtime == 'docker'
 
   - name: 加载 kube-master 镜像
@@ -65,7 +63,6 @@
     - kube-apiserver.tar
     - kube-controller-manager.tar
     - kube-scheduler.tar
-    - etcd.tar
     when: container_runtime == 'containerd'
   when: inventory_hostname in groups['kube-master']
 
