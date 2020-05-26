@@ -1,0 +1,12 @@
+# 公共系统参数设置
+- include_tasks: common.yml
+
+# 系统基础软件环境
+- include_tasks: centos.yml
+  when: ansible_distribution in [ 'CentOS','OracleLinux','RedHat' ]
+
+- name: prepare some dirs
+  file: name={{ item }} state=directory
+  with_items:
+    - "{{ bin_dir }}"
+    - /root/.kube

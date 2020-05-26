@@ -1,0 +1,95 @@
+- name: 下载 kubeadm kubelet kubectl 二进制
+  copy: src={{ base_dir }}/bin/k8s/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
+  with_items:
+  - kubeadm
+  - kubelet
+  - kubectl
+
+- name: 下载 cni 客户端
+  copy: src={{ base_dir }}/bin/k8s/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
+  with_items:
+  - calico
+  - calico-ipam
+  - portmap
+  - loopback
+  when: container_runtime == 'containerd'
+
+- name: prepare some dirs
+  file: name={{ item }} state=directory
+  with_items:
+    - /etc/kubernetes/images
+    - /etc/kubernetes/manifests
+    - /usr/lib/systemd/system/kubelet.service.d
+
+- name: 创建kubelet的systemd unit文件
+  template: src=kubelet.service.j2 dest=/usr/lib/systemd/system/kubelet.service
+
+- name: 创建kubelet的配置文件
+  template: src=10-kubeadm.conf.j2 dest=/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+- name: 创建kubelet的参数文件
+  template: src=kubelet.config.j2 dest=/etc/sysconfig/kubelet
+
+- name: 开机启用kubelet 服务
+  shell: systemctl enable kubelet
+  ignore_errors: true
+
+- name: 配置 kubectl 命令自动补全
+  lineinfile:
+    dest: ~/.bashrc
+    state: present
+    regexp: 'kubectl completion'
+    line: 'source <(kubectl completion bash)'
+
+- block:
+  - name: 下载 kube-master 镜像文件
+    copy: src={{ base_dir }}/bin/k8s/{{ item }} dest=/etc/kubernetes/images/{{ item }}
+    with_items:
+    - kube-apiserver.tar
+    - kube-controller-manager.tar
+    - kube-scheduler.tar
+    - etcd.tar
+
+  - name: 加载 kube-master 镜像
+    shell: "{{ bin_dir }}/docker load -i /etc/kubernetes/images/{{ item }}"
+    with_items:
+    - kube-apiserver.tar
+    - kube-controller-manager.tar
+    - kube-scheduler.tar
+    - etcd.tar
+    when: container_runtime == 'docker'
+
+  - name: 加载 kube-master 镜像
+    shell: "{{ bin_dir }}/ctr -n=k8s.io images import /etc/kubernetes/images/{{ item }}"
+    with_items:
+    - kube-apiserver.tar
+    - kube-controller-manager.tar
+    - kube-scheduler.tar
+    - etcd.tar
+    when: container_runtime == 'containerd'
+  when: inventory_hostname in groups['kube-master']
+
+- block:
+  - name: 下载 kube-worker 镜像文件
+    copy: src={{ base_dir }}/bin/k8s/{{ item }} dest=/etc/kubernetes/images/{{ item }}
+    with_items:
+    - kube-proxy.tar
+    - pause.tar
+    - coredns.tar
+
+  - name: 加载 kube-worker 镜像
+    shell: "{{ bin_dir }}/docker load -i /etc/kubernetes/images/{{ item }}"
+    with_items:
+    - kube-proxy.tar
+    - pause.tar
+    - coredns.tar
+    when: container_runtime == 'docker'
+
+  - name: 加载 kube-worker 镜像
+    shell: "{{ bin_dir }}/ctr -n=k8s.io images import /etc/kubernetes/images/{{ item }}"
+    with_items:
+    - kube-proxy.tar
+    - pause.tar
+    - coredns.tar
+    when: container_runtime == 'containerd'
+  when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])

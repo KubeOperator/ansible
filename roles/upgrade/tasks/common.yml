@@ -1,0 +1,42 @@
+- name: 删除不需要的参数
+  lineinfile:
+    path: /etc/kubernetes/kubeadm-config.yaml
+    regexp: 'max:'
+    state: absent
+
+- name: 更新 kubeadm config 版本
+  lineinfile:
+    path: /etc/kubernetes/kubeadm-config.yaml
+    regexp: '^kubernetesVersion'
+    line: "kubernetesVersion: v{{ kube_upgrade_version }}"
+
+- name: "迁移 kubeadm config 至 v{{ kube_upgrade_version }} 版本"
+  shell: >
+    kubeadm config migrate
+    --old-config=/etc/kubernetes/kubeadm-config.yaml
+    --new-config=/etc/kubernetes/kubeadm-config.yaml
+
+- name: "升级第一个 master 节点： {{ inventory_hostname }} 至 v{{ kube_upgrade_version }}"
+  shell: >
+    kubeadm upgrade apply --config=/etc/kubernetes/kubeadm-config.yaml --force
+  when: inventory_hostname == groups['kube-master'][0]
+
+- name: "升级剩余 master 节点： {{ inventory_hostname }} 至 v{{ kube_upgrade_version }}"
+  shell: >
+    kubeadm upgrade node
+    {% if kube_upgrade_version.split('.')[1]|int == 14 %}
+    experimental-control-plane
+    {% endif %}
+  when: 
+  - inventory_hostname != groups['kube-master'][0]
+  - inventory_hostname in groups['kube-master']
+
+- name: "升级 worker 节点： {{ inventory_hostname }} 至 v{{ kube_upgrade_version }}"
+  shell: >
+    kubeadm upgrade node
+    {% if kube_upgrade_version.split('.')[1]|int == 14 %}
+    config --kubelet-version v{{ kube_upgrade_version }}
+    {% endif %}
+  when: 
+  - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
+  - inventory_hostname not in groups['kube-master']

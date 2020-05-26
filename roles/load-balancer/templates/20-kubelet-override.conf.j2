@@ -1,0 +1,9 @@
+[Service]
+ExecStart=
+{% if container_runtime == "docker" %}
+ExecStart={{ bin_dir }}/kubelet --address=127.0.0.1 --pod-manifest-path=/etc/kubernetes/manifests --root-dir={{ kubelet_root_dir }} --pod-infra-container-image={{ pod_infra_container_image }} --hostname-override={{ inventory_hostname }}
+{% endif %}
+{% if container_runtime == "containerd" %}
+ExecStart={{ bin_dir }}/kubelet --address=127.0.0.1 --pod-manifest-path=/etc/kubernetes/manifests --root-dir={{ kubelet_root_dir }} --pod-infra-container-image={{ pod_infra_container_image }} --hostname-override={{ inventory_hostname }} --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock
+{% endif %}
+Restart=always

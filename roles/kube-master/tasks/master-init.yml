@@ -1,0 +1,71 @@
+- name: 确认 kubelet 已停止运行
+  service:
+    name: kubelet
+    state: stopped
+    enabled: yes
+
+- name: 初始化第一个 master 节点
+  shell: kubeadm init --config=/etc/kubernetes/kubeadm-config.yaml
+
+- include_tasks: "{{ (role_path + '/../kube-certificates/tasks/kubeconfig.yml') | realpath  }}"
+
+- name: 重新加载 daemon
+  systemd:
+    daemon_reload: yes
+
+- name: 重新启动 kubelet
+  service:
+    name: kubelet
+    state: restarted
+    enabled: yes
+
+- name: 等待 apiserver 运行
+  uri:
+    url: "https://{{ CURRENT_HOST_IP }}:6443/healthz"
+    validate_certs: no
+  register: apiserver_result
+  until: apiserver_result.status == 200
+  retries: 60
+  delay: 5
+
+- name: 等待 kube-scheduler 运行
+  uri:
+    url: "https://127.0.0.1:10259/healthz"
+    validate_certs: no
+  register: scheduler_result
+  until: scheduler_result.status == 200
+  retries: 60
+  delay: 5
+
+- name: 等待 kube-controller-manager 运行
+  uri:
+    url: "https://127.0.0.1:10257/healthz"
+    validate_certs: no
+  register: controller_manager_result
+  until: controller_manager_result.status == 200
+  retries: 60
+  delay: 5
+
+- name: 创建 kubelet 自动轮换服务端证书配置
+  template:
+    src: kubelet-certificates-renewal.yaml.j2
+    dest: /etc/kubernetes/config/kubelet-certificates-renewal.yaml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: 授权 kubelet 自动轮换服务端证书
+  shell: kubectl apply -f /etc/kubernetes/config/kubelet-certificates-renewal.yaml
+
+- block:
+  - name: 创建 Pod 安全策略配置文件
+    template:
+      src: pod-security-policy.yaml.j2
+      dest: /etc/kubernetes/config/pod-security-policy.yaml
+      owner: root
+      group: root
+      mode: 0644
+  
+  - name: 配置 Pod 安全策略
+    shell: kubectl apply -f /etc/kubernetes/config/pod-security-policy.yaml
+  when: '"PodSecurityPolicy" in kube_apiserver_enable_admission_plugins'

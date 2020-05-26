@@ -1,0 +1,76 @@
+# 提权操作
+ansible_become: true
+
+#----------------------------------------------- 基础参数 -------------------------------------------------#
+# 当前节点ip
+CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_host'] is defined %}{{ hostvars[inventory_hostname]['ansible_host'] }}{% else %}{{ inventory_hostname }}{% endif %}"
+# apiserver ip
+KUBE_APISERVER_IP: >-
+  {% if lb_kube_apiserver_ip is not defined %}
+    127.0.0.1
+  {% else %}
+    {{ lb_kube_apiserver_ip }}
+  {% endif %}
+
+KUBERNETES_SERVICE_IP: "{{ kube_service_subnet | ipaddr('net') | ipaddr(1) | ipaddr('address') }}"
+CLUSTER_DNS_SERVICE_IP: "{{ kube_service_subnet | ipaddr('net') | ipaddr(10) | ipaddr('address') }}"
+
+## 存入 Etcd 时的 Secret 进行静态加密 
+# 仅支持: aescbc, secretbox 或 aesgcm
+kube_encryption_algorithm: "aescbc"
+# 将Secret数据加密存储到etcd中的配置文件，下面加密码由 head -c 32 /dev/urandom | base64 生成
+kube_encrypt_token: "GPG4RC0Vyk7+Mz/niQPttxLIeL4HF96oRCcBRyKNpfM="
+
+## 审计相关配置
+# 是否启用审计
+kubernetes_audit: false
+# 保留审计日志最大天数
+audit_log_maxage: 30
+# 保留审计日志最大个数
+audit_log_maxbackups: 10
+# 保留审计日志最大容量（MB）
+audit_log_maxsize: 100
+# 审计日志文件挂载在主机上的目录
+audit_log_hostpath: /var/log/kubernetes/audit
+# 审计策略配置文件路径
+audit_policy_file: /etc/kubernetes/config/apiserver-audit-policy.yaml
+# 自定义审计日志规则 (替换默认的审计规则)
+# audit_policy_custom_rules: |
+#   - level: None
+#     users: []
+#     verbs: []
+#     resources: []
+
+# 1.10+ admission plugins
+kube_apiserver_enable_admission_plugins: 
+- NodeRestriction
+# - AlwaysPullImages
+# - PodSecurityPolicy
+
+# 1.10+ list of disabled admission plugins
+kube_apiserver_disable_admission_plugins: []
+
+# kube-controller-manager 标记 kubelet(node) 为不健康的周期
+kube_controller_node_monitor_grace_period: 40s
+# kube-controller-manager 定期检查 kubelet(node) 状态周期
+kube_controller_node_monitor_period: 5s
+# kube-controller-manager 判定节点故障，重建 Pod 的超时时间，默认值 5m0s，这里改为了 2m0s
+kube_controller_pod_eviction_timeout: 2m0s
+# exit 状态的 pod 超过多少会触发 gc，默认值 12500，这里改为了 10
+kube_controller_terminated_pod_gc_threshold: 10
+
+## Extra args for k8s components passing by kubeadm
+kube_kubeadm_apiserver_extra_args: {}
+kube_kubeadm_controller_extra_args: {}
+kube_kubeadm_scheduler_extra_args: {}
+
+## Extra control plane host volume mounts
+## Example:
+# apiserver_extra_volumes:
+#  - name: name
+#    hostPath: /host/path
+#    mountPath: /mount/path
+#    readOnly: true
+apiserver_extra_volumes: {}
+controller_manager_extra_volumes: {}
+scheduler_extra_volumes: {}

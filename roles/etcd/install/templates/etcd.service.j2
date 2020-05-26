@@ -1,0 +1,37 @@
+[Unit]
+Description=Etcd Server
+After=network.target
+After=network-online.target
+Wants=network-online.target
+Documentation=https://github.com/coreos
+
+[Service]
+Type=notify
+WorkingDirectory=/var/lib/etcd/
+ExecStart={{ bin_dir }}/etcd \
+  --name=etcd-{{ inventory_hostname }} \
+  --cert-file=/etc/kubernetes/pki/etcd/server.crt \
+  --key-file=/etc/kubernetes/pki/etcd/server.key \
+  --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt \
+  --peer-key-file=/etc/kubernetes/pki/etcd/peer.key \
+  --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt \
+  --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt \
+  --initial-advertise-peer-urls=https://{{ CURRENT_HOST_IP }}:2380 \
+  --listen-peer-urls=https://{{ CURRENT_HOST_IP }}:2380 \
+  --listen-client-urls=https://{{ CURRENT_HOST_IP }}:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls=https://{{ CURRENT_HOST_IP }}:2379 \
+  --initial-cluster-token=etcd-cluster-token \
+  --initial-cluster={{ INITIAL_CLUSTER }} \
+  --initial-cluster-state={{ CLUSTER_STATE }} \
+  --data-dir=/var/lib/etcd \
+  --snapshot-count=50000 \
+  --auto-compaction-retention=1 \
+  --max-request-bytes=10485760 \
+  --quota-backend-bytes=8589934592
+Restart=always
+RestartSec=15
+LimitNOFILE=65536
+OOMScoreAdjust=-999
+
+[Install]
+WantedBy=multi-user.target

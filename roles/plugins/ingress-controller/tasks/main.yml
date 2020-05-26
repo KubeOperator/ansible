@@ -1,0 +1,14 @@
+- block:
+  - name: 在第一台 master 节点创建 ingress-controller 配置文件目录
+    file:
+      path: /etc/kubernetes/plugins/ingress-controller
+      state: directory
+  - name: 获取当前 kubernetes 版本
+    shell: "kubeadm version -o short"
+    register: kubeadm_version_output
+  - include_tasks: nginx-ingress-controller.yml
+    when: ingress_controller_type == 'nginx'
+  - include_tasks: traefik-ingress-controller.yml
+    when: ingress_controller_type == 'traefik'
+
+  when: ingress_controller_enabled|bool

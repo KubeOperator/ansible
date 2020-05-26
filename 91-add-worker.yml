@@ -1,0 +1,25 @@
+- hosts: new-worker
+  roles:
+  - prepare/base
+  - { role: prepare/docker, when: "container_runtime == 'docker'" }
+  - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
+  - prepare/kubernetes
+
+- hosts: new-worker
+  roles:
+  - load-balancer
+
+- hosts: 
+  - kube-master
+  - kube-worker
+  - new-worker
+  roles:
+  - kube-certificates
+
+- hosts: new-worker
+  roles:
+  - kube-worker
+
+- hosts: new-worker
+  roles:
+  - post

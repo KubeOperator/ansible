@@ -1,0 +1,6 @@
+{% if container_runtime == "docker" %}
+KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs
+{% endif %}
+{% if container_runtime == "containerd" %}
+KUBELET_EXTRA_ARGS=--container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock
+{% endif %}

@@ -1,0 +1,22 @@
+- name: Haproxy | 生成 haproxy 配置文件
+  template: 
+    src: haproxy/haproxy.cfg.j2 
+    dest: /etc/kubernetes/plugins/lb-config/haproxy.cfg
+    owner: root
+    mode: 0644
+  register: lb_configuration_result
+
+- name: Haproxy | 拉取相关镜像
+  shell: "{{ bin_dir }}/docker pull {{ lb_haproxy_image }}"
+  when: container_runtime == 'docker'
+
+- name: Haproxy | 拉取相关镜像
+  shell: "{{ bin_dir }}/ctr -n=k8s.io images pull {{ lb_haproxy_image }}"
+  when: container_runtime == 'containerd'
+
+- name: Haproxy | 生成 haproxy static pod 文件
+  template: 
+    src: haproxy/haproxy.yaml.j2
+    dest: /etc/kubernetes/manifests/lb-kube-apiserver.yaml
+    owner: root
+    mode: 0644

@@ -1,0 +1,46 @@
+- block:
+  - name: 在第一台 master 节点创建 kubernetes-dashboard 配置文件目录
+    file:
+      path: /etc/kubernetes/plugins/kubernetes-dashboard
+      state: directory
+
+  - name: 创建 kubernetes-dashboard 默认证书
+    shell: >
+      openssl req -x509 -nodes -days {{ kubernetesui_dashboard_certs_expired }} \
+      -newkey rsa:2048 \
+      -keyout /etc/kubernetes/plugins/kubernetes-dashboard/dashboard.key \
+      -out /etc/kubernetes/plugins/kubernetes-dashboard/dashboard.crt \
+      -subj "/CN=timebye.github.io"
+
+  - name: 获取 kubernetes-dashboard 默认证书
+    slurp:
+      src: /etc/kubernetes/plugins/kubernetes-dashboard/{{ item }}
+    with_items:
+    - dashboard.key
+    - dashboard.crt
+    register: dashboard_certs
+
+  - name: 渲染 kubernetes-dashboard 配置文件
+    template:
+      src: kubernetes-dashboard.yaml.j2
+      dest: /etc/kubernetes/plugins/kubernetes-dashboard/kubernetes-dashboard.yaml
+    register: kubernetes_dashboard_manifest
+
+  - name: 卸载原有 kubernetes-dashboard
+    shell: kubectl delete ns kubernetes-dashboard --ignore-not-found
+    when: kubernetes_dashboard_manifest.changed
+
+  - name: 部署 kubernetes-dashboard
+    shell: kubectl apply -f /etc/kubernetes/plugins/kubernetes-dashboard/kubernetes-dashboard.yaml
+    when: kubernetes_dashboard_manifest.changed
+
+  - name: 轮询等待 kubernetes-dashboard 运行
+    shell: kubectl get pod --all-namespaces -o wide | grep 'kubernetes-dashboard' | awk '{print $4}'
+    register: pod_status
+    until: "'Running' in pod_status.stdout"
+    retries: 12
+    delay: 5
+    ignore_errors: true
+    when: wait_plugins_ready|bool
+
+  when: kubernetesui_dashboard_enabled|bool

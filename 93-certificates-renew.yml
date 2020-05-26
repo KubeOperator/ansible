@@ -1,0 +1,6 @@
+- hosts: 
+  - etcd
+  - kube-master
+  roles:
+  - etcd/certificates
+  - kube-certificates

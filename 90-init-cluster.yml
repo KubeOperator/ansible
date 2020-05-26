@@ -1,0 +1,49 @@
+- hosts: all
+  roles:
+  - prepare/base
+  - { role: prepare/docker, when: "container_runtime == 'docker'" }
+  - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
+  - prepare/kubernetes
+
+- hosts: all
+  roles:
+  - role: load-balancer
+
+- hosts: 
+  - etcd
+  - kube-master
+  roles:
+  - etcd/certificates
+  - etcd/install
+
+- hosts: 
+  - kube-master
+  - kube-worker
+  - new-worker
+  roles:
+  - kube-certificates
+
+- hosts: kube-master
+  roles:
+  - kube-master
+
+- hosts: 
+  - kube-worker
+  - new-worker
+  roles:
+  - kube-worker
+
+- hosts: 
+  - kube-master
+  - kube-worker
+  - new-worker
+  roles:
+  - post
+
+- hosts: kube-master[0]
+  roles:
+  - plugins/network-plugins
+  - plugins/ingress-controller
+  - plugins/metrics-server
+  - plugins/kubernetes-dashboard
+  - plugins/cert-manager

@@ -1,0 +1,25 @@
+- name: 创建 kubernetes 证书存放目录
+  file: 
+    name: "{{ item }}"
+    state: directory
+  with_items:
+  - /etc/kubernetes/pki
+  - /var/lib/kubelet/pki
+
+- block:
+  # 获取密钥状态
+  - include_tasks: certs_stat.yml
+  # 生成公共证书
+  - include_tasks: common.yml
+  when: inventory_hostname == groups['kube-master'][0]
+
+# 分发证书
+- include_tasks: distribute.yml
+
+- name: 读取 kubelet.conf 文件 stat 信息
+  stat: 
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf_stat
+
+- include_tasks: kubeconfig.yml
+  when: kubelet_conf_stat.stat.exists

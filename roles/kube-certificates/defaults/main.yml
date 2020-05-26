@@ -1,0 +1,13 @@
+# 提权操作
+ansible_become: true
+
+# apiserver ip
+KUBE_APISERVER_IP: >-
+  {% if lb_kube_apiserver_ip is not defined %}
+    127.0.0.1
+  {% else %}
+    {{ lb_kube_apiserver_ip }}
+  {% endif %}
+
+KUBERNETES_SERVICE_IP: "{{ kube_service_subnet | ipaddr('net') | ipaddr(1) | ipaddr('address') }}"
+CLUSTER_DNS_SERVICE_IP: "{{ kube_service_subnet | ipaddr('net') | ipaddr(10) | ipaddr('address') }}"

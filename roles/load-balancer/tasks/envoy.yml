@@ -1,0 +1,22 @@
+- name: Envoy lb | 生成 envoy lb 配置文件
+  template:
+    src: envoy/envoy.conf.yaml.j2
+    dest: /etc/kubernetes/plugins/lb-config/envoy.yaml
+    owner: root
+    mode: 0644
+  register: lb_configuration_result
+
+- name: Envoy lb | 拉取相关镜像
+  shell: "{{ bin_dir }}/docker pull {{ lb_envoy_image }}"
+  when: container_runtime == 'docker'
+
+- name: Envoy lb | 拉取相关镜像
+  shell: "{{ bin_dir }}/ctr images pull {{ lb_envoy_image }}"
+  when: container_runtime == 'containerd'
+
+- name: Envoy lb | 生成 envoy lb static pod 文件
+  template:
+    src: envoy/envoy.yaml.j2
+    dest: /etc/kubernetes/manifests/lb-kube-apiserver.yaml
+    owner: root
+    mode: 0644

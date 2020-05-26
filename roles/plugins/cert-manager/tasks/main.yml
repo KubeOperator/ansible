@@ -1,0 +1,44 @@
+- block:
+  - name: 在第一台 master 节点创建 cert-manager 配置文件目录
+    file:
+      path: /etc/kubernetes/plugins/cert-manager
+      state: directory
+
+  - name: 渲染 cert-manager crds 配置文件
+    template:
+      src: cert-manager-crds.yaml.j2
+      dest: /etc/kubernetes/plugins/cert-manager/cert-manager-crds.yaml
+    register: cert_manager_crds_manifest
+
+  - name: 渲染 cert-manager 配置文件
+    template:
+      src: cert-manager.yaml.j2
+      dest: /etc/kubernetes/plugins/cert-manager/cert-manager.yaml
+    register: cert_manager_manifest
+
+  - name: 部署 cert-manager crds
+    shell: >
+      kubectl apply -f /etc/kubernetes/plugins/cert-manager/cert-manager-crds.yaml && 
+      sleep 15
+    when: cert_manager_crds_manifest.changed
+
+  - name: 部署 cert-manager
+    shell: >
+      kubectl apply -f /etc/kubernetes/plugins/cert-manager/cert-manager-crds.yaml &&
+      kubectl apply -f /etc/kubernetes/plugins/cert-manager/cert-manager.yaml
+    register: apply_status
+    until: apply_status.rc == 0
+    retries: 12
+    delay: 10
+    when: cert_manager_manifest.changed
+
+  - name: 轮询等待 cert-manager 运行
+    shell: kubectl get pod --all-namespaces -o wide | grep 'cert-manager' | awk '{print $4}'
+    register: pod_status
+    until: "'Running' in pod_status.stdout"
+    retries: 12
+    delay: 5
+    ignore_errors: true
+    when: wait_plugins_ready|bool
+
+  when: cert_manager_enabled|bool

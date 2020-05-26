@@ -1,0 +1,63 @@
+- name: 创建 kubernetes 相关目录
+  file: 
+    name: "{{ item }}"
+    state: directory
+  with_items:
+  - "{{ kubelet_root_dir }}"
+  - /etc/kubernetes
+  - /usr/share/bash-completion/completions
+
+- name: 读取 kubelet.conf 文件 stat 信息
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf_stat
+
+- include_tasks: "{{ (role_path + '/../kube-master/tasks/kubeadm-config.yml') | realpath  }}"
+  when: 
+  - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
+  - inventory_hostname not in groups['kube-master']
+
+- block:
+  - name: 确认 kubelet 已停止运行
+    service:
+      name: kubelet
+      state: stopped
+      enabled: yes
+
+  - name: Worker 节点加入集群
+    shell: >
+      kubeadm join --config /etc/kubernetes/kubeadm-config.yaml 
+      --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
+  when: 
+  - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
+  - inventory_hostname not in groups['kube-master']
+  - not kubelet_conf_stat.stat.exists
+
+- block:
+  - name: 确认 kubelet 配置是否有修改
+    template:
+      src: kubelet-config.v1beta1.yaml.j2
+      dest: /var/lib/kubelet/config.yaml
+      owner: root
+      mode: 0644
+    register: configuration_result
+  
+  - name: 启动/重启 kubelet
+    service:
+      name: kubelet
+      state: restarted
+      enabled: yes
+    when: configuration_result.changed
+  when: 
+  - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
+  - inventory_hostname not in groups['kube-master']
+
+- name: 取消在 worker 组的 master 节点 taint，使 master 节点可以调度
+  shell: >
+    kubectl taint nodes {{inventory_hostname}} node-role.kubernetes.io/master='':NoSchedule --overwrite &&
+    kubectl taint nodes {{inventory_hostname}} node-role.kubernetes.io/master-
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  ignore_errors: yes
+  when: 
+  - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
+  - inventory_hostname in groups['kube-master']
