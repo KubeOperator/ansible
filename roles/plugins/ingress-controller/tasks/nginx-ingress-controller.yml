@@ -16,4 +16,3 @@
     retries: 24
     delay: 5
     ignore_errors: true
-    when: wait_plugins_ready|bool

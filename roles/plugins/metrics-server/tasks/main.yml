@@ -21,6 +21,5 @@
     retries: 12
     delay: 5
     ignore_errors: true
-    when: wait_plugins_ready|bool
 
   when: metrics_server_enabled|bool
