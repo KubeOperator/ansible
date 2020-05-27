@@ -83,7 +83,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: traefik
-          image: traefik:v2.2.1
+          image: {{ traefik_ingress_image }}
           args:
           - --entrypoints.web.Address=:80
           - --entrypoints.websecure.Address=:443

@@ -1,0 +1,45 @@
+- block:
+    - name: 在第一台 master 节点创建 efk 配置文件目录
+    file:
+      path: /etc/kubernetes/plugins/efk
+      state: directory
+
+    - name: 渲染 fluentd-configmap 配置文件
+      template:
+        src: fluentd-configmap.yaml.j2
+        dest: /etc/kubernetes/plugins/efk/fluentd-configmap.yaml
+      register: fluentd_configmap_manifest
+
+    - name: 渲染 fluentd-daemonset 配置文件
+      template:
+        src: fluentd-daemonset.yaml.j2
+        dest: /etc/kubernetes/plugins/efk/fluentd-daemonset.yaml
+      register: fluentd_daemonset_manifest
+
+    - name: 渲染 kibana 配置文件
+      template:
+        src: kibana.yaml.j2
+        dest: /etc/kubernetes/plugins/efk/kibana.yaml
+      register: kibana_manifest
+
+    - name: 渲染 elasticsearch 配置文件
+      template:
+        src: elasticsearch.yaml.j2
+        dest: /etc/kubernetes/plugins/efk/elasticsearch.yaml
+      register: elasticsearch_manifest
+
+    - name: 部署 fluentd-configmap
+      shell: kubectl apply -f /etc/kubernetes/plugins/efk/fluentd-configmap.yaml
+      when: fluentd_configmap_manifest.changed
+
+    - name: 部署 fluentd-daemonset
+      shell: kubectl apply -f /etc/kubernetes/plugins/efk/fluentd-daemonset.yaml
+      when: fluentd_daemonset_manifest.changed
+
+    - name: 部署 kibana
+      shell: kubectl apply -f /etc/kubernetes/plugins/efk/kibana.yaml
+      when: kibana.changed
+
+    - name: 部署 elasticsearch
+      shell: kubectl apply -f /etc/kubernetes/plugins/efk/elasticsearch.yaml
+      when: elasticsearch.changed
