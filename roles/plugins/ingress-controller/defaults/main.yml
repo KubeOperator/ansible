@@ -10,35 +10,10 @@ ingress_controller_enabled: true
 # ingress-controller类型(nginx,traefik)
 ingress_controller_type: nginx
 
-# NodePort svc 保留客户端的源 IP 地址，可选值：Cluster、Local
-#   Cluster：不保留客户端的源 IP 地址；
-#   Local：保留客户端的源 IP 地址，当设置为 Local 时仅 ingress-controller pod 运行的节点才能提供服务，其余节点不提供服务
-# 相关文档：https://kubernetes.io/docs/tutorials/services/source-ip/
-ingress_controller_external_traffic_policy: Cluster
-
 # nginx-ingress-controller 镜像地址
-nginx_ingress_image: registry.cn-shanghai.aliyuncs.com/kubeadm-ha/kubernetes-ingress-controller_nginx-ingress-controller:0.30.0
+nginx_ingress_image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.32.0
 
 # traefik默认证书过期时间（天）
 traefik_certs_expired: 3650
 # traefik-ingress-controller 镜像地址
-traefik_ingress_image: registry.cn-shanghai.aliyuncs.com/kubeadm-ha/traefik:2.2.0
-
-INGRESS_EXTERNALIPS: |
-  {% for host in ((groups['kube-worker'] + groups['new-worker'])|unique) %}
-  {% if hostvars[host]['ansible_host'] is defined %}
-    - {{ hostvars[host]['ansible_host'] }}
-  {% else %}
-    - {{ host }}
-  {% endif %}
-  {% endfor %}
-
-INGRESS_MIN_REPLICAS: >-
-  {%- if (groups['kube-worker'] + groups['new-worker']) | unique | length > 1 -%}
-  2
-  {%- else -%}
-  1
-  {%- endif -%}
-
-INGRESS_MAX_REPLICAS: >-
-  {{ (groups['kube-master'] + groups['kube-worker'] + groups['new-worker']) | unique | length }}
+traefik_ingress_image: traefik:v2.2.1
