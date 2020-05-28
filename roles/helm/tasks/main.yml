@@ -1,0 +1,124 @@
+- block:
+  - name: 创建 helm 根目录
+    file:
+      name: "{{ helm_home_dir }}"
+      state: directory
+
+  - name: 创建 helm 证书目录
+    file:
+      name: /etc/kubernetes/pki/helm
+      state: directory
+
+  - name: 下载 helm 客户端
+    copy: src={{ base_dir }}/bin/helm/helm dest={{ bin_dir }}/helm mode=0755
+
+  - name: 创建 helm-ca 根证书私钥
+    shell: openssl genrsa -out /etc/kubernetes/pki/helm/ca.key 2048
+
+  - name: 创建 helm-ca 根证书
+    shell: >
+      openssl req -x509 -new -nodes -extensions v3_ca
+      -subj "/CN=tiller-ca"
+      -key /etc/kubernetes/pki/helm/ca.key
+      -out /etc/kubernetes/pki/helm/ca.crt
+      -days {{ certs_expired }}
+
+  - name: 创建 tiller 服务端证书私钥
+    shell: openssl genrsa -out /etc/kubernetes/pki/helm/tiller.key 2048
+
+  - name: 创建 tiller 服务端证书请求
+    shell: >
+      openssl req -new -sha256
+      -subj "/CN=tiller-server"
+      -key /etc/kubernetes/pki/helm/tiller.key
+      -out /etc/kubernetes/pki/helm/tiller.csr
+
+  - name: 创建 tiller 服务端证书
+    shell: >
+      openssl x509 -req -CAcreateserial
+      -CA /etc/kubernetes/pki/helm/ca.crt
+      -CAkey /etc/kubernetes/pki/helm/ca.key
+      -in /etc/kubernetes/pki/helm/tiller.csr
+      -out /etc/kubernetes/pki/helm/tiller.crt
+      -days {{ certs_expired }}
+
+  - name: 创建 helm 客户端证书私钥
+    shell: openssl genrsa -out /etc/kubernetes/pki/helm/helm.key 2048
+
+  - name: 创建 helm 客户端证书请求
+    shell: >
+      openssl req -new -sha256
+      -subj "/CN=helm-client"
+      -key /etc/kubernetes/pki/helm/helm.key
+      -out /etc/kubernetes/pki/helm/helm.csr
+
+  - name: 创建 helm 客户端证书
+    shell: >
+      openssl x509 -req -CAcreateserial
+      -CA /etc/kubernetes/pki/helm/ca.crt
+      -CAkey /etc/kubernetes/pki/helm/ca.key
+      -in /etc/kubernetes/pki/helm/helm.csr
+      -out /etc/kubernetes/pki/helm/helm.crt
+      -days {{ certs_expired }}
+
+  - name: 获取当前集群所有 namespaces
+    shell: "{{ bin_dir }}/kubectl get ns"
+    register: current_ns
+    run_once: true
+
+  - name: 创建 helm 部署目录
+    file:
+      name: "{{ helm_deploy_dir }}"
+      state: directory
+
+  - name: 准备 helm rbac 配置文件
+    template: src=helm-rbac.yaml.j2 dest={{ helm_deploy_dir }}/helm-rbac.yaml
+
+  - name: 创建 helm rbac
+    shell: "{{ bin_dir }}/kubectl apply -f {{ helm_deploy_dir }}/helm-rbac.yaml"
+    ignore_errors: true
+    run_once: true
+
+  - name: 安装 tiller
+    shell: "{{ bin_dir }}/helm init \
+          --history-max {{ history_max }} \
+          --tiller-tls \
+          --tiller-tls-verify \
+          --tiller-tls-cert /etc/kubernetes/pki/helm/tiller.crt \
+          --tiller-tls-key /etc/kubernetes/pki/helm/tiller.key \
+          --tls-ca-cert /etc/kubernetes/pki/helm/ca.crt \
+          --service-account {{ tiller_sa }} \
+          --tiller-namespace {{ helm_namespace }} \
+          --tiller-image {{ tiller_image }} \
+          --stable-repo-url {{ repo_url }} \
+          --upgrade"
+    ignore_errors: true
+
+  - name: 配置 helm 客户端
+    shell: "cp -f /etc/kubernetes/pki/helm/ca.crt {{ helm_home_dir }}/ca.pem && \
+            cp -f /etc/kubernetes/pki/helm/helm.crt {{ helm_home_dir }}/cert.pem && \
+            cp -f /etc/kubernetes/pki/helm/helm.key {{ helm_home_dir }}/key.pem"
+    ignore_errors: true
+  when: helm_version is version('v3.0.0', '<')
+
+- block:
+  - name: 下载 helm 客户端
+    copy: src={{ base_dir }}/bin/helm/helm3 dest={{ bin_dir }}/helm mode=0755
+
+  - name: 添加 helm stable 仓库
+    command: "{{ bin_dir }}/helm repo add stable {{ helm_stable_repo_url }}"
+  when: helm_version is version('v3.0.0', '>=')
+
+- name: 添加 helm 命令自动补全
+  lineinfile:
+    dest: ~/.bashrc
+    state: present
+    regexp: 'helm completion'
+    line: 'source <(helm completion bash)'
+
+- name: 配置helm tls环境变量
+  lineinfile:
+    dest: ~/.bashrc
+    state: present
+    regexp: "helm tls environment"
+    line: "export HELM_TLS_ENABLE=true"

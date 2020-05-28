@@ -1,0 +1,10 @@
+helm_version: "v3.2.1"
+helm_home_dir: /root/.helm
+helm_deploy_dir: /etc/kubernetes/plugins/helm
+helm_namespace: kube-system
+tiller_sa: tiller
+tiller_image: registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.6
+helm_stable_repo_url: https://kubernetes-charts.storage.googleapis.com
+history_max: 5
+# 如果默认官方repo 网络访问不稳定可以使用如下的阿里云镜像repo
+#repo_url: https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
