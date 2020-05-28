@@ -1,7 +1,4 @@
-# 提权操作
-ansible_become: true
-
-# efk 镜像地址
+# efk 镜像
 # elasticsearch_image: gcr.io/fluentd-elasticsearch/elasticsearch:v6.6.1
 elasticsearch_image: easzlab/elasticsearch:v6.6.1
 alpine_image: alpine:3.6
