@@ -5,14 +5,13 @@
   - kubelet
   - kubectl
 
-- name: 下载 cni 客户端
-  copy: src={{ base_dir }}/bin/k8s/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
+- name: 下载基础 cni plugins
+  copy: src={{ base_dir }}/bin/cni/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
   with_items:
-  - calico
-  - calico-ipam
-  - portmap
+  - bridge
+  - host-local
   - loopback
-  when: container_runtime == 'containerd'
+  - portmap
 
 - name: prepare some dirs
   file: name={{ item }} state=directory
@@ -67,26 +66,34 @@
   when: inventory_hostname in groups['kube-master']
 
 - block:
-  - name: 下载 kube-worker 镜像文件
+  - name: 下载 kube-proxy 镜像文件
     copy: src={{ base_dir }}/bin/k8s/{{ item }} dest=/etc/kubernetes/images/{{ item }}
     with_items:
     - kube-proxy.tar
-    - pause.tar
-    - coredns.tar
 
-  - name: 加载 kube-worker 镜像
-    shell: "{{ bin_dir }}/docker load -i /etc/kubernetes/images/{{ item }}"
-    with_items:
-    - kube-proxy.tar
-    - pause.tar
-    - coredns.tar
+  - block:
+    - name: 加载 kube-proxy 镜像
+      shell: "{{ bin_dir }}/docker load -i /etc/kubernetes/images/{{ item }}"
+      with_items:
+      - kube-proxy.tar
+
+    - name: Docker | 下载 pause 镜像
+      shell: "{{ bin_dir }}/docker pull {{ pod_infra_container_image }}"
+
+    - name: Docker | 下载 coredns 镜像
+      shell: "{{ bin_dir }}/docker pull {{ coredns_image }}"
     when: container_runtime == 'docker'
 
-  - name: 加载 kube-worker 镜像
-    shell: "{{ bin_dir }}/ctr -n=k8s.io images import /etc/kubernetes/images/{{ item }}"
-    with_items:
-    - kube-proxy.tar
-    - pause.tar
-    - coredns.tar
+  - block:
+    - name: 加载 kube-proxy 镜像
+      shell: "{{ bin_dir }}/ctr -n=k8s.io images import /etc/kubernetes/images/{{ item }}"
+      with_items:
+      - kube-proxy.tar
+
+    - name: Containerd | 下载 pause 镜像
+      shell: "{{ bin_dir }}/ctr -n=k8s.io images pull {{ pod_infra_container_image }}"
+
+    - name: Containerd | 下载 coredns 镜像
+      shell: "{{ bin_dir }}/ctr -n=k8s.io images pull {{ coredns_image }}"
     when: container_runtime == 'containerd'
   when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
