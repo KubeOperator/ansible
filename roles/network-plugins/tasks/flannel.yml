@@ -1,6 +1,6 @@
 - name: 渲染 flannel 配置文件
   template:
-    src: kube-flannel.yaml.j2
+    src: flannel/kube-flannel.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
   register: flannel_manifest
 
