@@ -4,6 +4,7 @@
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
   - prepare/kubernetes
+  - prepare/repository
 
 - hosts: all
   roles:
@@ -42,4 +43,8 @@
 
 - hosts: kube-master[0]
   roles:
-  - network-plugins
+  - plugins/network-plugins
+  # - plugins/ingress-controller
+  # - plugins/metrics-server
+  # - plugins/kubernetes-dashboard
+  # - plugins/cert-manager
