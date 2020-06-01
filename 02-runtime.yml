@@ -1,0 +1,4 @@
+- hosts: all
+  roles:
+    - { role: prepare/docker, when: "container_runtime == 'docker'" }
+    - { role: prepare/containerd, when: "container_runtime == 'containerd'" }

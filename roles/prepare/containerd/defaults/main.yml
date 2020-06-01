@@ -1,5 +1,5 @@
 # 容器持久化存储目录
-STORAGE_DIR: "/var/lib/containerd"
+containerd_storage_dir: "/var/lib/containerd"
 # 基础容器镜像
 SANDBOX_IMAGE: "docker.io/kubeoperator/pause:3.1"
 # 启用容器仓库镜像
