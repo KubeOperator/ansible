@@ -7,8 +7,7 @@
 - name: 初始化第一个 master 节点
   shell: kubeadm init --config=/etc/kubernetes/kubeadm-config.yaml
 
-# - include_tasks: "{{ (role_path + 'kube-config/tasks/kubeconfig.yml) | realpath  }}"
-- name: 配置 kubeconfig
+- name:  节点配置 kubeconfig
   include_role:
     name: kube-config
     tasks_from: kubeconfig
