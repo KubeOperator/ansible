@@ -5,6 +5,7 @@
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
   - prepare/kubernetes
   - prepare/repository
+  - prepare/certificates
 
 - hosts: all
   roles:
@@ -14,15 +15,14 @@
   - etcd
   - kube-master
   roles:
-  - etcd/certificates
-  - etcd/install
+  - etcd
 
 - hosts: 
   - kube-master
   - kube-worker
   - new-worker
-  roles:
-  - kube-certificates
+  # roles:
+  # - kube-certificates
 
 - hosts: kube-master
   roles:

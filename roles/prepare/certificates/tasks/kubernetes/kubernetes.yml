@@ -21,5 +21,9 @@
     path: /etc/kubernetes/kubelet.conf
   register: kubelet_conf_stat
 
-- include_tasks: kubeconfig.yml
+# - include_tasks: "{{ (role_path + 'kube-config/tasks/kubeconfig.yml) | realpath  }}"
+- name: 配置 kubeconfig
+  include_role:
+    name: kube-config
+    tasks_from: kubeconfig
   when: kubelet_conf_stat.stat.exists
