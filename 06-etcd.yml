@@ -2,5 +2,4 @@
   - etcd
   - kube-master
   roles:
-  - etcd/certificates
-  - etcd/install
+  - etcd

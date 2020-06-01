@@ -1,0 +1,7 @@
+- name: 读取 kubelet.conf 文件 stat 信息
+  stat: 
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf_stat
+
+- include_tasks: kubeconfig.yml
+  when: kubelet_conf_stat.stat.exists

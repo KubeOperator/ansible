@@ -3,4 +3,4 @@
   - kube-worker
   - new-worker
   roles:
-  - kube-certificates
+  - kube-config

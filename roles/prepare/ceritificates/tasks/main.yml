@@ -1,0 +1,2 @@
+- include_tasks: etcd/etcd.yml
+- include_tasks: kubernetes/kubernetes.yml
