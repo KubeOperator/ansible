@@ -3,8 +3,19 @@
   with_items:
   - "/var/lib/etcd"    # etcd 工作目录
 
-- name: 下载etcd二进制文件
-  copy: src={{ base_dir }}/bin/etcd/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
+- name: 下载解压 etcd 二进制文件
+  unarchive:
+    src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/etcd.tar.gz"
+    dest: "{{ base_dir }}/"
+    mode: "0755"
+    copy: no
+
+- name: 拷贝 etcd 二进制文件
+  copy:
+    src: "{{ base_dir}}/etcd/{{ item }}"
+    dest: "{{ bin_dir }}/"
+    remote_src: yes
+    mode: "0755"
   with_items:
   - etcd
   - etcdctl

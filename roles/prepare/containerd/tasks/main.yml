@@ -15,11 +15,16 @@
 - name: 加载内核模块 overlay
   modprobe: name=overlay state=present
 
+- name: 创建k8s安装目录
+  file: name={{ item }} state=directory
+  with_items:
+  - "{{ base_dir }}"
+
 - name: 下载解压 containerd 二进制文件
   unarchive:
     src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/containerd.tar.gz"
     dest: "{{ base_dir }}/"
-    mode: ”0755“
+    mode: "0755"
     copy: no
   
 - name: 拷贝 containerd 二进制文件到 bin_dir
@@ -27,7 +32,7 @@
     src: "{{ base_dir}}/containerd/{{ item }}"
     dest: "{{ bin_dir }}/"
     remote_src: yes
-    mode: ”0755“
+    mode: "0755"
   with_items:
   - containerd
   - containerd-shim

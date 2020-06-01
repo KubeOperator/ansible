@@ -2,25 +2,25 @@
   unarchive:
     src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/k8s.tar.gz"
     dest: "{{ base_dir }}/"
-    mode: ”0755“
+    mode: "0755"
     copy: no
 
 - name: 拷贝 kubeadm kubelet kubectl 二进制文件
   copy:
-    src: "{{ base_dir}}/k8s/{{ item }}"
+    src: "{{ base_dir}}/k8s/k8s-tools/{{ item }}"
     dest: "{{ bin_dir }}/"
     remote_src: yes
-    mode: ”0755“
+    mode: "0755"
   with_items:
   - kubeadm
   - kubelet
   - kubectl
 
-- name: 下载基础 cni plugins
+- name: 下载解压基础 cni plugins
   unarchive:
     src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/cni.tar.gz"
     dest: "{{ base_dir }}/"
-    mode: ”0755“
+    mode: "0755"
     copy: no
 
 - name: 拷贝 cni plugins 二进制文件
@@ -28,12 +28,14 @@
     src: "{{ base_dir}}/cni/{{ item }}"
     dest: "{{ bin_dir }}/"
     remote_src: yes
-    mode: ”0755“
+    mode: "0755"
   with_items:
   - bridge
   - host-local
   - loopback
   - portmap
+  - calico
+  - calico-ipam
 
 - name: prepare some dirs
   file: name={{ item }} state=directory
@@ -68,7 +70,7 @@
       src: "{{ base_dir}}/k8s/{{ item }}"
       dest: "/etc/kubernetes/images/{{ item }}"
       remote_src: yes
-      mode: ”0755“
+      mode: "0755"
     with_items:
     - kube-apiserver.tar
     - kube-controller-manager.tar
@@ -80,7 +82,6 @@
     - kube-apiserver.tar
     - kube-controller-manager.tar
     - kube-scheduler.tar
-    - kube-proxy.tar
     when: container_runtime == 'docker'
 
   - name: 加载 kube-master 镜像
@@ -93,6 +94,15 @@
   when: inventory_hostname in groups['kube-master']
 
 - block:
+  - name: 拷贝 kube-proxy 镜像文件
+    copy:
+      src: "{{ base_dir}}/k8s/{{ item }}"
+      dest: "/etc/kubernetes/images/{{ item }}"
+      remote_src: yes
+      mode: "0755"
+    with_items:
+    - kube-proxy.tar
+
   - block:
     - name: 加载 kube-proxy 镜像
       shell: "{{ bin_dir }}/docker load -i /etc/kubernetes/images/{{ item }}"

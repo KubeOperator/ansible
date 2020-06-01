@@ -30,7 +30,7 @@
   unarchive:
     src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/docker.tar.gz"
     dest: "{{ base_dir }}/"
-    mode: ”0755“
+    mode: "0755"
     copy: no
 
 - name: 拷贝 docker 二进制文件到 bin_dir
@@ -38,7 +38,7 @@
     src: "{{ base_dir}}/docker/{{ item }}"
     dest: "{{ bin_dir }}/"
     remote_src: yes
-    mode: ”0755“
+    mode: "0755"
   with_items:
   - containerd
   - containerd-shim
