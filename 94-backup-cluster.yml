@@ -1,14 +1,3 @@
-- hosts: localhost
-  become: no
-  tasks:
-  - name: "校验 Ansible 版本"
-    assert:
-      msg: "Ansible 版本最低要求 2.8.0，当前版本为 {{ ansible_version.string }}，请升级 Ansible 版本。"
-      that:
-      - ansible_version.string is version("2.8.0", ">=")
-  vars:
-    ansible_connection: local
-
 - hosts: all
   roles:
   - backup

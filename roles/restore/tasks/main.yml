@@ -85,7 +85,6 @@
       src: "{{ etcd_latest_back_path.path }}"
       dest: "{{ playbook_dir }}/cluster-backup/etcd-snapshot-latest.db"
       flat: yes
-
   when: inventory_hostname == groups['etcd'][0]
 
 - block:
@@ -103,25 +102,20 @@
       dest: /etc/kubernetes/backup/etcd/etcd-snapshot-latest.db
       mode: 0644
 
-  - name: 恢复 etcd 数据库
-    shell: >
-      docker run --net host -e ETCDCTL_API=3
-      -v /etc/kubernetes/backup/etcd:/snapshot
-      -v {{ etcd_data_dir|dirname }}:{{ etcd_data_dir|dirname }}
-      --rm {{ etcd_image }}
-      etcdctl snapshot restore 
-      /snapshot/etcd-snapshot-latest.db
-      --data-dir={{ etcd_data_dir }}
-      --name=etcd-{{ inventory_hostname }}
-      --initial-cluster={{ INITIAL_CLUSTER }}
-      --initial-cluster-token=etcd-cluster-token
-      --initial-advertise-peer-urls=https://{{ CURRENT_HOST_IP }}:2380
+  - name: etcd 数据恢复
+    shell: "cd /etc/kubernetes/backup/etcd && \
+      ETCDCTL_API=3 {{ bin_dir }}/etcdctl snapshot restore \
+      etcd-snapshot-latest.db \
+      --data-dir={{ etcd_data_dir }} \
+      --name etcd-{{ inventory_hostname }} \
+      --initial-cluster {{ INITIAL_CLUSTER }} \
+      --initial-cluster-token etcd-cluster-token \
+      --initial-advertise-peer-urls https://{{ CURRENT_HOST_IP }}:2380"
   
   - name: 移除各节点临时 etcd 备份文件
     file: 
       name: /etc/kubernetes/backup/etcd/etcd-snapshot-latest.db
       state: absent
-
   when: inventory_hostname in groups['etcd']
 
 - block:
