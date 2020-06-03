@@ -1,6 +1,2 @@
 # 提权操作
 ansible_become: true
-# Pod根容器
-pod_infra_container_image: docker.io/kubeoperator/pause:3.1
-# coredns镜像
-coredns_image: docker.io/kubeoperator/coredns:1.6.2

@@ -6,32 +6,23 @@
   fail: msg="Containerd already installed!"
   when: '"running" in containerd_status.stdout'
 
-# 18.09.x 版本二进制名字有变化，需要做判断
-- name: 获取docker版本信息
-  shell: "{{ base_dir }}/bin/docker/dockerd --version|cut -d' ' -f3"
-  register: docker_ver
-  connection: local
-  run_once: true
-
-- name: 转换docker版本信息为浮点数
-  set_fact:
-    DOCKER_VER: "{{ docker_ver.stdout.split('.')[0]|int + docker_ver.stdout.split('.')[1]|int/100 }}"
-
-- name: debug info
-  debug: var="DOCKER_VER"
-
 - block:
   - name: 准备docker相关目录
     file: name={{ item }} state=directory
     with_items:
       - /etc/docker
 
-- name: 下载解压 docker 二进制文件(>= 18.09.x)
-  unarchive:
-    src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/docker.tar.gz"
-    dest: "{{ base_dir }}/"
-    mode: "0755"
-    copy: no
+  - name: 创建k8s安装目录
+    file: name={{ item }} state=directory
+    with_items:
+    - "{{ base_dir }}"
+
+  - name: 下载解压 docker 二进制文件(>= 18.09.x)
+    unarchive:
+      src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/docker.tar.gz"
+      dest: "{{ base_dir }}/"
+      mode: "0755"
+      copy: no
 
 - name: 拷贝 docker 二进制文件到 bin_dir
   copy:

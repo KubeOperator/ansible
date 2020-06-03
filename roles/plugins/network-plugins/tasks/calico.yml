@@ -3,11 +3,15 @@
   with_items:
   - /etc/cni/net.d
 
-# - name: 下载基础 cni plugins
-#   copy: src={{ base_dir }}/bin/cni/{{ item }} dest={{ bin_dir }}/{{ item }} mode=0755
-#   with_items:
-#   - calico
-#   - calico-ipam
+- name: 拷贝 calico cni plugins
+  copy: 
+    src: "{{ base_dir }}/cni/{{ item }}"
+    dest: "{{ bin_dir }}/{{ item }}"
+    mode: "0755"
+    remote_src: yes
+  with_items:
+  - calico
+  - calico-ipam
 
 - name: 渲染 calico 配置文件
   template:

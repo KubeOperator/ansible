@@ -1,10 +1,11 @@
 - hosts: all
+  # max_fail_percentage: 99
   roles:
+  - prepare/repository
   - prepare/base
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
   - prepare/kubernetes
-  - prepare/repository
   - prepare/certificates
 
 - hosts: all

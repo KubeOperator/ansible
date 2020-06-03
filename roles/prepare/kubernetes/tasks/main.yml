@@ -34,8 +34,6 @@
   - host-local
   - loopback
   - portmap
-  - calico
-  - calico-ipam
 
 - name: prepare some dirs
   file: name={{ item }} state=directory
