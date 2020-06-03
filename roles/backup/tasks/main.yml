@@ -5,16 +5,8 @@
       state: directory
 
   - name: 第一个 etcd 节点备份 etcd 数据库
-    raw: >
-      docker run --net host -e ETCDCTL_API=3
-      -v /etc/kubernetes/backup/etcd:/snapshot
-      -v /etc/kubernetes/pki/etcd/:/etc/kubernetes/pki/etcd/
-      --rm {{ etcd_image }}
-      etcdctl snapshot save 
-      /snapshot/etcd-snapshot-$(date '+%Y%m%dT%H%M%S').db 
-      --cacert=/etc/kubernetes/pki/etcd/ca.crt 
-      --key=/etc/kubernetes/pki/etcd/healthcheck-client.key 
-      --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt
+    shell: "cd /etc/kubernetes/backup/etcd && \
+        ETCDCTL_API=3 {{ bin_dir }}/etcdctl snapshot save etcd-snapshot-$(date '+%Y%m%dT%H%M%S').db"
   when: inventory_hostname == groups['etcd'][0]
 
 - name: 所有节点创建 kubelet 备份目录
