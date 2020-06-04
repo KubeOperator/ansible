@@ -1,22 +1,28 @@
-- name: Haproxy | 生成 haproxy 配置文件
-  template: 
-    src: haproxy/haproxy.cfg.j2 
-    dest: /etc/kubernetes/plugins/lb-config/haproxy.cfg
-    owner: root
-    mode: 0644
-  register: lb_configuration_result
+- name: 安装 haproxy
+  package: name=haproxy state=present
 
-- name: Haproxy | 拉取相关镜像
-  shell: "{{ bin_dir }}/docker pull {{ lb_haproxy_image }}"
-  when: container_runtime == 'docker'
+- name: 创建 haproxy 配置目录
+  file: name=/etc/haproxy state=directory
 
-- name: Haproxy | 拉取相关镜像
-  shell: "{{ bin_dir }}/ctr -n=k8s.io images pull {{ lb_haproxy_image }}"
-  when: container_runtime == 'containerd'
+- name: 修改 haproxy.service
+  template:
+    src: haproxy/haproxy.service.j2
+    dest: /usr/lib/systemd/system/haproxy.service
 
-- name: Haproxy | 生成 haproxy static pod 文件
-  template: 
-    src: haproxy/haproxy.yaml.j2
-    dest: /etc/kubernetes/manifests/lb-kube-apiserver.yaml
-    owner: root
-    mode: 0644
+- name: 配置 haproxy
+  template:
+    src: haproxy/haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+
+- name: daemon-reload for haproxy.service
+  shell: systemctl daemon-reload
+
+- name: 开机启用haproxy服务
+  service:
+    name: haproxy
+    enabled: yes
+
+- name: 开启haproxy服务
+  service:
+    name: haproxy
+    state: started
