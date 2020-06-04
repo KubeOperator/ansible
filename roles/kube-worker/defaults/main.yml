@@ -2,7 +2,7 @@
 ansible_become: true
 
 # 当前节点ip
-CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_host'] is defined %}{{ hostvars[inventory_hostname]['ansible_host'] }}{% else %}{{ inventory_hostname }}{% endif %}"
+CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defined %}{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}{% else %}{{ inventory_hostname }}{% endif %}"
 # apiserver ip
 KUBE_APISERVER_IP: >-
   {% if lb_kube_apiserver_ip is not defined %}

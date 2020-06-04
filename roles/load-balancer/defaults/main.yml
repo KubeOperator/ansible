@@ -12,7 +12,7 @@ ingress_controller_https_nodeport: 30443
 # 负载均衡器健康检查端口
 lb_kube_apiserver_healthcheck_port: 8081
 # 当前节点ip
-CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_host'] is defined %}{{ hostvars[inventory_hostname]['ansible_host'] }}{% else %}{{ inventory_hostname }}{% endif %}"
+CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defined %}{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}{% else %}{{ inventory_hostname }}{% endif %}"
 
 #---------------------------------------------- Nginx 相关参数 --------------------------------------------#
 # 使用nginx进行apiserver负载时使用的nginx镜像
@@ -56,4 +56,4 @@ LB_KEEPALIVED_PRIORITY: "120"
 # 节点初始主备状态
 LB_KEEPALIVED_STATE: "{% if inventory_hostname == groups['lb'][0] %}MASTER{% else %}BACKUP{% endif %}"
 # 其他 Keepalived 节点的单点传播 IP
-LB_KEEPALIVED_UNICAST_PEERS: "{% for host in groups['lb'] %}{% if hostvars[host]['ansible_host'] is defined %}'{{ hostvars[host]['ansible_host'] }}'{% else %}'{{ host }}'{% endif %}{% if not loop.last %},{% endif %}{% endfor %}"
+LB_KEEPALIVED_UNICAST_PEERS: "{% for host in groups['lb'] %}{% if hostvars[host]['ansible_ssh_host'] is defined %}'{{ hostvars[host]['ansible_ssh_host'] }}'{% else %}'{{ host }}'{% endif %}{% if not loop.last %},{% endif %}{% endfor %}"

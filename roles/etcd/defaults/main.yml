@@ -1,8 +1,8 @@
 # 当前节点ip
-CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_host'] is defined %}{{ hostvars[inventory_hostname]['ansible_host'] }}{% else %}{{ inventory_hostname }}{% endif %}"
+CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defined %}{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}{% else %}{{ inventory_hostname }}{% endif %}"
 
 # etcd 集群间通信的IP和端口, 根据etcd组成员自动生成
-INITIAL_CLUSTER: "{% for host in (groups['etcd']|unique) %}{% if hostvars[host]['ansible_host'] is defined %}etcd-{{ host }}=https://{{ hostvars[host]['ansible_host'] }}:2380{% else %}etcd-{{ host }}=https://{{ host }}:2380{% endif %}{% if not loop.last %},{% endif %}{% endfor %}"
+INITIAL_CLUSTER: "{% for host in (groups['etcd']|unique) %}{% if hostvars[host]['ansible_ssh_host'] is defined %}etcd-{{ host }}=https://{{ hostvars[host]['ansible_ssh_host'] }}:2380{% else %}etcd-{{ host }}=https://{{ host }}:2380{% endif %}{% if not loop.last %},{% endif %}{% endfor %}"
 
 # etcd 集群初始状态 new/existing
 CLUSTER_STATE: "new"

@@ -14,7 +14,7 @@ stream {
     upstream kube_apiserver {
         least_conn;
 {% for host in groups['kube-master'] %}
-        server {% if hostvars[host]['ansible_host'] is defined %}{{ hostvars[host]['ansible_host'] }}{% else %}{{ host }}{% endif %}:6443;
+        server {% if hostvars[host]['ansible_ssh_host'] is defined %}{{ hostvars[host]['ansible_ssh_host'] }}{% else %}{{ host }}{% endif %}:6443;
 {% endfor %}
     }
 
@@ -29,7 +29,7 @@ stream {
     upstream ingress_http {
         least_conn;
 {% for host in (groups['kube-worker'] + groups['new-worker']) %}
-        server {% if hostvars[host]['ansible_host'] is defined %}{{ hostvars[host]['ansible_host'] }}{% else %}{{ host }}{% endif %}:{{ ingress_controller_http_nodeport }};
+        server {% if hostvars[host]['ansible_ssh_host'] is defined %}{{ hostvars[host]['ansible_ssh_host'] }}{% else %}{{ host }}{% endif %}:{{ ingress_controller_http_nodeport }};
 {% endfor %}
     }
 
@@ -45,7 +45,7 @@ stream {
     upstream ingress_https {
         least_conn;
 {% for host in (groups['kube-worker'] + groups['new-worker']) %}
-        server {% if hostvars[host]['ansible_host'] is defined %}{{ hostvars[host]['ansible_host'] }}{% else %}{{ host }}{% endif %}:{{ ingress_controller_https_nodeport }};
+        server {% if hostvars[host]['ansible_ssh_host'] is defined %}{{ hostvars[host]['ansible_ssh_host'] }}{% else %}{{ host }}{% endif %}:{{ ingress_controller_https_nodeport }};
 {% endfor %}
     }
 

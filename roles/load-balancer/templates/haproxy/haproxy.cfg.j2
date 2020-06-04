@@ -20,5 +20,5 @@ listen kube-master
         option dontlog-normal
         balance {{ lb_haproxy_balance_alg }}
 {% for host in groups['kube-master'] %}
-    server {{ host }} {% if hostvars[host]['ansible_host'] is defined %}{{ hostvars[host]['ansible_host'] }}{% else %}{{ host }}{% endif %}:6443 check check-ssl verify none
+    server {{ host }} {% if hostvars[host]['ansible_ssh_host'] is defined %}{{ hostvars[host]['ansible_ssh_host'] }}{% else %}{{ host }}{% endif %}:6443 check check-ssl verify none
 {% endfor %}

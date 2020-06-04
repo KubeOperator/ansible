@@ -42,8 +42,8 @@ etcd:
   external:
     endpoints:
 {% for host in groups['etcd'] %}
-{% if hostvars[host]['ansible_host'] is defined %}
-    - https://{{ hostvars[host]['ansible_host'] }}:2379
+{% if hostvars[host]['ansible_ssh_host'] is defined %}
+    - https://{{ hostvars[host]['ansible_ssh_host'] }}:2379
 {% else %}
     - https://{{ host }}:2379
 {% endif %}
@@ -119,7 +119,7 @@ apiServer:
   - kubernetes.default.svc.{% for domain in kube_dns_domain.split('.') %}{% if loop.index <= outer_loop.index %}{{ domain }}{% if loop.index < outer_loop.index %}.{% endif %}{% endif %}{% endfor %}
   
 {% endfor %}
-{% if hostvars[inventory_hostname]['ansible_host'] is defined %}
+{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defined %}
 {% for host in (groups['kube-master'] + groups['new-master']| default([])) | unique %}
   - {{ host }}
 {% endfor %}
@@ -131,7 +131,7 @@ apiServer:
   - {{ lb_kube_apiserver_ip | trim }}
 {% endif %}
 {% for host in (groups['kube-master'] | default([])) | unique %}
-  - {% if hostvars[host]['ansible_host'] is defined %}{{ hostvars[host]['ansible_host'] }}{% else %}{{ host }}{% endif %}
+  - {% if hostvars[host]['ansible_ssh_host'] is defined %}{{ hostvars[host]['ansible_ssh_host'] }}{% else %}{{ host }}{% endif %}
   
 {% endfor %}
 controllerManager:
