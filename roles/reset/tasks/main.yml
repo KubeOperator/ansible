@@ -63,6 +63,37 @@
     - "/var/run/containerd/"
   when: container_runtime == 'containerd'
 
+- block:
+  - name: stop and disable etcd service
+    service:
+      name: etcd
+      state: stopped
+      enabled: no
+    ignore_errors: true
+
+  - name: remove files and dirs
+    file: name={{ item }} state=absent
+    with_items:
+    - "/var/lib/etcd"
+    - "/etc/etcd/"
+    - "/backup/k8s"
+    - "/etc/systemd/system/etcd.service"
+  when: "inventory_hostname in groups['etcd']"
+
+- block:
+  - name: rm service haproxy
+    service: name={{ item }} state=stopped enabled=no
+    with_items:
+    - haproxy
+    ignore_errors: true
+
+  - name: remove files and dirs
+    file: name={{ item }} state=absent
+    with_items:
+    - "/etc/haproxy"
+    - "/usr/lib/systemd/system/haproxy.service"
+    ignore_errors: true
+
 - name: 卸载 kubelet 相关目录
   mount: 
     path: "{{ item }}"
@@ -102,7 +133,6 @@
   - /etc/origin/openvswitch
   - /etc/openvswitch
   - /var/log/openvswitch
-  - /etc/cni/net.d/00-kube-ovn.conflist
 
 - name: 删除 ulimits 相关配置
   file: 
