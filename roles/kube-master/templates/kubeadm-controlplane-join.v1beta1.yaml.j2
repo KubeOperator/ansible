@@ -51,7 +51,7 @@ etcd:
     caFile: /etc/kubernetes/pki/etcd/ca.crt
     certFile: /etc/kubernetes/pki/apiserver-etcd-client.crt
     keyFile: /etc/kubernetes/pki/apiserver-etcd-client.key
-imageRepository: "{{ kube_image_repository }}"
+imageRepository: "{{ local_hostname }}:{{ registry_port }}/kubeoperator"
 networking:
   dnsDomain: {{ kube_dns_domain }}
   podSubnet: {{ kube_pod_subnet }}

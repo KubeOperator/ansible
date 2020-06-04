@@ -74,3 +74,8 @@ kube_kubeadm_scheduler_extra_args: {}
 apiserver_extra_volumes: {}
 controller_manager_extra_volumes: {}
 scheduler_extra_volumes: {}
+
+# Pod根容器
+pod_infra_container_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:3.2"
+# coredns镜像
+coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:1.6.7"

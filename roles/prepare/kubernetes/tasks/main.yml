@@ -64,28 +64,28 @@
 
 - block:
   - name: 下载 kube-master 镜像
-    shell: "{{ bin_dir }}/docker pull {{ item }}"
+    shell: "{{ bin_dir }}/docker pull {{ local_hostname }}:{{ registry_port }}/kubeoperator/{{ item }}"
     with_items:
-    - kubeoperator/kube-apiserver:v{{ kube_version }}
-    - kubeoperator/kube-controller-manager:v{{ kube_version }}
-    - kubeoperator/kube-scheduler:v{{ kube_version }}
+    - kube-apiserver:v{{ kube_version }}
+    - kube-controller-manager:v{{ kube_version }}
+    - kube-scheduler:v{{ kube_version }}
     when: container_runtime == 'docker'
 
   - name: 下载 kube-master 镜像
-    shell: "{{ bin_dir }}/ctr -n=k8s.io images pull {{ item }}"
+    shell: "{{ bin_dir }}/crictl pull  {{ local_hostname }}:{{ registry_port }}/kubeoperator/{{ item }} -n=k8s.io"
     with_items:
-    - kubeoperator/kube-apiserver:v{{ kube_version }}
-    - kubeoperator/kube-controller-manager:v{{ kube_version }}
-    - kubeoperator/kube-scheduler:v{{ kube_version }}
+    - kube-apiserver:v{{ kube_version }}
+    - kube-controller-manager:v{{ kube_version }}
+    - kube-scheduler:v{{ kube_version }}
     when: container_runtime == 'containerd'
   when: inventory_hostname in groups['kube-master']
 
 - block:
   - block:
     - name: 下载 kube-proxy 镜像
-      shell: "{{ bin_dir }}/docker pull {{ item }}"
+      shell: "{{ bin_dir }}/docker pull {{ local_hostname }}:{{ registry_port }}/kubeoperator/{{ item }}"
       with_items:
-      - kubeoperator/kube-proxy:v{{ kube_version }}
+      - kube-proxy:v{{ kube_version }}
 
     - name: Docker | 下载 pause 镜像
       shell: "{{ bin_dir }}/docker pull {{ pod_infra_container_image }}"
@@ -96,14 +96,14 @@
 
   - block:
     - name: 下载 kube-proxy 镜像
-      shell: "{{ bin_dir }}/ctr -n=k8s.io images pull /etc/kubernetes/images/{{ item }}"
+      shell: "{{ bin_dir }}/crictl pull {{ local_hostname }}:{{ registry_port }}/kubeoperator/{{ item }} -n=k8s.io"
       with_items:
-      - kubeoperator/kube-proxy:v{{ kube_version }}
+      - kube-proxy:v{{ kube_version }}
 
     - name: Containerd | 下载 pause 镜像
-      shell: "{{ bin_dir }}/ctr -n=k8s.io images pull {{ pod_infra_container_image }}"
+      shell: "{{ bin_dir }}/crictl pull {{ pod_infra_container_image }} -n=k8s.io"
 
     - name: Containerd | 下载 coredns 镜像
-      shell: "{{ bin_dir }}/ctr -n=k8s.io images pull {{ coredns_image }}"
+      shell: "{{ bin_dir }}/crictl pull {{ coredns_image }} -n=k8s.io"
     when: container_runtime == 'containerd'
   when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])

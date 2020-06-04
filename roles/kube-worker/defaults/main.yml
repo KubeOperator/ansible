@@ -12,3 +12,8 @@ KUBE_APISERVER_IP: >-
   {% endif %}
 
 CLUSTER_DNS_SERVICE_IP: "{{ kube_service_subnet | ipaddr('net') | ipaddr(10) | ipaddr('address') }}"
+
+# Pod根容器
+pod_infra_container_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:3.2"
+# coredns镜像
+coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:1.6.7"
