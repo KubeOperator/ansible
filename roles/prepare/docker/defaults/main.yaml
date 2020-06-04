@@ -1,11 +1,13 @@
 # 国内镜像加速
 docker_mirror:
+  - "http://{{ local_hostname }}:{{ registry_port }}"
 # - "https://reg-mirror.qiniu.com"
 # - "https://hub-mirror.c.163.com"
 # - "https://docker.mirrors.ustc.edu.cn"
 
 # 信任的不安全镜像库地址，默认为 Pod 和 Service 网段
 docker_insecure_registries:
+  - "{{ local_hostname }}:{{ registry_port }}"
   - "{{ kube_pod_subnet }}"
   - "{{ kube_service_subnet }}"
 
