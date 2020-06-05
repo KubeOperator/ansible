@@ -66,17 +66,17 @@
   - name: 下载 kube-master 镜像
     shell: "{{ bin_dir }}/docker pull {{ local_hostname }}:{{ registry_port }}/kubeoperator/{{ item }}"
     with_items:
-    - kube-apiserver:v{{ kube_version }}
-    - kube-controller-manager:v{{ kube_version }}
-    - kube-scheduler:v{{ kube_version }}
+    - kube-apiserver:{{ kube_version }}
+    - kube-controller-manager:{{ kube_version }}
+    - kube-scheduler:{{ kube_version }}
     when: container_runtime == 'docker'
 
   - name: 下载 kube-master 镜像
     shell: "{{ bin_dir }}/crictl pull  {{ local_hostname }}:{{ registry_port }}/kubeoperator/{{ item }} -n=k8s.io"
     with_items:
-    - kube-apiserver:v{{ kube_version }}
-    - kube-controller-manager:v{{ kube_version }}
-    - kube-scheduler:v{{ kube_version }}
+    - kube-apiserver:{{ kube_version }}
+    - kube-controller-manager:{{ kube_version }}
+    - kube-scheduler:{{ kube_version }}
     when: container_runtime == 'containerd'
   when: inventory_hostname in groups['kube-master']
 
@@ -85,7 +85,7 @@
     - name: 下载 kube-proxy 镜像
       shell: "{{ bin_dir }}/docker pull {{ local_hostname }}:{{ registry_port }}/kubeoperator/{{ item }}"
       with_items:
-      - kube-proxy:v{{ kube_version }}
+      - kube-proxy:{{ kube_version }}
 
     - name: Docker | 下载 pause 镜像
       shell: "{{ bin_dir }}/docker pull {{ pod_infra_container_image }}"
@@ -98,7 +98,7 @@
     - name: 下载 kube-proxy 镜像
       shell: "{{ bin_dir }}/crictl pull {{ local_hostname }}:{{ registry_port }}/kubeoperator/{{ item }} -n=k8s.io"
       with_items:
-      - kube-proxy:v{{ kube_version }}
+      - kube-proxy:{{ kube_version }}
 
     - name: Containerd | 下载 pause 镜像
       shell: "{{ bin_dir }}/crictl pull {{ pod_infra_container_image }} -n=k8s.io"
