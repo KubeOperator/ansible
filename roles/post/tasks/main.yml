@@ -8,13 +8,13 @@
 - block:
   - name: 渲染 SA 配置文件
     template:
-      src: kube-admin.yaml.j2
-      dest: /etc/kubernetes/kube-admin.yaml.j2
+      src: ko-admin.yaml.j2
+      dest: /etc/kubernetes/ko-admin.yaml
     register: sa_manifest
 
   - name: 添加默认集群管理员账户
     shell: >
-      kubectl apply -f /etc/kubernetes/kube-admin.yaml
+      kubectl apply -f /etc/kubernetes/ko-admin.yaml
     when: sa_manifest.changed
   delegate_to: "{{ groups['kube-master'][0] }}"
 
