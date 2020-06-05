@@ -94,6 +94,10 @@
     - "/usr/lib/systemd/system/haproxy.service"
     ignore_errors: true
 
+- name: stop and disable chronyd
+  service: name=chronyd state=stopped enabled=no
+  ignore_errors: true
+
 - name: 卸载 kubelet 相关目录
   mount: 
     path: "{{ item }}"
