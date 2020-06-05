@@ -6,7 +6,7 @@
 - name: 拷贝 calico cni plugins
   copy: 
     src: "{{ base_dir }}/cni/{{ item }}"
-    dest: "{{ bin_dir }}/{{ item }}"
+    dest: "/opt/cni/bin"
     mode: "0755"
     remote_src: yes
   with_items:
