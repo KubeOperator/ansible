@@ -26,7 +26,7 @@
 - name: 拷贝 cni plugins 二进制文件
   copy:
     src: "{{ base_dir}}/cni/{{ item }}"
-    dest: "{{ bin_dir }}/"
+    dest: "/opt/cni/bin"
     remote_src: yes
     mode: "0755"
   with_items:
