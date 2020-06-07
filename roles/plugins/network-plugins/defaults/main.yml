@@ -10,21 +10,7 @@ kube_apiserver_enable_admission_plugins:
 # - AlwaysPullImages
 # - PodSecurityPolicy
 
-# 设置 flannel 后端
-# flannel_backend: "host-gw"
-flannel_backend: "vxlan"
-# flannel 镜像地址
-flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:v0.12.0-amd64"
-
 # calico mtu
 calico_veth_mtu: 1440
-# calico 相关镜像
-calico_typha_image: "{{ local_hostname }}:{{ registry_port }}/calico/typha:v3.14.1"
-calico_cni_image: "{{ local_hostname }}:{{ registry_port }}/calico/cni:v3.14.1"
-calico_node_image: "{{ local_hostname }}:{{ registry_port }}/calico/node:v3.14.1"
-calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/kube-controllers:v3.14.1"
-calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:v3.14.1"
 # 设置 Felix 日志级别(debug, info, warning, error)
 calico_felix_log_level: "warning"
-# calicoctl image 地址
-calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:v3.14.1"

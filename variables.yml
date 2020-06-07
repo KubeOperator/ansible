@@ -1,0 +1,25 @@
+# -----------------------指定 tag 版本-----------------------
+coredns_version: "1.6.7"
+calico_version: "v3.14.1"
+pause_version: "3.2"
+flannel_version: "v0.12.0-amd64"
+
+# -----------------------指定 iamge 地址----------------------
+# Pod根容器
+pod_infra_container_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}"
+# coredns镜像
+coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:{{ coredns_version }}"
+# 基础容器镜像
+SANDBOX_IMAGE: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}"
+tiller_image: registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.6
+helm_stable_repo_url: https://kubernetes-charts.storage.googleapis.com
+# calico 相关镜像
+calico_typha_image: "{{ local_hostname }}:{{ registry_port }}/calico/typha:{{ calico_version }}"
+calico_cni_image: "{{ local_hostname }}:{{ registry_port }}/calico/cni:{{ calico_version }}"
+calico_node_image: "{{ local_hostname }}:{{ registry_port }}/calico/node:{{ calico_version }}"
+calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/kube-controllers:{{ calico_version }}"
+calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}"
+# calicoctl image 地址
+calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}"
+# flannel 镜像地址
+flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}"

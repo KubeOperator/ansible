@@ -1,6 +1,2 @@
 # 提权操作
 ansible_become: true
-# Pod根容器
-pod_infra_container_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:3.2"
-# coredns镜像
-coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:1.6.7"
