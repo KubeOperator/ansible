@@ -15,7 +15,7 @@
 
 - name: 渲染 calico 配置文件
   template:
-    src: calico/nfs-client-provisioner.yaml.j2
+    src: calico/calico-typha.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
   register: calico_typha_manifest
 
