@@ -1,0 +1,4 @@
+- import_tasks: nfs-client.yml
+  when:
+    - 'storage_nfs_enabled is defined '
+    - 'storage_nfs_enabled '

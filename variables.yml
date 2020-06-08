@@ -23,3 +23,17 @@ calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calic
 calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}"
 # flannel 镜像地址
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}"
+
+
+# 资源保留相关配置
+eviction_hard_imagefs_available: "15%"
+eviction_hard_memory_available: "100Mi"
+eviction_hard_nodefs_available: "10%"
+eviction_hard_nodefs_inodes_free: "5%"
+
+# Etcd 数据根目录
+etcd_data_dir: "/var/lib/etcd"
+# Binaries Directory
+bin_dir: "/usr/local/bin"
+# Deploy Directory (kubeasz workspace)
+base_dir: "/opt/kubeoperator"

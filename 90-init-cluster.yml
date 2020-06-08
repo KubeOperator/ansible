@@ -45,7 +45,8 @@
 - hosts: kube-master[0]
   roles:
   - plugins/network-plugins
+  - plugins/cluster-storage
+  # - plugins/cert-manager
   # - plugins/ingress-controller
   # - plugins/metrics-server
   # - plugins/kubernetes-dashboard
-  # - plugins/cert-manager

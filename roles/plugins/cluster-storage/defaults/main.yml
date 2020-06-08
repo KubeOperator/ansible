@@ -1,0 +1,7 @@
+# nfs
+storage_nfs_provisioner_name: "nfs-provisioner"
+storageClassName: "storageclass-default"
+
+# busybox
+busybox_image: busybox
+busybox_version: 1.28
