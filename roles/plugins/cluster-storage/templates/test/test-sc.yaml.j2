@@ -20,7 +20,7 @@ metadata:
 spec:
   containers:
     - name: test-pod
-      image: {{ local_hostname }}:{{ registry_port }}/{{ busybox_image }}:{{ busybox_version }}
+      image: {{ busybox_image }}
       command:
         - "/bin/sh"
       args:

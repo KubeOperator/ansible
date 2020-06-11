@@ -1,11 +1,19 @@
-# -----------------------指定 tag 版本-----------------------
+# -----------------------平台架构-----------------------
+image_arch: "amd64"
+
+# -----------------------版本设置-----------------------
 coredns_version: "1.6.7"
 calico_version: "v3.14.1"
 pause_version: "3.2"
 flannel_version: "v0.12.0-amd64"
 rbd_provisioner_version: "v2.1.1-k8s1.11"
+busybox_version: "1.28"
+cni_version: "v0.8.6"
+etcd_version: "v3.4.8"
+docker_version: "v18.09.9"
+containerd_version: "v1.2.2"
 
-# -----------------------指定 iamge 地址----------------------
+# -----------------------docker iamge 地址--------------
 # Pod根容器
 pod_infra_container_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}"
 # coredns镜像
@@ -14,6 +22,8 @@ coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:{{
 SANDBOX_IMAGE: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}"
 tiller_image: registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.6
 helm_stable_repo_url: https://kubernetes-charts.storage.googleapis.com
+# busybox_image
+busybox_image: "{{ local_hostname }}:{{ registry_port }}/busybox:{{ busybox_version }}"
 # calico 相关镜像
 calico_typha_image: "{{ local_hostname }}:{{ registry_port }}/calico/typha:{{ calico_version }}"
 calico_cni_image: "{{ local_hostname }}:{{ registry_port }}/calico/cni:{{ calico_version }}"
@@ -26,8 +36,8 @@ calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}"
 # ceph-rbd provisioner
 rbd_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
-# -----------------------集群参数设置----------------------
 
+# -----------------------集群参数设置----------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
 # Binaries Directory
@@ -36,9 +46,15 @@ bin_dir: "/usr/local/bin"
 base_dir: "/opt/kubeoperator"
 # 集群 manifest 配置文件存放目录
 kube_config_dir: "/etc/kubernetes"
-
 # 资源保留相关配置
 eviction_hard_imagefs_available: "15%"
 eviction_hard_memory_available: "100Mi"
 eviction_hard_nodefs_available: "10%"
 eviction_hard_nodefs_inodes_free: "5%"
+
+# -----------------------二进制文件下载地址----------------------
+k8s_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ image_arch }}/k8s.tar.gz"
+etcd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/etcd/version/{{ etcd_version }}/{{ image_arch }}/etcd.tar.gz"
+cni_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/cni/version/{{ cni_version }}/{{ image_arch }}/cni.tar.gz"
+docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/docker/version/{{ docker_version }}/{{ image_arch }}/docker.tar.gz"
+containerd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/containerd/version/{{ containerd_version }}/{{ image_arch }}/containerd.tar.gz"

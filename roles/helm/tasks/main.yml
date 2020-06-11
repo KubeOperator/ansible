@@ -127,7 +127,7 @@
 
 - block:
   - name: 下载 helm 客户端
-    copy: src={{ base_dir }}/bin/helm/helm3 dest={{ bin_dir }}/helm mode=0755
+    synchronize: src={{ base_dir }}/bin/helm/helm3 dest={{ bin_dir }}/helm mode=0755
 
   - name: 添加 helm stable 仓库
     command: "{{ bin_dir }}/helm repo add stable {{ helm_stable_repo_url }}"

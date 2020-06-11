@@ -1,13 +1,13 @@
-- name: 下载解压 kubeadm kubelet kubectl 二进制文件和 apiserver controller-manager kube-scheduler 镜像文件
+- name: 下载解压 kubeadm kubelet kubectl 二进制文件
   unarchive:
-    src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/k8s.tar.gz"
+    src: "{{ k8s_download_url }}"
     dest: "{{ base_dir }}/"
     mode: "0755"
     copy: no
 
 - name: 拷贝 kubeadm kubelet kubectl 二进制文件
   copy:
-    src: "{{ base_dir}}/k8s/k8s-tools/{{ item }}"
+    src: "{{ base_dir}}/k8s/{{ item }}"
     dest: "{{ bin_dir }}/"
     remote_src: yes
     mode: "0755"
@@ -18,7 +18,7 @@
 
 - name: 下载解压基础 cni plugins
   unarchive:
-    src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/cni.tar.gz"
+    src: "{{ cni_download_url }}"
     dest: "{{ base_dir }}/"
     mode: "0755"
     copy: no

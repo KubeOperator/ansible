@@ -122,7 +122,7 @@ metadata:
   namespace: {{ rbd_provisioner_namespace }}
   labels:
     app: rbd-provisioner
-    version: {{ rbd_provisioner_image_tag }}
+    version: {{ rbd_provisioner_version }}
 spec:
   replicas: 2
   strategy:
@@ -130,12 +130,12 @@ spec:
   selector:
     matchLabels:
       app: rbd-provisioner
-      version: {{ rbd_provisioner_image_tag }}
+      version: {{ rbd_provisioner_version }}
   template:
     metadata:
       labels:
         app: rbd-provisioner
-        version: {{ rbd_provisioner_image_tag }}
+        version: {{ rbd_provisioner_version }}
     spec:
       priorityClassName: {% if rbd_provisioner_namespace == 'kube-system' %}system-cluster-critical{% else %}k8s-cluster-critical{% endif %}{{''}}
       serviceAccount: rbd-provisioner
