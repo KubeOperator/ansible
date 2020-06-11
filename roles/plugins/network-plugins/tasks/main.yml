@@ -9,4 +9,4 @@
 
   - include_tasks: calico.yml
     when: network_plugin == 'calico'
-  when: network_plugins_enabled|bool
+  when: network_plugins_enabled | bool

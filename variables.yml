@@ -3,6 +3,7 @@ coredns_version: "1.6.7"
 calico_version: "v3.14.1"
 pause_version: "3.2"
 flannel_version: "v0.12.0-amd64"
+rbd_provisioner_version: "v2.1.1-k8s1.11"
 
 # -----------------------指定 iamge 地址----------------------
 # Pod根容器
@@ -23,13 +24,9 @@ calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calic
 calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}"
 # flannel 镜像地址
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}"
-
-
-# 资源保留相关配置
-eviction_hard_imagefs_available: "15%"
-eviction_hard_memory_available: "100Mi"
-eviction_hard_nodefs_available: "10%"
-eviction_hard_nodefs_inodes_free: "5%"
+# ceph-rbd provisioner
+rbd_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
+# -----------------------集群参数设置----------------------
 
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
@@ -37,3 +34,11 @@ etcd_data_dir: "/var/lib/etcd"
 bin_dir: "/usr/local/bin"
 # Deploy Directory (kubeasz workspace)
 base_dir: "/opt/kubeoperator"
+# 集群 manifest 配置文件存放目录
+kube_config_dir: "/etc/kubernetes"
+
+# 资源保留相关配置
+eviction_hard_imagefs_available: "15%"
+eviction_hard_memory_available: "100Mi"
+eviction_hard_nodefs_available: "10%"
+eviction_hard_nodefs_inodes_free: "5%"

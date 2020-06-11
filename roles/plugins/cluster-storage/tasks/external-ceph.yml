@@ -1,0 +1,38 @@
+- name: Ceph | install ceph-common
+  yum:
+    name:
+      - ceph-common
+    state: present
+    update_cache: yes
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['all'] }}"
+
+- name: RBD Provisioner | Create storage-plugin dir
+  file:
+    path: "{{ kube_config_dir }}/plugins/storage-plugin/rbd-provisioner"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  when:
+    - inventory_hostname == groups['kube-master'][0]
+
+- name: RBD Provisioner | Templates list
+  set_fact:
+    rbd_provisioner_templates:
+      - { file: 'ceph-rbd-provisioner.yaml' }
+      - { file: 'secret-rbd-provisioner.yaml' }
+      - { file: 'storageclass.yaml' }
+
+- name: RBD Provisioner | Create manifests
+  template:
+    src: external-ceph/{{ item.file }}.j2
+    dest: '{{ kube_config_dir }}/plugins/storage-plugin/rbd-provisioner/{{ item.file }}'
+  with_items: "{{ rbd_provisioner_templates }}"
+  when: inventory_hostname == groups['kube-master'][0]
+
+
+- name: RBD Provisioner | Deploy manifests
+  shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rbd-provisioner/{{ item.file }}"
+  with_items: "{{ rbd_provisioner_templates }}"
+  when: inventory_hostname == groups['kube-master'][0]

@@ -1,4 +1,7 @@
 - import_tasks: nfs-client.yml
+  when: storage_nfs_enabled | bool
+
+- import_tasks: external-ceph.yml
   when:
-    - 'storage_nfs_enabled is defined '
-    - 'storage_nfs_enabled '
+    - storage_external_ceph_enabled is defined
+    - storage_external_ceph_enabled | bool

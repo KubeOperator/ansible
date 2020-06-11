@@ -23,6 +23,11 @@
     mode: "0755"
     copy: no
 
+- name: 创建 cni 二进制文件存放目录
+  file:
+    name: "/opt/cni/bin"
+    state: directory
+
 - name: 拷贝 cni plugins 二进制文件
   copy:
     src: "{{ base_dir}}/cni/{{ item }}"

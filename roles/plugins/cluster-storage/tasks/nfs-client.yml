@@ -4,7 +4,7 @@
       - nfs-utils # 挂载nfs 共享文件需要 (创建基于 nfs的PV 需要)
     state: present
     update_cache: yes
-  when: 'storage_nfs_enabled'
+  when: storage_nfs_enabled | bool
   delegate_to: "{{ item }}"
   with_items: "{{ groups['all'] }}"
 
@@ -32,20 +32,44 @@
         replace: "Lock=False"
       delegate_to: "{{ item }}"
       with_items: "{{ groups['all'] }}"
-  when: 'storage_nfs_server_version is defined and storage_nfs_server_version == "3"'
+  when: storage_nfs_server_version is defined and storage_nfs_server_version == "3"
   ignore_errors: true
 
 - block:
-    - name: 准备nfs-client 配置目录
-      file: name={{ base_dir }}/manifests/storage/nfs state=directory
+    - name: 准备 nfs-client 配置目录
+      file: name={{ kube_config_dir }}/plugins/storage-plugin/nfs state=directory
 
     - name: 生成nfs-client动态存储配置
       template:
         src: nfs/nfs-client-provisioner.yaml.j2
-        dest: "{{ base_dir }}/manifests/storage/nfs/{{ storage_nfs_provisioner_name }}.yaml"
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
 
-    - name: 开始部署nfs-client动态存储
-      shell: "{{ bin_dir }}/kubectl apply -f {{ base_dir }}/manifests/storage/nfs/{{ storage_nfs_provisioner_name }}.yaml"
+    - name: 开始部署 nfs-client 动态存储
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
       ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true
+
+- block:
+    - name: copy test-sc.yaml
+      template:
+        src: test/test-sc.yaml.j2
+        dest: "/tmp/test-sc.yaml"
+
+    - name: verify storageclass availability
+      shell: "kubectl -n default apply -f /tmp/test-sc.yaml"
+
+    - name: 轮询等待 storageclass 验证结果
+      shell: "{{ bin_dir }}/kubectl -n default get pod -o wide | grep {{ cluster_name }}-pod | awk '{print $3}'"
+      register: pod_status
+      until: pod_status.stdout == "Completed"
+      delegate_to: "{{ groups['kube-master'][0] }}"
+      retries: 10
+      delay: 10
+
+    - name: delete test-sc.yaml
+      shell: "kubectl -n default delete -f /tmp/test-sc.yaml"
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - 'storage_local_volume_enabled is not defined'
   run_once: true

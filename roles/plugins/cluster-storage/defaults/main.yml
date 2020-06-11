@@ -1,7 +1,12 @@
-# nfs
-storage_nfs_provisioner_name: "nfs-provisioner"
-storageClassName: "storageclass-default"
-
 # busybox
 busybox_image: busybox
 busybox_version: 1.28
+
+
+# storage-nfs
+storage_nfs_provisioner_name: "nfs-provisioner"
+
+# storage-ceph-rbd
+storageClassName: "storageclass-default"
+rbd_provisioner_namespace: "kube-system"
+rbd_provisioner_image_tag: "v2.1.1-k8s1.11"
