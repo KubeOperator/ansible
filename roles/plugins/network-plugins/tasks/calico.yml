@@ -1,34 +1,19 @@
-- name: 创建 cni 相关目录
-  file: name={{ item }} state=directory
-  with_items:
-  - /etc/cni/net.d
-
-- name: 拷贝 calico cni plugins
-  copy: 
-    src: "{{ base_dir }}/cni/{{ item }}"
-    dest: "/opt/cni/bin"
-    mode: "0755"
-    remote_src: yes
-  with_items:
-  - calico
-  - calico-ipam
-
-- name: 渲染 calico 配置文件
+- name: Calico | 渲染 calico 配置文件
   template:
     src: calico/calico-typha.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
   register: calico_typha_manifest
 
-- name: 渲染 calicoctl 配置文件
+- name: Calico | 渲染 calicoctl 配置文件
   template:
     src: calico/calicoctl-daemonset.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   register: calicoctl_manifest
 
-- name: 部署 calico
+- name: Calico | 部署 calico
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
   when: calico_typha_manifest.changed
 
-- name: 部署 calicoctl
+- name: Calico | 部署 calicoctl
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   when: calicoctl_manifest.changed

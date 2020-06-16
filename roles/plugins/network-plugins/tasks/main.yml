@@ -1,8 +1,27 @@
 - block:
-  - name: 创建 cni 相关目录
-    file: 
-      name: /etc/kubernetes/plugins/network-plugin
-      state: directory
+  - name: CNI | 创建 cni 配置文件存放目录01
+    file: name=/etc/cni/net.d state=directory
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: CNI | 创建 cni 配置文件存放目录02
+    file: name=/etc/kubernetes/plugins/network-plugin state=directory
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: CNI | 创建 cni 配置文件存放目录03
+    file: name=/opt/cni/bin state=directory
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: CNI | 下载解压基础 cni plugins
+    unarchive:
+      src: "{{ cni_download_url }}"
+      dest: "/opt/cni/bin"
+      mode: "0755"
+      copy: no
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
 
   - include_tasks: flannel.yml
     when: network_plugin == 'flannel'

@@ -1,14 +1,9 @@
-- name: 创建 cni 相关目录
-  file: name={{ item }} state=directory
-  with_items:
-  - /etc/cni/net.d
-
-- name: 渲染 flannel 配置文件
+- name: Flannel | 渲染 flannel 配置文件
   template:
     src: flannel/kube-flannel.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
   register: flannel_manifest
 
-- name: 部署 flannel
+- name: Flannel | 部署 flannel
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
   when: flannel_manifest.changed
