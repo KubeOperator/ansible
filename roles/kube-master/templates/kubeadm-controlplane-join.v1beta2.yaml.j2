@@ -40,6 +40,8 @@ controlPlaneEndpoint: "{{ KUBE_APISERVER_IP | trim }}:{{ lb_kube_apiserver_port 
 certificatesDir: /etc/kubernetes/pki
 dns:
   type: CoreDNS
+  imageRepository: {{ local_hostname }}:{{ registry_port }}/kubeoperator
+  imageTag: {{ coredns_version }}-{{ architectures }}
 etcd:
   external:
     endpoints:
@@ -53,7 +55,6 @@ etcd:
     caFile: /etc/kubernetes/pki/etcd/ca.crt
     certFile: /etc/kubernetes/pki/apiserver-etcd-client.crt
     keyFile: /etc/kubernetes/pki/apiserver-etcd-client.key
-imageRepository: "docker.io/kubeoperator"
 networking:
   dnsDomain: {{ kube_dns_domain }}
   podSubnet: {{ kube_pod_subnet }}
