@@ -8,9 +8,8 @@ Documentation=https://github.com/coreos
 [Service]
 Type=notify
 WorkingDirectory=/var/lib/etcd/
-Environment="ETCD_UNSUPPORTED_ARCH=arm64"
 {% if architectures != "amd64" -%}
-ETCD_UNSUPPORTED_ARCH={{ architectures }}
+Environment="ETCD_UNSUPPORTED_ARCH={{ architectures }}"
 {%- endif %}
 ExecStart={{ bin_dir }}/etcd \
   --name=etcd-{{ inventory_hostname }} \
