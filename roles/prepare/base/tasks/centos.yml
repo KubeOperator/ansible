@@ -10,24 +10,24 @@
     enabled: no
   when: '"active" in firewalld_already_installed.stdout'
 
-- name: 添加Amazon EPEL仓库
-  shell: "amazon-linux-extras install epel"
-  when: ansible_distribution == "Amazon"
-  ignore_errors: true
-
 - name: 安装基础软件包
   yum: 
     name:
     - bash-completion     # bash命令补全工具，需要重新登录服务器生效
-    - conntrack-tools     # ipvs 模式需要
-    - ipset               # ipvs 模式需要
-    - ipvsadm             # ipvs 模式需要
     - libseccomp          # 安装containerd需要
     - psmisc              # 安装psmisc 才能使用命令killall，keepalive的监测脚本需要
     - rsync               # 文件同步工具，分发证书等配置文件需要
     - socat               # 用于port forwarding
-    - nc                  # 使用lb时进行端口判断时会用到
     state: latest
+
+- name: 安装ipvs基础软件包
+  yum:
+    name:
+    - conntrack-tools
+    - ipset
+    - ipvsadm
+    state: latest
+  when: kube_proxy_mode == "ipvs"
 
 - name: 临时关闭 selinux
   shell: "setenforce 0"
