@@ -22,7 +22,7 @@
 
 - name: 下载解压 containerd 二进制文件
   unarchive:
-    src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/containerd.tar.gz"
+    src: "{{ containerd_download_url }}"
     dest: "{{ base_dir }}/"
     mode: "0755"
     copy: no

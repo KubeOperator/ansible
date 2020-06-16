@@ -1,43 +1,44 @@
-# -----------------------平台架构-----------------------
-image_arch: "amd64"
 
-# -----------------------版本设置-----------------------
+# ----------------------- 版本设置 -----------------------
 coredns_version: "1.6.7"
 calico_version: "v3.14.1"
 pause_version: "3.2"
-flannel_version: "v0.12.0-amd64"
+flannel_version: "v0.12.0"
 rbd_provisioner_version: "v2.1.1-k8s1.11"
+nfs_provisioner_version: "v3.1.0-k8s1.11"
 busybox_version: "1.28"
 cni_version: "v0.8.6"
 etcd_version: "v3.4.8"
 docker_version: "v18.09.9"
 containerd_version: "v1.2.2"
 
-# -----------------------docker iamge 地址--------------
+# ----------------------- 容器镜像地址--------------
 # Pod根容器
-pod_infra_container_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}"
+pod_infra_container_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
 # coredns镜像
-coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:{{ coredns_version }}"
+coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:{{ coredns_version }}-{{ architectures }}"
 # 基础容器镜像
-SANDBOX_IMAGE: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}"
+SANDBOX_IMAGE: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
 tiller_image: registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.6
 helm_stable_repo_url: https://kubernetes-charts.storage.googleapis.com
 # busybox_image
-busybox_image: "{{ local_hostname }}:{{ registry_port }}/busybox:{{ busybox_version }}"
+busybox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/busybox:{{ busybox_version }}-{{ architectures }}"
 # calico 相关镜像
-calico_typha_image: "{{ local_hostname }}:{{ registry_port }}/calico/typha:{{ calico_version }}"
-calico_cni_image: "{{ local_hostname }}:{{ registry_port }}/calico/cni:{{ calico_version }}"
-calico_node_image: "{{ local_hostname }}:{{ registry_port }}/calico/node:{{ calico_version }}"
-calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/kube-controllers:{{ calico_version }}"
-calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}"
+calico_typha_image: "{{ local_hostname }}:{{ registry_port }}/calico/typha:{{ calico_version }}-{{ architectures }}"
+calico_cni_image: "{{ local_hostname }}:{{ registry_port }}/calico/cni:{{ calico_version }}-{{ architectures }}"
+calico_node_image: "{{ local_hostname }}:{{ registry_port }}/calico/node:{{ calico_version }}-{{ architectures }}"
+calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/kube-controllers:{{ calico_version }}-{{ architectures }}"
+calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}-{{ architectures }}"
 # calicoctl image 地址
-calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}"
+calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}-{{ architectures }}"
 # flannel 镜像地址
-flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}"
+flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}-{{ architectures }}"
 # ceph-rbd provisioner
 rbd_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
+# nfs provisioner
+nfs_client_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/nfs-client-provisioner:{{ nfs_provisioner_version }}-{{ architectures }}"
 
-# -----------------------集群参数设置----------------------
+# ----------------------- 集群参数设置 ----------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
 # Binaries Directory
@@ -52,9 +53,15 @@ eviction_hard_memory_available: "100Mi"
 eviction_hard_nodefs_available: "10%"
 eviction_hard_nodefs_inodes_free: "5%"
 
-# -----------------------二进制文件下载地址----------------------
-k8s_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ image_arch }}/k8s.tar.gz"
-etcd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/etcd/version/{{ etcd_version }}/{{ image_arch }}/etcd.tar.gz"
-cni_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/cni/version/{{ cni_version }}/{{ image_arch }}/cni.tar.gz"
-docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/docker/version/{{ docker_version }}/{{ image_arch }}/docker.tar.gz"
-containerd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/containerd/version/{{ containerd_version }}/{{ image_arch }}/containerd.tar.gz"
+# ----------------------- k8s二进制文件下载地址 ------------------
+k8s_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/k8s.tar.gz"
+etcd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/etcd/version/{{ etcd_version }}/{{ architectures }}/etcd.tar.gz"
+cni_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/cni/version/{{ cni_version }}/{{ architectures }}/cni.tar.gz"
+docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/docker/version/{{ docker_version }}/{{ architectures }}/docker.tar.gz"
+containerd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/containerd/version/{{ containerd_version }}/{{ architectures }}/containerd.tar.gz"
+
+# ----------------------- 离线镜像文件下载地址----------------------
+kube_controller_manager_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/kube-controller-manager.tar"
+kube_apiserver_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/kube-apiserver.tar"
+kube_scheduler_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/kube-scheduler.tar"
+kube_proxy_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/kube-proxy.tar"

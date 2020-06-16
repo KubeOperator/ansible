@@ -19,7 +19,7 @@
 
   - name: 下载解压 docker 二进制文件(>= 18.09.x)
     unarchive:
-      src: "http://{{local_hostname}}:{{repo_port}}/repository/raw/k8s/docker.tar.gz"
+      src: "{{ docker_download_url }}"
       dest: "{{ base_dir }}/"
       mode: "0755"
       copy: no
