@@ -14,7 +14,7 @@ containerd_version: "v1.2.2"
 
 # ----------------------- 容器镜像地址--------------
 # Pod根容器
-pod_infra_container_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
+pod_infra_container_image: "gcr.io/pause:{{ pause_version }}-{{ architectures }}"
 # coredns镜像
 coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:{{ coredns_version }}-{{ architectures }}"
 # 基础容器镜像
@@ -65,3 +65,4 @@ kube_controller_manager_download_url: "http://{{ local_hostname }}:{{ repo_port 
 kube_apiserver_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/kube-apiserver.tar"
 kube_scheduler_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/kube-scheduler.tar"
 kube_proxy_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/kube-proxy.tar"
+pause_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/pause.tar"
