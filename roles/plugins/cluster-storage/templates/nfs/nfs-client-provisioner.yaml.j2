@@ -39,7 +39,7 @@ spec:
       serviceAccountName: nfs-client-provisioner
       containers:
       - name: nfs-client-provisioner
-        image: {{ local_hostname }}:{{ registry_port }}/external_storage/nfs-client-provisioner:v3.1.0-k8s1.11
+        image: {{ nfs_client_provisioner_image }}
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - name: nfs-client-root
