@@ -2,8 +2,6 @@
   template:
     src: flannel/kube-flannel.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
-  register: flannel_manifest
 
 - name: Flannel | 部署 flannel
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
-  when: flannel_manifest.changed

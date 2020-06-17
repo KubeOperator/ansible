@@ -2,18 +2,14 @@
   template:
     src: calico/calico-typha.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
-  register: calico_typha_manifest
 
 - name: Calico | 渲染 calicoctl 配置文件
   template:
     src: calico/calicoctl-daemonset.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
-  register: calicoctl_manifest
 
 - name: Calico | 部署 calico
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
-  when: calico_typha_manifest.changed
 
 - name: Calico | 部署 calicoctl
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
-  when: calicoctl_manifest.changed

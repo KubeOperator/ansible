@@ -24,3 +24,7 @@
 - hosts: new-worker
   roles:
   - post
+
+- hosts: kube-master[0]
+  roles:
+  - plugins/network-plugins

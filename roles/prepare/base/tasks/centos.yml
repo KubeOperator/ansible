@@ -13,17 +13,17 @@
 - name: 安装基础软件包
   yum: 
     name:
-    - bash-completion     # bash命令补全工具，需要重新登录服务器生效
-    - libseccomp          # 安装containerd需要
-    - psmisc              # 安装psmisc 才能使用命令killall，keepalive的监测脚本需要
-    - rsync               # 文件同步工具，分发证书等配置文件需要
-    - socat               # 用于port forwarding
+    - conntrack-tools
+    - bash-completion
+    - libseccomp
+    - psmisc
+    - rsync
+    - socat
     state: latest
 
 - name: 安装ipvs基础软件包
   yum:
     name:
-    - conntrack-tools
     - ipset
     - ipvsadm
     state: latest
