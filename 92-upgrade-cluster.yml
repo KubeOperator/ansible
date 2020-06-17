@@ -29,5 +29,5 @@
   - etcd
   - kube-master
   roles:
-  - etcd/certificates
-  - kube-certificates
+  - prepare/etcd-certificates
+  - prepare/kube-certificates

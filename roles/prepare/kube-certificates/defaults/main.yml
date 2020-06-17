@@ -1,0 +1,4 @@
+# 提权操作
+ansible_become: true
+
+KUBERNETES_SERVICE_IP: "{{ kube_service_subnet | ipaddr('net') | ipaddr(1) | ipaddr('address') }}"
