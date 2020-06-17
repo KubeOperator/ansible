@@ -189,7 +189,6 @@ spec:
         args:
         - --ip-masq
         - --kube-subnet-mgr
-        - --iface=$(POD_IP)
         resources:
           requests:
             cpu: "100m"
@@ -284,7 +283,6 @@ spec:
         args:
         - --ip-masq
         - --kube-subnet-mgr
-        - --iface=$(POD_IP)
         resources:
           requests:
             cpu: "100m"
