@@ -9,7 +9,7 @@
     kubeadm join --config /etc/kubernetes/kubeadm-config.yaml 
     --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
 
-- include_tasks: "{{ (role_path + '/../kube-certificates/tasks/kubeconfig.yml') | realpath  }}"
+- include_tasks: "{{ (role_path + '/../kube-config/tasks/kubeconfig.yml') | realpath  }}"
 
 - name: 重新加载 daemon
   systemd:
