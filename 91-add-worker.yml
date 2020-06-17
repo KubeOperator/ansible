@@ -14,7 +14,7 @@
   - kube-worker
   - new-worker
   roles:
-  - kube-certificates
+  - prepare/kube-certificates
 
 - hosts: new-worker
   roles:

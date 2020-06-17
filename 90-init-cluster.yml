@@ -1,12 +1,12 @@
 - hosts: all
-  # max_fail_percentage: 99
   roles:
   - prepare/repository
   - prepare/base
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
   - prepare/kubernetes
-  - prepare/certificates
+  - prepare/etcd-certificates
+  - prepare/kube-certificates
 
 - hosts: all
   roles:
@@ -17,13 +17,6 @@
   - kube-master
   roles:
   - etcd
-
-- hosts: 
-  - kube-master
-  - kube-worker
-  - new-worker
-  # roles:
-  # - kube-certificates
 
 - hosts: kube-master
   roles:
@@ -45,7 +38,7 @@
 - hosts: kube-master[0]
   roles:
   - plugins/network-plugins
-  - plugins/cluster-storage
+  # - plugins/cluster-storage
   # - plugins/cert-manager
   # - plugins/ingress-controller
   # - plugins/metrics-server
