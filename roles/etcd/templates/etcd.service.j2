@@ -11,6 +11,7 @@ WorkingDirectory=/var/lib/etcd/
 {% if architectures != "amd64" -%}
 Environment="ETCD_UNSUPPORTED_ARCH={{ architectures }}"
 {%- endif %}
+
 ExecStart={{ bin_dir }}/etcd \
   --name=etcd-{{ inventory_hostname }} \
   --cert-file=/etc/kubernetes/pki/etcd/server.crt \
