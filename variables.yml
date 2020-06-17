@@ -14,13 +14,13 @@ containerd_version: "v1.2.2"
 
 # ----------------------- 容器镜像地址--------------
 # Pod根容器
-pod_infra_container_image: "gcr.io/pause:{{ pause_version }}"
+pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
 # coredns镜像
 coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:{{ coredns_version }}-{{ architectures }}"
 # 基础容器镜像
-SANDBOX_IMAGE: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
-tiller_image: registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.6
-helm_stable_repo_url: https://kubernetes-charts.storage.googleapis.com
+sandbox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
+tiller_image: "registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.6"
+helm_stable_repo_url: "https://kubernetes-charts.storage.googleapis.com"
 # busybox_image
 busybox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/busybox:{{ busybox_version }}-{{ architectures }}"
 # calico 相关镜像
