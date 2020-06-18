@@ -2,6 +2,7 @@
   roles:
   - prepare/repository
   - prepare/base
+  - chrony
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
   - prepare/kubernetes

@@ -1,6 +1,0 @@
-- hosts:
-  - kube-master
-  - kube-worker
-  - new-worker
-  roles:
-  - kube-config
