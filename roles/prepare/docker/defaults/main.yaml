@@ -19,3 +19,5 @@ docker_log_max_file: 3
 
 # 并行镜像下载数量
 docker_max_concurrent_downloads: 10
+
+architectures: "{% if ansible_architecture == 'x86_64' %}amd64{% elif ansible_architecture == 'aarch64' %}arm64{% endif %}"
