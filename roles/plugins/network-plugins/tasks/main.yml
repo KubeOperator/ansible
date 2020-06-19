@@ -1,15 +1,15 @@
 - block:
-  - name: CNI | 创建 cni 配置文件存放目录01
+  - name: CNI | 创建 cni 配置文件存放目录
     file: name=/etc/cni/net.d state=directory
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: CNI | 创建 cni 配置文件存放目录02
+  - name: CNI | 创建 cni manifests 存放目录
     file: name=/etc/kubernetes/plugins/network-plugin state=directory
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: CNI | 创建 cni 配置文件存放目录03
+  - name: CNI | 创建 cni 二进制文件存放目录
     file: name=/opt/cni/bin state=directory
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"

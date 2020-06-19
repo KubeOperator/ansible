@@ -11,7 +11,7 @@ cni_version: "v0.8.6"
 etcd_version: "v3.4.8"
 docker_version: "v18.09.9"
 containerd_version: "v1.2.2"
-
+metrics_server_version: "v0.3.6"
 # ----------------------- 容器镜像地址--------------
 # Pod根容器
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
@@ -37,7 +37,8 @@ flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flann
 rbd_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
 # nfs provisioner
 nfs_client_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/nfs-client-provisioner:{{ nfs_provisioner_version }}-{{ architectures }}"
-
+# metrics-server image地址
+metrics_server_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/metrics-server:{{ metrics_server_version }}-{{ architectures }}"
 # ----------------------- 集群参数设置 ----------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
