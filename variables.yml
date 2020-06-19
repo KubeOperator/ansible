@@ -67,3 +67,11 @@ kube_apiserver_download_url: "http://{{ local_hostname }}:{{ repo_port }}/reposi
 kube_scheduler_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/kube-scheduler.tar"
 kube_proxy_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/kube-proxy.tar"
 pause_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_version }}/{{ architectures }}/pause.tar"
+
+# ----------------------- k8s升级二进制文件及镜像下载地址 ------------------
+k8s_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/k8s.tar.gz"
+kube_controller_manager_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-controller-manager.tar"
+kube_apiserver_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-apiserver.tar"
+kube_scheduler_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-scheduler.tar"
+kube_proxy_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-proxy.tar"
+pause_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/raw/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/pause.tar"
