@@ -42,5 +42,5 @@
   # - plugins/cluster-storage
   # - plugins/cert-manager
   # - plugins/ingress-controller
-  # - plugins/metrics-server
+   - plugins/metrics-server
   # - plugins/kubernetes-dashboard

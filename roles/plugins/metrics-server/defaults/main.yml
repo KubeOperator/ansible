@@ -3,6 +3,3 @@ ansible_become: true
 
 # 是否启用metrics-server
 metrics_server_enabled: true
-
-# metrics-server image地址
-metrics_server_image: registry.aliyuncs.com/google_containers/metrics-server-amd64:v0.3.6
