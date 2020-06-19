@@ -21,7 +21,6 @@
   - backup
 
 - hosts: all
-  serial: 1
   roles:
   - upgrade
 
