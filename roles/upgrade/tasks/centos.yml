@@ -1,26 +1,81 @@
-- name: 添加 Kubernetes yum 仓库
-  yum_repository:
-    name: kubernetes
-    description: Kubernetes Repository
-    baseurl: "{{ kubernetes_yum_repo }}"
-    enabled: no
-    gpgcheck: no
-    state: present
+- name: 下载解压 kubeadm kubelet kubectl 二进制文件
+  unarchive:
+    src: "{{ k8s_upgrade_download_url }}"
+    dest: "{{ base_dir }}/"
+    mode: "0755"
+    copy: no
 
-- name: "安装 kubeadm-{{ kube_upgrade_version }}"
-  yum:
-    name: 
-    - "kubeadm-{{ kube_upgrade_version }}"
-    state: present
-    enablerepo: kubernetes
+- name: 拷贝 kubeadm kubelet kubectl 二进制文件
+  copy:
+    src: "{{ base_dir}}/k8s/{{ item }}"
+    dest: "{{ bin_dir }}/"
+    remote_src: yes
+    mode: "0755"
+  with_items:
+  - kubeadm
+  - kubelet
+  - kubectl
+
+- block:
+  - name: 下载 kube-master 镜像
+    get_url:
+      url: "{{ item }}"
+      dest: "{{ base_dir }}/k8s"
+    with_items:
+      - "{{ kube_controller_manager_upgrade_download_url }}"
+      - "{{ kube_apiserver_upgrade_download_url }}"
+      - "{{ kube_scheduler_upgrade_download_url }}"
+
+  - name: Docker | 加载 kube-master 镜像
+    shell: "{{ bin_dir }}/docker load -i {{ base_dir }}/k8s/{{ item }}"
+    with_items:
+      - kube-controller-manager.tar
+      - kube-apiserver.tar
+      - kube-scheduler.tar
+    when: container_runtime == 'docker'
+
+  - name: Containerd | 加载 kube-master 镜像
+    shell: "{{ bin_dir }}/crictl images import {{ base_dir }}/k8s/{{ item }} -n=k8s.io"
+    with_items:
+      - kube-controller-manager.tar
+      - kube-apiserver.tar
+      - kube-scheduler.tar
+    when: container_runtime == 'containerd'
+  when: inventory_hostname in groups['kube-master']
+
+- block:
+  - name: 下载 kube-proxy 和 pause 镜像
+    get_url:
+      url: "{{ item }}"
+      dest: "{{ base_dir }}/k8s"
+    with_items:
+    - "{{ kube_proxy_upgrade_download_url }}"
+    - "{{ pause_upgrade_download_url }}"
+
+  - block:
+    - name: Docker | 加载 kube-proxy 镜像
+      shell: "{{ bin_dir }}/docker load -i {{ base_dir }}/k8s/{{ item }}"
+      with_items:
+      - kube-proxy.tar
+
+    - name: Docker | 加载 pause 镜像
+      shell: "{{ bin_dir }}/docker load -i {{ base_dir }}/k8s/{{ item }}"
+      with_items:
+      - pause.tar
+    when: container_runtime == 'docker'
+
+  - block:
+    - name: Containerd | 加载 kube-proxy 镜像
+      shell: "{{ bin_dir }}/crictl images import {{ base_dir }}/k8s/{{ item }} -n=k8s.io"
+      with_items:
+      - kube-proxy.tar
+
+    - name: Containerd | 加载 pause 镜像
+      shell: "{{ bin_dir }}/crictl images import {{ base_dir }}/k8s/{{ item }} -n=k8s.io"
+      with_items:
+      - pause.tar
+    when: container_runtime == 'containerd'
+  when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
 
 - include_tasks: common.yml
   when: inventory_hostname in (groups['kube-master'] + groups['kube-worker'] + groups['new-worker'])
-
-- name: "安装 kubelet-{{ kube_upgrade_version }} kubectl-{{ kube_upgrade_version }}"
-  yum:
-    name: 
-    - "kubectl-{{ kube_upgrade_version }}"
-    - "kubelet-{{ kube_upgrade_version }}"
-    state: present
-    enablerepo: kubernetes
