@@ -14,12 +14,27 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: CNI | 下载解压基础 cni plugins
+  - name: CNI | 创建 cni 压缩包存放目录
+    file: name="{{ base_dir }}/cni" state=directory
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: CNI | 下载基础 cni plugins
+    get_url:
+      url: "{{ cni_download_url }}"
+      dest: "{{ base_dir }}/cni"
+      mode: "0755"
+      copy: no
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: CNI | 解压基础 cni plugins
     unarchive:
-      src: "{{ cni_download_url }}"
+      src: "{{ base_dir }}/cni/cni.tar.gz"
       dest: "/opt/cni/bin"
       mode: "0755"
       copy: no
+      remote_src: yes
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
