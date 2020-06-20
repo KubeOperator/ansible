@@ -21,24 +21,19 @@
 
   - name: CNI | 下载基础 cni plugins
     get_url:
-      url: "{{ cni_download_url }}"
+      url: "{{ item }}"
       dest: "{{ base_dir }}/cni"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
+    with_items: "{{ cni_download_url }}"
 
   - name: CNI | 解压基础 cni plugins
     unarchive:
       src: "{{ base_dir }}/cni/cni.tar.gz"
       dest: "/opt/cni/bin"
       remote_src: yes
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
 
   - include_tasks: flannel.yml
     when: network_plugin == 'flannel'
-    delegate_to: "{{ groups['kube-master'][0] }}"
 
   - include_tasks: calico.yml
     when: network_plugin == 'calico'
-    delegate_to: "{{ groups['kube-master'][0] }}"
-  when: network_plugins_enabled | bool
+   when: network_plugins_enabled | bool

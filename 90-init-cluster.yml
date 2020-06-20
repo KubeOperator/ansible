@@ -12,6 +12,8 @@
 - hosts: all
   roles:
   - role: load-balancer
+  - role: plugins/network-plugins
+
 
 - hosts: 
   - etcd
@@ -38,7 +40,6 @@
 
 - hosts: kube-master[0]
   roles:
-  - plugins/network-plugins
   - plugins/metrics-server
   # - plugins/cluster-storage
   # - plugins/cert-manager

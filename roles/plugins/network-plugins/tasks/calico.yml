@@ -2,14 +2,18 @@
   template:
     src: calico/calico-typha.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Calico | 渲染 calicoctl 配置文件
   template:
     src: calico/calicoctl-daemonset.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Calico | 部署 calico
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Calico | 部署 calicoctl
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"

@@ -3,12 +3,18 @@
     src: flannel/kube-flannel-amd64.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
   when: ansible_architecture == 'x86_64'
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
 
 - name: Flannel arm64 | 渲染 flannel 配置文件
   template:
     src: flannel/kube-flannel-arm64.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
   when: ansible_architecture == 'aarch64'
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
 
 - name: Flannel | 部署 flannel
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
