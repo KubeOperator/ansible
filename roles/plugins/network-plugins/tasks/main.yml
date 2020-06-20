@@ -23,8 +23,6 @@
     get_url:
       url: "{{ cni_download_url }}"
       dest: "{{ base_dir }}/cni"
-      mode: "0755"
-      copy: no
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
@@ -32,8 +30,6 @@
     unarchive:
       src: "{{ base_dir }}/cni/cni.tar.gz"
       dest: "/opt/cni/bin"
-      mode: "0755"
-      copy: no
       remote_src: yes
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
