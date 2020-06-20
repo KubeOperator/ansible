@@ -6,8 +6,8 @@
 
   - name: CNI | 创建 cni manifests 存放目录
     file: name=/etc/kubernetes/plugins/network-plugin state=directory
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
+    delegate_to: "{{ groups['kube-master'][0] }}"
+
 
   - name: CNI | 创建 cni 二进制文件存放目录
     file: name=/opt/cni/bin state=directory
@@ -36,7 +36,9 @@
 
   - include_tasks: flannel.yml
     when: network_plugin == 'flannel'
+    delegate_to: "{{ groups['kube-master'][0] }}"
 
   - include_tasks: calico.yml
     when: network_plugin == 'calico'
+    delegate_to: "{{ groups['kube-master'][0] }}"
   when: network_plugins_enabled | bool
