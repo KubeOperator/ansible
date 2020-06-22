@@ -78,6 +78,7 @@
     with_items:
     - "{{ kube_proxy_download_url }}"
     - "{{ pause_download_url }}"
+    - "{{ core_dns_download_url }}"
 
   - block:
     - name: Docker | 加载 kube-proxy 镜像
@@ -105,7 +106,9 @@
       with_items:
       - pause.tar
 
-    - name: Containerd |下载 coredns 镜像
-      shell: "{{ bin_dir }}/crictl pull {{ coredns_image }} -n=k8s.io"
+    - name: Containerd | 加载 coredns 镜像
+      shell: "{{ bin_dir }}/crictl images import {{ base_dir }}/k8s/{{ item }} -n=k8s.io"
+      with_items:
+        - coredns.tar
     when: container_runtime == 'containerd'
   when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
