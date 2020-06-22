@@ -16,7 +16,7 @@ metrics_server_version: "v0.3.6"
 # Pod根容器
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
 # coredns镜像
-coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:{{ coredns_version }}-{{ architectures }}"
+coredns_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/coredns:{{ coredns_version }}"
 # 基础容器镜像
 sandbox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
 tiller_image: "registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.6"
