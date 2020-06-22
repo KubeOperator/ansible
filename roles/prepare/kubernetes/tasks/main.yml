@@ -71,7 +71,7 @@
   when: inventory_hostname in groups['kube-master']
 
 - block:
-  - name: 下载 kube-proxy 和 pause 镜像
+  - name: 下载 kube-proxy pause coredns 镜像
     get_url:
       url: "{{ item }}"
       dest: "{{ base_dir }}/k8s"
