@@ -4,13 +4,23 @@
       path: /etc/kubernetes/plugins/metrics-server
       state: directory
 
+  - name: metrics-server template list
+    set_fact:
+      metrics_server_template:
+        - { name: arm64_template, t_file: metrics-server-arm64.yaml.j2 , d_file: metrics-server-arm64.yaml }
+        - { name: amd64_template, t_file: metrics-server-amd64.yaml.j2 , d_file: metrics-server-amd64.yaml }
+
+
   - name: 渲染 metrics-server 配置文件
     template:
-      src: metrics-server.yaml.j2
-      dest: /etc/kubernetes/plugins/metrics-server/metrics-server.yaml
+      src: {{ item.t_file }}
+      dest: /etc/kubernetes/plugins/metrics-server/{{ item.d_file }}
+    with_item: "{{ metrics_server_template }}"
     register: metrics_server_manifest
 
   - name: 部署 metrics-server
-    shell: kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server.yaml
+    shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/{{ item.d_file }}"
+    with_item: "{{ metrics_server_template }}"
+    register: metrics_server_manifest
     when: metrics_server_manifest.changed
   when: metrics_server_enabled|bool

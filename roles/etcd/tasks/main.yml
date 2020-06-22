@@ -20,6 +20,13 @@
   - etcd
   - etcdctl
 
+- name: arm | 设置系统 ETCD_UNSUPPORTED_ARCH 变量
+  lineinfile:
+    dest: "/etc/bashrc "
+    line: 'export ETCD_UNSUPPORTED_ARCH=arm64'
+    remote_src: yes
+  when: ansible_architecture == 'aarch64'
+
 - name: 创建etcd的systemd unit文件
   template: src=etcd.service.j2 dest=/etc/systemd/system/etcd.service
   tags: upgrade_etcd
