@@ -16,10 +16,10 @@
 
 - name: Flannel | 部署 flannel | amd64 host
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
-  delegate_to: "{{ groups['kube-master'][0] }}"
   when: ansible_architecture == 'x86_64'
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Flannel | 部署 flannel | arm64 host
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
-  delegate_to: "{{ groups['kube-master'][0] }}"
   when: ansible_architecture == 'aarch64'
+  delegate_to: "{{ groups['kube-master'][0] }}"

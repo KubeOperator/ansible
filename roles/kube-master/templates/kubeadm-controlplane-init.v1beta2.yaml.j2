@@ -41,7 +41,7 @@ certificatesDir: /etc/kubernetes/pki
 dns:
   type: CoreDNS
   imageRepository: {{ local_hostname }}:{{ registry_port }}/kubeoperator
-  imageTag: {{ coredns_version }}-{{ architectures }}
+  imageTag: {{ coredns_version }}
 etcd:
   external:
     endpoints:
