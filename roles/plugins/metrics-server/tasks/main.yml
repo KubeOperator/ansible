@@ -13,14 +13,14 @@
 
   - name: 渲染 metrics-server 配置文件
     template:
-      src: {{ item.t_file }}
+      src: "{{ item.t_file }}"
       dest: /etc/kubernetes/plugins/metrics-server/{{ item.d_file }}
-    with_item: "{{ metrics_server_template }}"
+    with_items: "{{ metrics_server_template }}"
     register: metrics_server_manifest
 
   - name: 部署 metrics-server
     shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/{{ item.d_file }}"
-    with_item: "{{ metrics_server_template }}"
+    with_items: "{{ metrics_server_template }}"
     register: metrics_server_manifest
     when: metrics_server_manifest.changed
   when: metrics_server_enabled|bool
