@@ -40,7 +40,7 @@ controlPlaneEndpoint: "{{ KUBE_APISERVER_IP | trim }}:{{ lb_kube_apiserver_port 
 certificatesDir: /etc/kubernetes/pki
 dns:
   type: CoreDNS
-  imageRepository: {{ local_hostname }}:{{ registry_port }}/kubeoperator
+  imageRepository: docker.io/kubeoperator
   imageTag: {{ coredns_version }}
 etcd:
   external:
