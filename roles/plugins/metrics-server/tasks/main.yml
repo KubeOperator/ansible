@@ -4,12 +4,6 @@
       path: /etc/kubernetes/plugins/metrics-server
       state: directory
 
-  - name: metrics-server template list
-    set_fact:
-      metrics_server_template:
-        - { name: arm64_template, d_file: metrics-server-arm64.yaml }
-        - { name: amd64_template, d_file: metrics-server-amd64.yaml }
-
   - name: 渲染 metrics-server arm64 配置文件
     template:
       src: metrics-server-arm64.yaml.j2
