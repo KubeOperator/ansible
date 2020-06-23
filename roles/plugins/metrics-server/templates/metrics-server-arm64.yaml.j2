@@ -134,7 +134,7 @@ spec:
                   - key: kubernetes.io/arch
                     operator: In
                     values:
-                      - arm64
+                      - {{ architectures }}
       serviceAccountName: metrics-server
       volumes:
       # mount in tmp so we can safely use from-scratch images and/or read-only containers
