@@ -7,20 +7,26 @@
   - name: metrics-server template list
     set_fact:
       metrics_server_template:
-        - { name: arm64_template, t_file: metrics-server-arm64.yaml.j2 , d_file: metrics-server-arm64.yaml }
-        - { name: amd64_template, t_file: metrics-server-amd64.yaml.j2 , d_file: metrics-server-amd64.yaml }
+        - { name: arm64_template, d_file: metrics-server-arm64.yaml }
+        - { name: amd64_template, d_file: metrics-server-amd64.yaml }
 
-
-  - name: 渲染 metrics-server 配置文件
+  - name: 渲染 metrics-server arm64 配置文件
     template:
-      src: "{{ item.t_file }}"
-      dest: /etc/kubernetes/plugins/metrics-server/{{ item.d_file }}
-    with_items: "{{ metrics_server_template }}"
-    register: metrics_server_manifest
+      src: metrics-server-arm64.yaml.j2
+      dest: /etc/kubernetes/plugins/metrics-server/metrics-server-arm64.yaml
+    register: metrics_server_arm64_manifest
+
+  - name: 渲染 metrics-server amd64 配置文件
+    template:
+      src: metrics-server-amd64.yaml.j2
+      dest: /etc/kubernetes/plugins/metrics-server/metrics-server-amd64.yaml
+    register: metrics_server_amd64_manifest
 
   - name: 部署 metrics-server
-    shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/{{ item.d_file }}"
-    with_items: "{{ metrics_server_template }}"
-    register: metrics_server_manifest
-    when: metrics_server_manifest.changed
+    shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server-arm64.yaml"
+    when: ansible_architecture == 'x86_64'
+
+  - name: 部署 metrics-server
+    shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server-arm64.yaml"
+    when: ansible_architecture == 'aarch64'
   when: metrics_server_enabled|bool
