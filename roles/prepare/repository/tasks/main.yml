@@ -10,8 +10,15 @@
   file:
     path: /etc/yum.repos.d/*
     state: absent
-    
+
 - name: 添加离线仓库
   template:
-    src: templates/kubeops.repo.j2
+    src: kubeops.repo.amd64.j2
     dest: /etc/yum.repos.d/kubeops.repo
+  when: ansible_architecture == 'x86_64'
+
+- name: 添加离线仓库
+  template:
+    src: kubeops.repo.arm64.j2
+    dest: /etc/yum.repos.d/kubeops.repo
+  when: ansible_architecture == 'aarch64'
