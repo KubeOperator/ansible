@@ -12,12 +12,14 @@ etcd_version: "v3.4.8"
 docker_version: "v18.09.9"
 containerd_version: "v1.2.2"
 metrics_server_version: "v0.3.6"
-# ----------------------- 容器镜像地址--------------
-# Pod根容器
+npd_versioon: "v0.8.1"
+
+# ----------------------- 容器镜像地址 ---------------------
+# Pod image 地址
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
-# 基础容器镜像
+# 基础容器 image 地址
 sandbox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
-# busybox_image
+# busybox_image image 地址
 busybox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/busybox:{{ busybox_version }}-{{ architectures }}"
 # calico 相关镜像
 calico_typha_image: "{{ local_hostname }}:{{ registry_port }}/calico/typha:{{ calico_version }}-{{ architectures }}"
@@ -27,15 +29,19 @@ calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/
 calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}-{{ architectures }}"
 # calicoctl image 地址
 calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}-{{ architectures }}"
-# flannel 镜像地址
+# flannel image 地址
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}-{{ architectures }}"
 # ceph-rbd provisioner
 rbd_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
 # nfs provisioner
 nfs_client_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/nfs-client-provisioner:{{ nfs_provisioner_version }}-{{ architectures }}"
-# metrics-server image地址
+# metrics-server image 地址
 metrics_server_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/metrics-server:{{ metrics_server_version }}-{{ architectures }}"
-# ----------------------- 集群参数设置 ----------------------
+# npd image 地址
+npd_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/node-problem-detector:{{ npd_versioon }}-{{ architectures }}"
+
+
+# ----------------------- 集群参数设置 ---------------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
 # Binaries Directory
@@ -50,14 +56,14 @@ eviction_hard_memory_available: "100Mi"
 eviction_hard_nodefs_available: "10%"
 eviction_hard_nodefs_inodes_free: "5%"
 
-# ----------------------- k8s二进制文件下载地址 ------------------
+# ----------------------- k8s二进制文件下载地址 --------------------
 k8s_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/k8s.tar.gz"
 etcd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/etcd/version/{{ etcd_version }}/{{ architectures }}/etcd.tar.gz"
 cni_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/cni/version/{{ cni_version }}/{{ architectures }}/cni.tar.gz"
 docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/docker/version/{{ docker_version }}/{{ architectures }}/docker.tar.gz"
 containerd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/containerd/version/{{ containerd_version }}/{{ architectures }}/containerd.tar.gz"
 
-# ----------------------- 离线镜像文件下载地址----------------------
+# ----------------------- 离线镜像文件下载地址 ----------------------
 kube_controller_manager_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-controller-manager.tar"
 kube_apiserver_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-apiserver.tar"
 kube_scheduler_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-scheduler.tar"
@@ -65,7 +71,7 @@ kube_proxy_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository
 pause_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/pause.tar"
 core_dns_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/coredns.tar"
 
-# ----------------------- k8s升级二进制文件及镜像下载地址 ------------------
+# ----------------------- k8s升级二进制文件及镜像下载地址 -------------
 k8s_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/k8s.tar.gz"
 kube_controller_manager_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-controller-manager.tar"
 kube_apiserver_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-apiserver.tar"

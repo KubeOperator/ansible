@@ -1,24 +1,26 @@
-- name: 在第一台 master 节点创建 npd 配置文件目录
-  file:
-    path: /etc/kubernetes/plugins/npd
-    state: directory
+- block:
+  - name: 在第一台 master 节点创建 npd 配置文件目录
+    file:
+      path: /etc/kubernetes/plugins/npd
+      state: directory
 
-- name: 渲染 npd config 配置文件
-  template:
-    src: npd-config.yaml.j2
-    dest: /etc/kubernetes/plugins/npd/npd-config.yaml
-  register: npd_config_manifest
+  - name: 渲染 npd config 配置文件
+    template:
+      src: npd-config.yaml.j2
+      dest: /etc/kubernetes/plugins/npd/npd-config.yaml
+    register: npd_config_manifest
 
-- name: 渲染 npd ds 配置文件
-  template:
-    src: npd-ds.yaml.j2
-    dest: /etc/kubernetes/plugins/npd/npd-ds.yaml
-  register: npd_ds_manifest
+  - name: 渲染 npd ds 配置文件
+    template:
+      src: npd-ds.yaml.j2
+      dest: /etc/kubernetes/plugins/npd/npd-ds.yaml
+    register: npd_ds_manifest
 
-- name: 部署 npd config
-  shell: kubectl apply -f /etc/kubernetes/plugins/npd/npd-config.yaml
-  when: npd_config_manifest.changed
+  - name: 部署 npd config
+    shell: kubectl apply -f /etc/kubernetes/plugins/npd/npd-config.yaml
+    when: npd_config_manifest.changed
 
-- name: 部署 npd ds
-  shell: kubectl apply -f /etc/kubernetes/plugins/npd/npd-ds.yaml
-  when: npd_ds_manifest.changed
+  - name: 部署 npd ds
+    shell: kubectl apply -f /etc/kubernetes/plugins/npd/npd-ds.yaml
+    when: npd_ds_manifest.changed
+  when: ansible_architecture == 'x86_64'

@@ -1,3 +1,0 @@
-# npd 镜像
-# npd_image: k8s.gcr.io/node-problem-detector:v0.8.1
-npd_image: sapcc/node-problem-detector:v0.8.1
