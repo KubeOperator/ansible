@@ -2,6 +2,7 @@
   roles:
   - prepare/repository
   - prepare/base
+  - chrony
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
   - prepare/kubernetes
@@ -25,6 +26,6 @@
   roles:
   - post
 
-- hosts: kube-master[0]
+- hosts: all
   roles:
   - plugins/network-plugins
