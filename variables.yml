@@ -14,6 +14,15 @@ containerd_version: "v1.2.2"
 metrics_server_version: "v0.3.6"
 npd_versioon: "v0.8.1"
 
+ceph_image_version: "v14.2.9"
+rook_ceph_image_version: "v1.3.6"
+csi_ceph_image_version: "v2.1.2"
+csi_registrar_image_version: "v1.2.0"
+csi_resizer_image_version: "v0.4.0"
+csi_provisioner_image_version: "v1.4.0"
+csi_snapshotter_image_version: "v1.2.2"
+csi_attacher_image_version: "v2.1.0"
+
 # ----------------------- 容器镜像地址 ---------------------
 # Pod image 地址
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
@@ -21,6 +30,7 @@ pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
 sandbox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
 # busybox_image image 地址
 busybox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/busybox:{{ busybox_version }}-{{ architectures }}"
+
 # calico 相关镜像
 calico_typha_image: "{{ local_hostname }}:{{ registry_port }}/calico/typha:{{ calico_version }}-{{ architectures }}"
 calico_cni_image: "{{ local_hostname }}:{{ registry_port }}/calico/cni:{{ calico_version }}-{{ architectures }}"
@@ -29,14 +39,28 @@ calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/
 calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}-{{ architectures }}"
 # calicoctl image 地址
 calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}-{{ architectures }}"
+
 # flannel image 地址
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}-{{ architectures }}"
+
 # ceph-rbd provisioner
 rbd_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
+
 # nfs provisioner
 nfs_client_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/nfs-client-provisioner:{{ nfs_provisioner_version }}-{{ architectures }}"
+
+ceph_image: "{{ local_hostname }}:{{ registry_port }}/ceph/ceph:{{ ceph_image_version }}"
+rook_ceph_image: "{{ local_hostname }}:{{ registry_port }}/rook/ceph:{{ rook_ceph_image_version }}"
+rook_csi_ceph_image: "{{ local_hostname }}:{{ registry_port }}/cephcsi/cephcsi:{{ csi_ceph_image_version }}"
+rook_csi_registrar_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ csi_registrar_image_version }}"
+rook_csi_resizer_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-resizer:{{ csi_resizer_image_version }}"
+rook_csi_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ csi_provisioner_image_version }}"
+rook_csi_snapshotter_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-snapshotter:{{ csi_snapshotter_image_version }}"
+rook_csi_attacher_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ csi_attacher_image_version }}"
+
 # metrics-server image 地址
 metrics_server_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/metrics-server:{{ metrics_server_version }}-{{ architectures }}"
+
 # npd image 地址
 npd_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/node-problem-detector:{{ npd_versioon }}-{{ architectures }}"
 

@@ -4,3 +4,14 @@ storage_nfs_provisioner_name: "nfs-provisioner"
 # storage-ceph-rbd
 storageClassName: "storageclass-default"
 rbd_provisioner_namespace: "kube-system"
+
+# set default StorageClass
+default_label: '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+# rook-ceph
+mon_count: >-
+  {% if groups['all'] | length < 3 %}
+    2
+  {% else %}
+    3
+  {% endif %}

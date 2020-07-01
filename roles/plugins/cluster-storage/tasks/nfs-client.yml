@@ -9,7 +9,7 @@
   with_items: "{{ groups['all'] }}"
 
 - block:
-    - name: set defaultvers
+    - name: NFS| set defaultvers
       replace:
         path: /etc/nfsmount.conf
         regexp: '# Defaultvers=4'
@@ -25,7 +25,7 @@
       delegate_to: "{{ item }}"
       with_items: "{{ groups['all'] }}"
 
-    - name: set nfslock
+    - name: NFS| set nfslock
       replace:
         path: /etc/nfsmount.conf
         regexp: '# Lock=True'
@@ -36,30 +36,30 @@
   ignore_errors: true
 
 - block:
-    - name: 准备 nfs-client 配置目录
+    - name: NFS| prepare nfs-client file
       file: name={{ kube_config_dir }}/plugins/storage-plugin/nfs state=directory
 
-    - name: 生成nfs-client动态存储配置
+    - name: NFS| prepare nfs-client file
       template:
         src: nfs/nfs-client-provisioner.yaml.j2
         dest: "{{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
 
-    - name: 开始部署 nfs-client 动态存储
+    - name: NFS|  deploy nfs-client
       shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
       ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
   run_once: true
 
 - block:
-    - name: copy test-sc.yaml
+    - name: NFS| copy test-sc.yaml
       template:
         src: test/test-sc.yaml.j2
         dest: "/tmp/test-sc.yaml"
 
-    - name: verify storageclass availability
+    - name: NFS| verify storageclass availability
       shell: "kubectl -n default apply -f /tmp/test-sc.yaml"
 
-    - name: 轮询等待 storageclass 验证结果
+    - name: NFS| wait for all component complete
       shell: "{{ bin_dir }}/kubectl -n default get pod -o wide | grep {{ cluster_name }}-pod | awk '{print $3}'"
       register: pod_status
       until: pod_status.stdout == "Completed"
@@ -67,7 +67,7 @@
       retries: 10
       delay: 10
 
-    - name: delete test-sc.yaml
+    - name: NFS| delete test-sc.yaml
       shell: "kubectl -n default delete -f /tmp/test-sc.yaml"
   delegate_to: "{{ groups['kube-master'][0] }}"
   when:

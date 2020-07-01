@@ -1,0 +1,79 @@
+- block:
+    - name: rook-cceph | prepare rook-ceph deploy directory
+      file: name={{ kube_config_dir }}/plugins/storage-plugin/rook-ceph state=directory
+
+    - name: rook-cceph | prepare rook-crd file
+      template:
+        src: rook-ceph/common.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/common.yaml"
+
+    - name: rook-cceph | deploy rook-crd
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/common.yaml"
+      ignore_errors: truec
+
+    - name: rook-cceph | prepare rook-operator file
+      template:
+        src: rook-ceph/operator.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/operator.yaml"
+
+    - name: rook-cceph | deploy rook-operator
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/operator.yaml"
+      ignore_errors: true
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true
+
+- block:
+    - name: rook-cceph | wait for operator to running
+      shell: "{{ bin_dir }}/kubectl -n rook-ceph get pod -o wide | grep rook-discover | grep '{{ inventory_hostname }}' | awk '{print $3}'"
+      register: pod_status
+      until: pod_status.stdout == "Running"
+      retries: 60
+      delay: 15
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true
+
+- block:
+    - name: rook-cceph | prepare rook-cluster file
+      template:
+        src: rook-ceph/cluster.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/cluster.yaml"
+
+    - name: rook-cceph | deploy rook-cluster
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/cluster.yaml"
+      ignore_errors: true
+
+#     - name: rook-cceph | prepare rook-dashboard file
+#       template:
+#         src: rook-ceph/dashboard.yaml.j2
+#         dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/dashboard.yaml"
+#
+#     - name: rook-cceph | deploy rook-dashboard-service
+#       shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/dashboard.yaml"
+#       ignore_errors: true
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true
+
+- block:
+    - name: rook-cceph | wait for all component complete
+      shell: "{{ bin_dir }}/kubectl -n rook-ceph get pod -o wide | grep ceph-osd-prepare | head -1 | awk '{print $3}'"
+      register: pod_status
+      until: pod_status.stdout == "Completed"
+      retries: 30
+      delay: 15
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true
+
+- block:
+    - name: rook-cceph | prepare rook-storageclass file
+      template:
+        src: rook-ceph/storageclass.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/storageclass.yaml"
+
+    - name: rook-cceph | deploy rook-storageclass
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/storageclass.yaml"
+      ignore_errors: true
+
+    - name: rook-cceph | set default storageClass
+      shell: "{{ bin_dir }}/kubectl patch storageclass '{{ storageClassName }}' -p '{{ default_label }}'"
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true

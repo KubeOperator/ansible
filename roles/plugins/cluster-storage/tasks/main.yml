@@ -5,3 +5,9 @@
   when:
     - storage_external_ceph_enabled is defined
     - storage_external_ceph_enabled | bool
+
+- import_tasks: rook-ceph.yml
+  when:
+    - storage_rook_path is defined
+    - storage_rook_enabled | bool
+    - ansible_architecture == 'x86_64'
