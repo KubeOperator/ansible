@@ -32,16 +32,18 @@
         replace: "Lock=False"
       delegate_to: "{{ item }}"
       with_items: "{{ groups['all'] }}"
-  when: storage_nfs_server_version is defined and storage_nfs_server_version == "3"
+  when:
+    - storage_nfs_server_version is defined and storage_nfs_server_version == "3"
+    - storage_nfs_enabled | bool
   ignore_errors: true
 
 - block:
-    - name: NFS| prepare nfs-client file
+    - name: NFS| prepare nfs-client directory
       file: name={{ kube_config_dir }}/plugins/storage-plugin/nfs state=directory
 
     - name: NFS| prepare nfs-client file
       template:
-        src: nfs/nfs-client-provisioner.yaml.j2
+        src: nfs-client-provisioner.yaml.j2
         dest: "{{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
 
     - name: NFS|  deploy nfs-client
@@ -49,27 +51,6 @@
       ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
   run_once: true
-
-- block:
-    - name: NFS| copy test-sc.yaml
-      template:
-        src: test/test-sc.yaml.j2
-        dest: "/tmp/test-sc.yaml"
-
-    - name: NFS| verify storageclass availability
-      shell: "kubectl -n default apply -f /tmp/test-sc.yaml"
-
-    - name: NFS| wait for all component complete
-      shell: "{{ bin_dir }}/kubectl -n default get pod -o wide | grep {{ cluster_name }}-pod | awk '{print $3}'"
-      register: pod_status
-      until: pod_status.stdout == "Completed"
-      delegate_to: "{{ groups['kube-master'][0] }}"
-      retries: 10
-      delay: 10
-
-    - name: NFS| delete test-sc.yaml
-      shell: "kubectl -n default delete -f /tmp/test-sc.yaml"
-  delegate_to: "{{ groups['kube-master'][0] }}"
   when:
     - 'storage_local_volume_enabled is not defined'
-  run_once: true
+    - storage_nfs_enabled | bool
