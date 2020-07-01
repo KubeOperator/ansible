@@ -77,6 +77,7 @@ apiServer:
 {% if kube_apiserver_disable_admission_plugins|length > 0 %}
     disable-admission-plugins: {{ kube_apiserver_disable_admission_plugins | join(',') }}
 {% endif %}
+    enable-aggregator-routing: "true"
     encryption-provider-config: /etc/kubernetes/pki/secrets-encryption.yaml
     kubelet-certificate-authority: /etc/kubernetes/pki/ca.crt
     kubelet-client-certificate: /etc/kubernetes/pki/apiserver-kubelet-client.crt

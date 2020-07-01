@@ -1,3 +1,6 @@
+# 判断系统架构，arm64 或 amd64
+architectures: "{% if ansible_architecture == 'x86_64' %}amd64{% elif ansible_architecture == 'aarch64' %}arm64{% endif %}"
+
 # storage-nfs
 storage_nfs_provisioner_name: "nfs-provisioner"
 
@@ -5,6 +8,7 @@ storage_nfs_provisioner_name: "nfs-provisioner"
 storageClassName: "storageclass-default"
 rbd_provisioner_namespace: "kube-system"
 
+<<<<<<< HEAD
 # set default StorageClass
 default_label: '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
@@ -15,3 +19,7 @@ mon_count: >-
   {% else %}
     3
   {% endif %}
+=======
+# vsphere
+cloud_config_dir: "/etc/kubernetes/cloud-config"
+>>>>>>> 7617dd95c27b8d8edb4c7b0928d230bfad5350f4

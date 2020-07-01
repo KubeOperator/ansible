@@ -13,6 +13,7 @@ docker_version: "v18.09.9"
 containerd_version: "v1.2.2"
 metrics_server_version: "v0.3.6"
 npd_versioon: "v0.8.1"
+govc_version: "0.23.0"
 
 ceph_image_version: "v14.2.9"
 rook_ceph_image_version: "v1.3.6"
@@ -102,3 +103,6 @@ kube_apiserver_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }
 kube_scheduler_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-scheduler.tar"
 kube_proxy_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-proxy.tar"
 pause_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/pause.tar"
+
+# ----------------------- 存储所需二进制文件下载地址 --------------------
+govc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/govc/version/{{ govc_version }}/{{ architectures }}/govc.tar.gz"
