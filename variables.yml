@@ -1,18 +1,19 @@
 
 # ----------------------- 版本设置 -----------------------
+docker_version: "v18.09.9"
+containerd_version: "v1.2.2"
 coredns_version: "1.6.7"
 calico_version: "v3.14.1"
 pause_version: "3.2"
 flannel_version: "v0.12.0"
-rbd_provisioner_version: "v2.1.1-k8s1.11"
-nfs_provisioner_version: "v3.1.0-k8s1.11"
 busybox_version: "1.28"
 cni_version: "v0.8.6"
 etcd_version: "v3.4.8"
-docker_version: "v18.09.9"
-containerd_version: "v1.2.2"
 metrics_server_version: "v0.3.6"
 npd_versioon: "v0.8.1"
+# 存储类镜像版本设置
+rbd_provisioner_version: "v2.1.1-k8s1.11"
+nfs_provisioner_version: "v3.1.0-k8s1.11"
 govc_version: "0.23.0"
 ceph_image_version: "v14.2.9"
 rook_ceph_image_version: "v1.3.6"
@@ -27,8 +28,10 @@ csi_attacher_image_version: "v2.1.0"
 # ----------------------- 容器镜像地址 ---------------------
 # Pod image 地址
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
+
 # 基础容器 image 地址
 sandbox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
+
 # busybox_image image 地址
 busybox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/busybox:{{ busybox_version }}-{{ architectures }}"
 
@@ -38,6 +41,7 @@ calico_cni_image: "{{ local_hostname }}:{{ registry_port }}/calico/cni:{{ calico
 calico_node_image: "{{ local_hostname }}:{{ registry_port }}/calico/node:{{ calico_version }}-{{ architectures }}"
 calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/kube-controllers:{{ calico_version }}-{{ architectures }}"
 calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}-{{ architectures }}"
+
 # calicoctl image 地址
 calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}-{{ architectures }}"
 
@@ -50,6 +54,7 @@ rbd_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/external_storag
 # nfs provisioner
 nfs_client_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/nfs-client-provisioner:{{ nfs_provisioner_version }}-{{ architectures }}"
 
+# rook-ceph
 ceph_image: "{{ local_hostname }}:{{ registry_port }}/ceph/ceph:{{ ceph_image_version }}"
 rook_ceph_image: "{{ local_hostname }}:{{ registry_port }}/rook/ceph:{{ rook_ceph_image_version }}"
 rook_csi_ceph_image: "{{ local_hostname }}:{{ registry_port }}/cephcsi/cephcsi:{{ csi_ceph_image_version }}"
@@ -69,12 +74,16 @@ npd_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/node-problem-d
 # ----------------------- 集群参数设置 ---------------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
+
 # Binaries Directory
 bin_dir: "/usr/local/bin"
-# Deploy Directory (kubeasz workspace)
+
+# Deploy Directory (ansible workspace)
 base_dir: "/opt/kubeoperator"
+
 # 集群 manifest 配置文件存放目录
 kube_config_dir: "/etc/kubernetes"
+
 # 资源保留相关配置
 eviction_hard_imagefs_available: "15%"
 eviction_hard_memory_available: "100Mi"
