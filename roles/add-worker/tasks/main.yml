@@ -1,0 +1,37 @@
+- name: 下载解压 govc 二进制文件
+  unarchive:
+    src: "{{ govc_download_url }}"
+    dest: "{{ base_dir }}/"
+    mode: "0755"
+    copy: no
+
+- name: 拷贝 govc 二进制文件
+  copy:
+    src: "{{ base_dir}}/govc"
+    dest: "{{ bin_dir }}/"
+    remote_src: yes
+    mode: "0755"
+
+- name: 创建 cloud-config 目录
+  file:
+    name: "{{ cloud_config_dir }}"
+    state: directory
+
+- name: prepare setup.sh
+  template:
+    src: vsphere/setup.sh.j2
+    dest: {{ cloud_config_dir }}/setup.sh
+
+- name: set disk.enableuuid to true for all vms
+  shell: "bash setup.sh"
+  args:
+    chdir: "{{ cloud_config_dir }}"
+
+- name: modify kubelet cloud provider params on worker
+  lineinfile:
+    dest: /etc/sysconfig/kubelet
+    regexp: '^KUBELET_EXTRA_ARGS'
+    line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs --cloud-provider=vsphere'
+
+- name: restart kubelet on worker
+  shell: "systemctl daemon-reload && systemctl restart kubelet"

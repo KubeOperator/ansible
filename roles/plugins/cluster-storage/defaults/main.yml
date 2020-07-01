@@ -18,6 +18,3 @@ mon_count: >-
   {% else %}
     3
   {% endif %}
-
-# vsphere
-cloud_config_dir: "/etc/kubernetes/cloud-config"

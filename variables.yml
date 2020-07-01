@@ -80,6 +80,8 @@ eviction_hard_imagefs_available: "15%"
 eviction_hard_memory_available: "100Mi"
 eviction_hard_nodefs_available: "10%"
 eviction_hard_nodefs_inodes_free: "5%"
+# vsphere
+cloud_config_dir: "/etc/kubernetes/cloud-config"
 
 # ----------------------- k8s二进制文件下载地址 --------------------
 k8s_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/k8s.tar.gz"

@@ -18,7 +18,9 @@
     state: directory
 
 - name: prepare vsphere.conf
-  template: src=vsphere/vsphere.conf.j2 dest={{ cloud_config_dir }}/vsphere.conf
+  template:
+    src: vsphere/vsphere.conf.j2
+    dest: {{ cloud_config_dir }}/vsphere.conf
 
 - name: prepare setup.sh
   template: src=vsphere/setup.sh.j2 dest={{ cloud_config_dir }}/setup.sh

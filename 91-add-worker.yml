@@ -26,6 +26,10 @@
   roles:
   - post
 
+- hosts: new-worker
+  roles:
+  - add-worker
+
 - hosts: all
   roles:
   - plugins/network-plugins
