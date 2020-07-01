@@ -14,7 +14,6 @@ containerd_version: "v1.2.2"
 metrics_server_version: "v0.3.6"
 npd_versioon: "v0.8.1"
 govc_version: "0.23.0"
-
 ceph_image_version: "v14.2.9"
 rook_ceph_image_version: "v1.3.6"
 csi_ceph_image_version: "v2.1.2"
@@ -23,6 +22,7 @@ csi_resizer_image_version: "v0.4.0"
 csi_provisioner_image_version: "v1.4.0"
 csi_snapshotter_image_version: "v1.2.2"
 csi_attacher_image_version: "v2.1.0"
+
 
 # ----------------------- 容器镜像地址 ---------------------
 # Pod image 地址
@@ -106,3 +106,4 @@ pause_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/reposit
 
 # ----------------------- 存储所需二进制文件下载地址 --------------------
 govc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/govc/version/{{ govc_version }}/{{ architectures }}/govc.tar.gz"
+
