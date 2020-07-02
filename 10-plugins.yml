@@ -1,8 +1,0 @@
-- hosts: all
-  roles:
-#  - plugins/network-plugins
-#  - plugins/cluster-storage/nfs
-  - plugins/cluster-storage/external-ceph
-#  - plugins/cluster-storage/rook-ceph
-#  - plugins/cluster-storage/vsphere
-

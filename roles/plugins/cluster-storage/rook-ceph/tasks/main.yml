@@ -63,22 +63,6 @@
         delay: 15
     delegate_to: "{{ groups['kube-master'][0] }}"
     run_once: true
-
-  - block:
-      - name: rook-cceph | prepare rook-storageclass file
-        template:
-          src: storageclass.yaml.j2
-          dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/storageclass.yaml"
-
-      - name: rook-cceph | deploy rook-storageclass
-        shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/storageclass.yaml"
-        ignore_errors: true
-
-      - name: rook-cceph | set default storageClass
-        shell: "{{ bin_dir }}/kubectl patch storageclass '{{ storageClassName }}' -p '{{ default_label }}'"
-    delegate_to: "{{ groups['kube-master'][0] }}"
-    run_once: true
   when:
     - storage_rook_path is defined
-    - storage_rook_enabled | bool
     - ansible_architecture == 'x86_64'

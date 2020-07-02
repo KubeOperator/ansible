@@ -8,7 +8,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: RBD Provisioner | Create storage-plugin dir
+  - name: RBD Provisioner | Create storage-plugin directory
     file:
       path: "{{ kube_config_dir }}/plugins/storage-plugin/rbd-provisioner"
       state: directory
@@ -23,7 +23,6 @@
       rbd_provisioner_templates:
         - { file: 'ceph-rbd-provisioner.yaml' }
         - { file: 'secret-rbd-provisioner.yaml' }
-        - { file: 'storageclass.yaml' }
 
   - name: RBD Provisioner | Create manifests
     template:
@@ -38,7 +37,5 @@
     with_items: "{{ rbd_provisioner_templates }}"
     when: inventory_hostname == groups['kube-master'][0]
   when:
-    - storage_external_ceph_enabled is defined
-    - storage_external_ceph_enabled | bool
     - ansible_architecture == 'x86_64'
 

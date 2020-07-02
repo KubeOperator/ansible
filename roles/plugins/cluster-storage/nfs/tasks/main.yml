@@ -4,7 +4,6 @@
       - nfs-utils # 挂载nfs 共享文件需要 (创建基于 nfs的PV 需要)
     state: present
     update_cache: yes
-  when: storage_nfs_enabled | bool
   delegate_to: "{{ item }}"
   with_items: "{{ groups['all'] }}"
 
@@ -34,7 +33,6 @@
       with_items: "{{ groups['all'] }}"
   when:
     - storage_nfs_server_version is defined and storage_nfs_server_version == "3"
-    - storage_nfs_enabled | bool
   ignore_errors: true
 
 - block:
@@ -53,4 +51,3 @@
   run_once: true
   when:
     - 'storage_local_volume_enabled is not defined'
-    - storage_nfs_enabled | bool

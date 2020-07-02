@@ -56,12 +56,3 @@ spec:
           nfs:
             server: {{ storage_nfs_server }}
             path: {{ storage_nfs_server_path }}
-
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: {{ storageClassName }}
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
-provisioner: {{ storage_nfs_provisioner_name }}

@@ -118,13 +118,13 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rbd-provisioner
+  name: {{ storage_rbd_provisioner_name }}
   namespace: {{ rbd_provisioner_namespace }}
   labels:
     app: rbd-provisioner
     version: {{ rbd_provisioner_version }}
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -145,7 +145,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: PROVISIONER_NAME
-              value: ceph.com/rbd
+              value: {{ storage_rbd_provisioner_name }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
