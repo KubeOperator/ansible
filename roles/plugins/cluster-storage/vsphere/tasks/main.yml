@@ -21,10 +21,12 @@
   - name: prepare vsphere.conf
     template:
       src: vsphere.conf.j2
-      dest: {{ cloud_config_dir }}/vsphere.conf
+      dest: "{{ cloud_config_dir }}/vsphere.conf"
 
   - name: prepare setup.sh
-    template: src=setup.sh.j2 dest={{ cloud_config_dir }}/setup.sh
+    template:
+      src: setup.sh.j2
+      dest: "{{ cloud_config_dir }}/setup.sh"
 
   - name: set disk.enableuuid to true for all vms
     shell: "bash setup.sh"
