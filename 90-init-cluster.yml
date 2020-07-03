@@ -44,7 +44,10 @@
   roles:
   - plugins/metrics-server
   - plugins/npd
-  # - plugins/cluster-storage
+  # - plugins/cluster-storage/nfs
+  # - plugins/cluster-storage/external-ceph
+  # - plugins/cluster-storage/vsphere
+  # - plugins/cluster-storage/rook-ceph
   # - plugins/cert-manager
   # - plugins/ingress-controller
   # - plugins/kubernetes-dashboard

@@ -1,6 +1,6 @@
 
 # ----------------------- 版本设置 -----------------------
-docker_version: "v18.09.9"
+docker_version: "18.09.9"
 containerd_version: "v1.2.2"
 coredns_version: "1.6.7"
 calico_version: "v3.14.1"
@@ -92,12 +92,12 @@ eviction_hard_nodefs_inodes_free: "5%"
 # vsphere
 cloud_config_dir: "/etc/kubernetes/cloud-config"
 
-# ----------------------- k8s二进制文件下载地址 --------------------
+# ----------------------- k8s 二进制文件下载地址 --------------------
 k8s_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/k8s.tar.gz"
-etcd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/etcd/version/{{ etcd_version }}/{{ architectures }}/etcd.tar.gz"
-cni_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/cni/version/{{ cni_version }}/{{ architectures }}/cni.tar.gz"
-docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/docker/version/{{ docker_version }}/{{ architectures }}/docker.tar.gz"
-containerd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/containerd/version/{{ containerd_version }}/{{ architectures }}/containerd.tar.gz"
+etcd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-{{ architectures }}.tar.gz"
+cni_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ cni_version }}/cni-plugins-linux-{{ architectures }}-{{ cni_version }}.tgz"
+docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ architectures }}/docker-{{ docker_version }}.tgz"
+containerd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ architectures }}.tar.gz"
 
 # ----------------------- 离线镜像文件下载地址 ----------------------
 kube_controller_manager_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-controller-manager.tar"
@@ -107,7 +107,7 @@ kube_proxy_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository
 pause_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/pause.tar"
 core_dns_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/coredns.tar"
 
-# ----------------------- k8s升级二进制文件及镜像下载地址 -------------
+# ----------------------- k8s 升级二进制文件及镜像下载地址 -------------
 k8s_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/k8s.tar.gz"
 kube_controller_manager_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-controller-manager.tar"
 kube_apiserver_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-apiserver.tar"
@@ -116,5 +116,5 @@ kube_proxy_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/re
 pause_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/pause.tar"
 
 # ----------------------- 存储所需二进制文件下载地址 --------------------
-govc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/govc/version/{{ govc_version }}/{{ architectures }}/govc.tar.gz"
+govc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ govc_version }}/govc_linux_{{ architectures }}.gz"
 
