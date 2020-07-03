@@ -1,0 +1,4 @@
+- hosts: del-worker
+  roles:
+  - remove
+  - reset
