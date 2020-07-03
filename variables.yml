@@ -14,7 +14,7 @@ npd_versioon: "v0.8.1"
 # 存储类镜像版本设置
 rbd_provisioner_version: "v2.1.1-k8s1.11"
 nfs_provisioner_version: "v3.1.0-k8s1.11"
-govc_version: "0.23.0"
+govc_version: "v0.23.0"
 ceph_image_version: "v14.2.9"
 rook_ceph_image_version: "v1.3.6"
 csi_ceph_image_version: "v2.1.2"
