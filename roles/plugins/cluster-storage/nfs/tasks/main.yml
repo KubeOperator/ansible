@@ -4,8 +4,6 @@
       - nfs-utils # 挂载nfs 共享文件需要 (创建基于 nfs的PV 需要)
     state: present
     update_cache: yes
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['all'] }}"
 
 - block:
     - name: NFS| set defaultvers
@@ -13,24 +11,18 @@
         path: /etc/nfsmount.conf
         regexp: '# Defaultvers=4'
         replace: "Defaultvers=3"
-      delegate_to: "{{ item }}"
-      with_items: "{{ groups['all'] }}"
 
     - name: set nfsvers
       replace:
         path: /etc/nfsmount.conf
         regexp: '# Nfsvers=4'
         replace: "Nfsvers=3"
-      delegate_to: "{{ item }}"
-      with_items: "{{ groups['all'] }}"
 
     - name: NFS| set nfslock
       replace:
         path: /etc/nfsmount.conf
         regexp: '# Lock=True'
         replace: "Lock=False"
-      delegate_to: "{{ item }}"
-      with_items: "{{ groups['all'] }}"
   when:
     - storage_nfs_server_version is defined and storage_nfs_server_version == "3"
   ignore_errors: true
