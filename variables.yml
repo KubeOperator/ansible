@@ -11,6 +11,8 @@ cni_version: "v0.8.6"
 etcd_version: "v3.4.8"
 metrics_server_version: "v0.3.6"
 npd_versioon: "v0.8.1"
+helm_binaries_v2_version: "v2.16.9"
+helm_binaries_v3_version: "v3.2.4"
 # 存储类镜像版本设置
 rbd_provisioner_version: "v2.1.1-k8s1.11"
 nfs_provisioner_version: "v3.1.0-k8s1.11"
@@ -64,12 +66,14 @@ rook_csi_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi
 rook_csi_snapshotter_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-snapshotter:{{ csi_snapshotter_image_version }}"
 rook_csi_attacher_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ csi_attacher_image_version }}"
 
-# metrics-server image 地址
+# metrics-server image
 metrics_server_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/metrics-server:{{ metrics_server_version }}-{{ architectures }}"
 
 # npd image 地址
 npd_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/node-problem-detector:{{ npd_versioon }}-{{ architectures }}"
 
+# helm2 tiller image
+tiller_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/tiller:{{ helm_binaries_v2_version }}"
 
 # ----------------------- 集群参数设置 ---------------------------
 # Etcd 数据根目录
@@ -118,3 +122,7 @@ pause_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/reposit
 # ----------------------- 存储所需二进制文件下载地址 --------------------
 govc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ govc_version }}/govc_linux_{{ architectures }}.gz"
 
+# ----------------------- helm 仓库地址 --------------------
+helm2_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/version/{{ helm_binaries_v2_version }}/{{ architectures }}/helm-{{ helm_binaries_v2_version }}-linux-{{ architectures }}.tar.gz"
+helm3_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/version/{{ helm_binaries_v3_version }}/{{ architectures }}/helm-{{ helm_binaries_v3_version }}-linux-{{ architectures }}.tar.gz"
+helm_stable_repo_url: "https://apphub.aliyuncs.com"
