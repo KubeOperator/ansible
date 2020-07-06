@@ -18,18 +18,18 @@
 - name: 创建k8s安装目录
   file: name={{ item }} state=directory
   with_items:
-  - "{{ base_dir }}"
+  - "{{ base_dir }}/containerd"
 
 - name: 下载解压 containerd 二进制文件
   unarchive:
     src: "{{ containerd_download_url }}"
-    dest: "{{ base_dir }}/"
+    dest: "{{ base_dir}}/containerd"
     mode: "0755"
     copy: no
   
 - name: 拷贝 containerd 二进制文件到 bin_dir
   copy:
-    src: "{{ base_dir}}/containerd/{{ item }}"
+    src: "{{ base_dir}}/containerd/bin/{{ item }}"
     dest: "{{ bin_dir }}/"
     remote_src: yes
     mode: "0755"
