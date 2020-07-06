@@ -26,7 +26,6 @@ csi_provisioner_image_version: "v1.4.0"
 csi_snapshotter_image_version: "v1.2.2"
 csi_attacher_image_version: "v2.1.0"
 
-
 # ----------------------- 容器镜像地址 ---------------------
 # Pod image 地址
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
