@@ -125,3 +125,5 @@ govc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-p
 helm2_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/version/{{ helm_binaries_v2_version }}/{{ architectures }}/helm-{{ helm_binaries_v2_version }}-linux-{{ architectures }}.tar.gz"
 helm3_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/version/{{ helm_binaries_v3_version }}/{{ architectures }}/helm-{{ helm_binaries_v3_version }}-linux-{{ architectures }}.tar.gz"
 helm_stable_repo_url: "https://apphub.aliyuncs.com"
+dns_repository_hostname: "registry.kubeops.io"
+dns_registry_hostname: "registry.{{ app_domain }}"
