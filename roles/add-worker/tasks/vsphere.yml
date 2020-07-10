@@ -32,7 +32,7 @@
   - name: install jq
     yum:
       name:
-        - jq
+      - jq
 
   - name: set disk.enableuuid to true for all vms
     shell: "bash setup.sh"
@@ -46,5 +46,26 @@
     regexp: '^KUBELET_EXTRA_ARGS'
     line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs --cloud-provider=vsphere'
 
-- name: restart kubelet on worker
-  shell: "systemctl daemon-reload && systemctl restart kubelet"
+- name: 重新加载 daemon
+  systemd:
+    daemon_reload: yes
+
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+  delegate_to: "{{ item }}"
+  with_items:
+  - "{{ groups['kube-master'] }}"
+  - "{{ groups['kube-worker'] }}"
+  - "{{ groups['new-worker'] }}"
+
+- name: restart kubelet
+  service:
+    name: kubelet
+    state: restarted
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ groups['kube-master'] }}"
+    - "{{ groups['kube-worker'] }}"
+    - "{{ groups['new-worker'] }}"
