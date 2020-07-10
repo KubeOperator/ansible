@@ -85,13 +85,17 @@
       regexp: '^KUBELET_EXTRA_ARGS'
       line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs --cloud-provider=vsphere'
     delegate_to: "{{ item }}"
-    with_items: "{{ groups['kube-worker'] }}"
+    with_items:
+    - "{{ groups['kube-worker'] }}"
+    - "{{ groups['new-worker'] }}"
     run_once: true
 
   - name: restart kubelet on worker
     shell: "systemctl daemon-reload && systemctl restart kubelet"
     delegate_to: "{{ item }}"
-    with_items: "{{ groups['kube-worker'] }}"
+    with_items:
+    - "{{ groups['kube-worker'] }}"
+    - "{{ groups['new-worker'] }}"
     run_once: true
 
   - name: modify kubelet cloud provider params on master

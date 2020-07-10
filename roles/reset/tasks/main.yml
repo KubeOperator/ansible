@@ -120,6 +120,7 @@
   - "/usr/lib/systemd/system/kubelet.service.d/"
   - "/usr/share/bash-completion/completions/kubectl"
   - "/etc/systemd/system/kubelet.service.d/20-kubelet-override.conf"
+  ignore_errors: true
 
 - name: 移除其他相关文件或目录
   file:
