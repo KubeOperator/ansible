@@ -1,23 +1,18 @@
 - block:
   - name: CNI | 创建 cni 配置文件存放目录
     file: name=/etc/cni/net.d state=directory
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
+#    delegate_to: "{{ item }}"
+#    with_items: "{{ groups['all'] }}"
 
   - name: CNI | 创建 cni manifests 存放目录
     file: name=/etc/kubernetes/plugins/network-plugin state=directory
     delegate_to: "{{ groups['kube-master'][0] }}"
 
-
   - name: CNI | 创建 cni 二进制文件存放目录
     file: name=/opt/cni/bin state=directory
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
 
   - name: CNI | 创建 cni 压缩包存放目录
     file: name="{{ base_dir }}/cni" state=directory
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
 
   - name: CNI | 下载基础 cni plugins
     get_url:
@@ -27,7 +22,7 @@
 
   - name: CNI | 解压基础 cni plugins
     unarchive:
-      src: "{{ base_dir }}/cni/cni.tar.gz"
+      src: "{{ base_dir }}/cni/cni-plugins-linux-{{ architectures }}-{{ cni_version }}.tgz"
       dest: "/opt/cni/bin"
       remote_src: yes
 

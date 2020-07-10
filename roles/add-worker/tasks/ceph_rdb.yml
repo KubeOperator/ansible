@@ -1,0 +1,6 @@
+- name: Ceph | install ceph-common
+  yum:
+    name:
+      - ceph-common
+    state: present
+    update_cache: yes

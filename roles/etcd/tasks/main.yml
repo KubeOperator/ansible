@@ -12,7 +12,7 @@
 
 - name: 拷贝 etcd 二进制文件
   copy:
-    src: "{{ base_dir}}/etcd/{{ item }}"
+    src: "{{ base_dir}}/etcd-{{ etcd_version }}-linux-{{ architectures }}/{{ item }}"
     dest: "{{ bin_dir }}/"
     remote_src: yes
     mode: "0755"
