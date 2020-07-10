@@ -5,4 +5,4 @@
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - import_tasks: vsphere.yml
-  when: '"vsphere-volume" in sc_info.stdout'
+  when: '"vsphere" in sc_info.stdout'
