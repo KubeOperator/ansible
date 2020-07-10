@@ -29,6 +29,11 @@
       src: vsphere.conf.j2
       dest: "{{ cloud_config_dir }}/vsphere.conf"
 
+  - name: install jq
+    yum:
+      name:
+      - jq
+
   - name: prepare setup.sh
     template:
       src: setup.sh.j2
