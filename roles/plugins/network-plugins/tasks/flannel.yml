@@ -1,25 +1,21 @@
-- name: Flannel amd64 | 渲染 flannel 配置文件 | amd64 host
-  template:
-    src: flannel/kube-flannel-amd64.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
-  when: ansible_architecture == 'x86_64'
-  delegate_to: "{{ groups['kube-master'][0] }}"
+- block:
+  - name: Flannel amd64 | 渲染 flannel 配置文件 | amd64 host
+    template:
+      src: flannel/kube-flannel-amd64.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
+    when: ansible_architecture == 'x86_64'
 
-- name: Flannel arm64 | 渲染 flannel 配置文件 | arm64 host
-  template:
-    src: flannel/kube-flannel-arm64.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
-  when: ansible_architecture == 'aarch64'
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  - name: Flannel arm64 | 渲染 flannel 配置文件 | arm64 host
+    template:
+      src: flannel/kube-flannel-arm64.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
+    when: ansible_architecture == 'aarch64'
 
-- name: Flannel | 部署 flannel | amd64 host
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
-  when: ansible_architecture == 'x86_64'
-  run_once: true
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  - name: Flannel | 部署 flannel | amd64 host
+    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
+    when: ansible_architecture == 'x86_64'
 
-- name: Flannel | 部署 flannel | arm64 host
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
-  when: ansible_architecture == 'aarch64'
-  run_once: true
+  - name: Flannel | 部署 flannel | arm64 host
+    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
+    when: ansible_architecture == 'aarch64'
   delegate_to: "{{ groups['kube-master'][0] }}"

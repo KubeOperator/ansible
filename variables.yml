@@ -1,14 +1,15 @@
 
 # ----------------------- 版本设置 -----------------------
-docker_version: "18.09.9"
+docker_version: "19.03.9"
 containerd_version: "v1.2.2"
 coredns_version: "1.6.7"
 calico_version: "v3.14.1"
 pause_version: "3.2"
 flannel_version: "v0.12.0"
+weave_version: "2.6.5"
 busybox_version: "1.28"
 cni_version: "v0.8.6"
-etcd_version: "v3.4.8"
+etcd_version: "v3.4.9"
 metrics_server_version: "v0.3.6"
 npd_versioon: "v0.8.1"
 helm_binaries_v2_version: "v2.16.9"
@@ -45,6 +46,10 @@ calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calic
 
 # calicoctl image 地址
 calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}-{{ architectures }}"
+
+# weave image 地址
+weave_kube_image: "{{ local_hostname }}:{{ registry_port }}/weaveworks/weave-kube:{{ weave_version }}"
+weave_npc_image: "{{ local_hostname }}:{{ registry_port }}/weaveworks/weave-npc:{{ weave_version }}"
 
 # flannel image 地址
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}-{{ architectures }}"
