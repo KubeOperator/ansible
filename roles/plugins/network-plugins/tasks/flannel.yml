@@ -19,3 +19,4 @@
     shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
     when: ansible_architecture == 'aarch64'
   delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true

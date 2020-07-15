@@ -15,3 +15,4 @@
   - name: Calico | 部署 calicoctl
     shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true

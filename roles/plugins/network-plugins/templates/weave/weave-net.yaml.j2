@@ -119,6 +119,20 @@ items:
                     fieldRef:
                       apiVersion: v1
                       fieldPath: spec.nodeName
+                - name: CHECKPOINT_DISABLE
+                  value: "{{ weave_checkpoint_disable | bool | int }}"
+                - name: CONN_LIMIT
+                  value: "{{ weave_conn_limit | int }}"
+                - name: HAIRPIN_MODE
+                  value: "{{ weave_hairpin_mode | bool | lower }}"
+                - name: IPALLOC_RANGE
+                  value: "{{ weave_ipalloc_range }}"
+                - name: EXPECT_NPC
+                  value: "{{ weave_expect_npc | bool | int }}"
+                - name: WEAVE_MTU
+                  value: "{{ weave_mtu | int }}"
+                - name: NO_MASQ_LOCAL
+                  value: "{{ weave_no_masq_local | bool | int }}"
               image: '{{ weave_kube_image }}'
               readinessProbe:
                 httpGet:

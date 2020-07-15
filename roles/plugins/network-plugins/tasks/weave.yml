@@ -7,3 +7,4 @@
   - name: weave | 部署 weave
     shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/weave-net.yaml
   delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true
