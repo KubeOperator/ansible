@@ -1,16 +1,5 @@
 # 提权操作
 ansible_become: true
 
-# 是否启用ingress-controller
-ingress_controller_enabled: true
-
-# ingress-controller类型(nginx,traefik)
-ingress_controller_type: nginx
-
-# nginx-ingress-controller 镜像地址
-nginx_ingress_image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.32.0
-
 # traefik默认证书过期时间（天）
 traefik_certs_expired: 3650
-# traefik-ingress-controller 镜像地址
-traefik_ingress_image: traefik:v2.2.1

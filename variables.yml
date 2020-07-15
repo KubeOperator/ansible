@@ -14,6 +14,8 @@ metrics_server_version: "v0.3.6"
 npd_versioon: "v0.8.1"
 helm_binaries_v2_version: "v2.16.9"
 helm_binaries_v3_version: "v3.2.4"
+nginx_ingress_version: "0.32.0"
+traefik_ingress_version: "v2.2.1"
 # 存储类镜像版本设置
 rbd_provisioner_version: "v2.1.1-k8s1.11"
 nfs_provisioner_version: "v3.1.0-k8s1.11"
@@ -53,6 +55,10 @@ weave_npc_image: "{{ local_hostname }}:{{ registry_port }}/weaveworks/weave-npc:
 
 # flannel image 地址
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}-{{ architectures }}"
+
+# ingress-controller 镜像地址
+nginx_ingress_image: "{{ local_hostname }}:{{ registry_port }}/kubernetes-ingress-controller/nginx-ingress-controller:{{ nginx_ingress_version }}"
+traefik_ingress_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/traefik:{{ traefik_ingress_version }}"
 
 # ceph-rbd provisioner
 rbd_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
