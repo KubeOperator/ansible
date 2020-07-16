@@ -25,7 +25,7 @@
     dest: "/etc/bashrc"
     line: 'export ETCD_UNSUPPORTED_ARCH=arm64'
     remote_src: yes
-  when: architecture == "arm64"
+  when: architectures == "arm64"
 
 - name: 创建etcd的systemd unit文件
   template: src=etcd.service.j2 dest=/etc/systemd/system/etcd.service

@@ -112,4 +112,4 @@
   - name: restart kubelet on master
     shell: "systemctl daemon-reload && systemctl restart kubelet"
   when:
-  - architecture == 'amd64'
+  - architectures == 'amd64'

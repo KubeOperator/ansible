@@ -19,4 +19,4 @@
 
   - name: 部署 npd ds
     shell: kubectl apply -f /etc/kubernetes/plugins/npd/npd-ds.yaml
-  when: architecture == 'amd64'
+  when: architectures == 'amd64'

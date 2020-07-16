@@ -6,7 +6,7 @@
 
   - name: Flannel | 部署 flannel | amd64 host
     shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
-  when: architecture == 'amd64'
+  when: architectures == 'amd64'
 
 - block:
   - name: Flannel arm64 | 渲染 flannel 配置文件 | arm64 host
@@ -16,4 +16,4 @@
 
   - name: Flannel | 部署 flannel | arm64 host
     shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
-  when: architecture == 'arm64'
+  when: architectures == 'arm64'

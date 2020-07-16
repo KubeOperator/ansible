@@ -15,10 +15,10 @@
   template:
     src: kubeops.repo.amd64.j2
     dest: /etc/yum.repos.d/kubeops.repo
-  when: architecture == 'amd64'
+  when: architectures == 'amd64'
 
 - name: 添加离线仓库
   template:
     src: kubeops.repo.arm64.j2
     dest: /etc/yum.repos.d/kubeops.repo
-  when: architecture == 'arm64'
+  when: architectures == 'arm64'
