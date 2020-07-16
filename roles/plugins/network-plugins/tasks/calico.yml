@@ -1,19 +1,26 @@
-- name: Calico | 渲染 calico 配置文件
-  template:
-    src: calico/calico-typha.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
-  delegate_to: "{{ groups['kube-master'][0] }}"
+- block:
+  - name: Calico | 渲染 calico crds 配置文件
+    template:
+      src: calico/crds.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/crds.yaml
 
-- name: Calico | 渲染 calicoctl 配置文件
-  template:
-    src: calico/calicoctl-daemonset.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  - name: Calico | 渲染 calico typha 配置文件
+    template:
+      src: calico/calico-typha.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
 
-- name: Calico | 部署 calico
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  - name: Calico | 渲染 calico daemonset 配置文件
+    template:
+      src: calico/calicoctl-daemonset.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
 
-- name: Calico | 部署 calicoctl
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  - name: Calico | 部署 calico crds
+    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml
+
+  - name: Calico | 部署 calico typha
+    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+
+  - name: Calico | 部署 calico daemonset
+    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true

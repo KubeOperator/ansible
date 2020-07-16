@@ -1,0 +1,10 @@
+- block:
+  - name: weave | 渲染 weave 配置文件
+    template:
+      src: weave/weave-net.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/weave-net.yaml
+
+  - name: weave | 部署 weave
+    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/weave-net.yaml
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true
