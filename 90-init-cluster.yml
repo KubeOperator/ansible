@@ -38,7 +38,7 @@
 
 - hosts: all
   roles:
-    - role: plugins/network-plugins
+  - role: plugins/network-plugins
 
 - hosts: kube-master[0]
   roles:
