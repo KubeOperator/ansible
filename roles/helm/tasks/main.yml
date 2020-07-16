@@ -114,7 +114,7 @@
     ignore_errors: true
   when:
   - helm_version is version('v3', '<')
-  - ansible_architecture == 'x86_64'
+  - architecture == 'amd64'
 
 - block:
   - name: Helm3 | 创建 helm 压缩包存放目录

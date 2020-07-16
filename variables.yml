@@ -1,7 +1,7 @@
 
 # ----------------------- 版本设置 -----------------------
 docker_version: "19.03.9"
-containerd_version: "v1.2.2"
+containerd_version: "1.3.6"
 coredns_version: "1.6.7"
 calico_version: "v3.14.1"
 pause_version: "3.2"
@@ -110,7 +110,7 @@ cloud_config_dir: "/etc/kubernetes/cloud-config"
 k8s_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/k8s.tar.gz"
 etcd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-{{ architectures }}.tar.gz"
 cni_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ cni_version }}/cni-plugins-linux-{{ architectures }}-{{ cni_version }}.tgz"
-docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ architectures }}/docker-{{ docker_version }}.tgz"
+docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ ansible_architecture }}/docker-{{ docker_version }}.tgz"
 containerd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ architectures }}.tar.gz"
 
 # ----------------------- 离线镜像文件下载地址 ----------------------

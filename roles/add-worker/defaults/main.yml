@@ -1,5 +1,2 @@
 # 提权操作
 ansible_become: true
-
-# 判断系统架构，arm64 或 amd64
-architectures: "{% if ansible_architecture == 'x86_64' %}amd64{% elif ansible_architecture == 'aarch64' %}arm64{% endif %}"
