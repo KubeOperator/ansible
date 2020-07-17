@@ -15,10 +15,12 @@
 - name: 加载内核模块 overlay
   modprobe: name=overlay state=present
 
-- name: 创建k8s安装目录
+- name: 创建 containerd 安装目录
   file: name={{ item }} state=directory
   with_items:
   - "{{ base_dir }}/containerd"
+  - "{{ base_dir }}/crictl"
+  - "{{ base_dir }}/runc"
 
 - name: 下载解压 containerd 二进制文件
   unarchive:
@@ -37,9 +39,37 @@
   - containerd
   - containerd-shim
   - containerd-shim-runc-v1
-  - crictl
+  - containerd-shim-runc-v2
+  - containerd-stress
   - ctr
-  - runc
+  ignore_errors: true
+
+- name: 下载解压 crictl 二进制文件
+  unarchive:
+    src: "{{ crictl_download_url }}"
+    dest: "{{ base_dir}}/crictl"
+    mode: "0755"
+    copy: no
+
+- name: 拷贝 crictl 二进制文件到 bin_dir
+  copy:
+    src: "{{ base_dir}}/crictl/crictl"
+    dest: "{{ bin_dir }}/"
+    remote_src: yes
+    mode: "0755"
+  ignore_errors: true
+
+- name: 下载 runc 二进制文件
+  get_url:
+    url: "{{ runc_download_url }}"
+    dest: "{{ base_dir }}/runc"
+
+- name: 拷贝 runc 二进制文件
+  copy:
+    src: "{{ base_dir}}/runc/runc.{{ architectures }}"
+    dest: "{{ bin_dir }}/runc"
+    remote_src: yes
+    mode: "0755"
 
 - name: 创建 containerd 配置文件
   template: src=config.toml.j2 dest=/etc/containerd/config.toml
@@ -61,8 +91,8 @@
   shell: "systemctl status containerd.service|grep Active"
   register: containerd_status
   until: '"running" in containerd_status.stdout'
-  retries: 8
-  delay: 2
+  retries: 10
+  delay: 5
 
 - name: 添加 crictl 命令自动补全
   lineinfile:
