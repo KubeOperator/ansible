@@ -7,7 +7,7 @@
   file: name=/etc/kubernetes/plugins/network-plugin state=directory
 
 - name: CNI | 创建 cni 二进制文件存放目录
-  file: name=/opt/cni/bin state=directory
+  file: name="{{ cni_bin_dir }}" state=directory
   delegate_to: "{{ item }}"
   with_items: "{{ groups['all'] }}"
 
@@ -26,7 +26,7 @@
 - name: CNI | 解压基础 cni plugins
   unarchive:
     src: "{{ base_dir }}/cni/cni-plugins-linux-{{ architectures }}-{{ cni_version }}.tgz"
-    dest: "/opt/cni/bin"
+    dest: "{{ cni_bin_dir }}"
     remote_src: yes
   delegate_to: "{{ item }}"
   with_items: "{{ groups['all'] }}"

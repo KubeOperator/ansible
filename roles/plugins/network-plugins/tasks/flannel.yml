@@ -1,4 +1,42 @@
 - block:
+  - name: 拷贝 loopback 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/loopback"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: 拷贝 flannel 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/flannel"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: 拷贝 bridge 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/bridge"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: 拷贝 host-local 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/host-local"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+  when: container_runtime == 'containerd'
+
+- block:
   - name: Flannel amd64 | 渲染 flannel 配置文件 | amd64 host
     template:
       src: flannel/kube-flannel-amd64.yaml.j2
