@@ -63,9 +63,10 @@
   get_url:
     url: "{{ runc_download_url }}"
     dest: "{{ base_dir }}/runc"
+    timeout: "{{ download_timeout_online }}"
 
 - name: 拷贝 runc 二进制文件
-  copy:
+  copy:2
     src: "{{ base_dir}}/runc/runc.{{ architectures }}"
     dest: "{{ bin_dir }}/runc"
     remote_src: yes

@@ -21,6 +21,9 @@
     get_url:
       url: "{{ cni_calico_download_url }}"
       dest: "{{ cni_bin_dir }}"
+      timeout: "{{ download_timeout_online }}"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
 
   - name: 拷贝 calico 二进制文件
     copy:
@@ -28,11 +31,16 @@
       dest: "{{ bin_dir }}/calico"
       remote_src: yes
       mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
 
   - name: 下载 calico-ipam 二进制文件
     get_url:
       url: "{{ cni_calico_ipam_download_url }}"
       dest: "{{ cni_bin_dir }}"
+      timeout: "{{ download_timeout_online }}"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
 
   - name: 拷贝 calico-ipam 二进制文件
     copy:
@@ -40,6 +48,8 @@
       dest: "{{ bin_dir }}/calico-ipam"
       remote_src: yes
       mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
   when: container_runtime == 'containerd'
 
 - name: Calico | 渲染 calico crds 配置文件
