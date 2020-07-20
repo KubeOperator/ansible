@@ -30,6 +30,6 @@
   roles:
   - add-worker
 
-- hosts: all
+- hosts: kube-master[0]
   roles:
   - plugins/network-plugins

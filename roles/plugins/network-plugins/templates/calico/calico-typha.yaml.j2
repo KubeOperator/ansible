@@ -492,7 +492,7 @@ spec:
         # upgraded to use calico-ipam.
         - name: upgrade-ipam
           image: {{ calico_cni_image }}
-          command: ["/opt/cni/bin/calico-ipam", "-upgrade"]
+          command: ["{{ cni_bin_dir }}/calico-ipam", "-upgrade"]
           env:
             - name: KUBERNETES_NODE_NAME
               valueFrom:
@@ -680,7 +680,7 @@ spec:
         # Used to install CNI.
         - name: cni-bin-dir
           hostPath:
-            path: /opt/cni/bin
+            path: "{{ cni_bin_dir }}"
         - name: cni-net-dir
           hostPath:
             path: /etc/cni/net.d

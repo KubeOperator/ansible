@@ -1,26 +1,77 @@
 - block:
-  - name: Calico | 渲染 calico crds 配置文件
-    template:
-      src: calico/crds.yaml.j2
-      dest: /etc/kubernetes/plugins/network-plugin/crds.yaml
+  - name: 拷贝 loopback 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/loopback"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
 
-  - name: Calico | 渲染 calico typha 配置文件
-    template:
-      src: calico/calico-typha.yaml.j2
-      dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+  - name: 拷贝 portmap 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/portmap"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
 
-  - name: Calico | 渲染 calico daemonset 配置文件
-    template:
-      src: calico/calicoctl-daemonset.yaml.j2
-      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  - name: 下载 calico 二进制文件
+    get_url:
+      url: "{{ cni_calico_download_url }}"
+      dest: "{{ cni_bin_dir }}"
+      timeout: "{{ download_timeout_online }}"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
 
-  - name: Calico | 部署 calico crds
-    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml
+  - name: 拷贝 calico 二进制文件
+    copy:
+      src: "{{ cni_bin_dir}}/calico-{{ architectures }}"
+      dest: "{{ bin_dir }}/calico"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
 
-  - name: Calico | 部署 calico typha
-    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+  - name: 下载 calico-ipam 二进制文件
+    get_url:
+      url: "{{ cni_calico_ipam_download_url }}"
+      dest: "{{ cni_bin_dir }}"
+      timeout: "{{ download_timeout_online }}"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
 
-  - name: Calico | 部署 calico daemonset
-    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
-  delegate_to: "{{ groups['kube-master'][0] }}"
-  run_once: true
+  - name: 拷贝 calico-ipam 二进制文件
+    copy:
+      src: "{{ cni_bin_dir}}/calico-ipam-{{ architectures }}"
+      dest: "{{ bin_dir }}/calico-ipam"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+  when: container_runtime == 'containerd'
+
+- name: Calico | 渲染 calico crds 配置文件
+  template:
+    src: calico/crds.yaml.j2
+    dest: /etc/kubernetes/plugins/network-plugin/crds.yaml
+
+- name: Calico | 渲染 calico typha 配置文件
+  template:
+    src: calico/calico-typha.yaml.j2
+    dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+
+- name: Calico | 渲染 calico daemonset 配置文件
+  template:
+    src: calico/calicoctl-daemonset.yaml.j2
+    dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+
+- name: Calico | 部署 calico crds
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml
+
+- name: Calico | 部署 calico typha
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+
+- name: Calico | 部署 calico daemonset
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml

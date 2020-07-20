@@ -7,14 +7,19 @@
       name: /etc/kubernetes/pki/helm
       state: directory
 
-  - name: Helm2 | 下载 helm 二进制文件
+  - name: 下载 helm2 客户端
+    get_url:
+      url: "{{ helm2_download_url }}"
+      dest: "{{ base_dir }}/"
+      timeout: "{{ download_timeout_online }}"
+
+  - name: Helm2 | 解压 helm2 客户端
     unarchive:
-      src: "{{ helm2_download_url }}"
+      src: "{{ base_dir }}/helm-{{ helm_binaries_v2_version }}-linux-{{ architectures }}.tar.gz"
       dest: "{{ base_dir }}/helm"
-      mode: 0755
       remote_src: yes
 
-  - name: Helm2 | 拷贝 helm 二进制文件
+  - name: Helm2 | 拷贝 helm2 客户端
     copy:
       src: "{{ base_dir }}/helm/linux-{{architectures}}/helm"
       dest: "{{ bin_dir }}/helm"
@@ -114,20 +119,25 @@
     ignore_errors: true
   when:
   - helm_version is version('v3', '<')
-  - ansible_architecture == 'x86_64'
+  - architectures == 'amd64'
 
 - block:
   - name: Helm3 | 创建 helm 压缩包存放目录
     file: name="{{ base_dir }}/helm" state=directory
 
-  - name: Helm3 | 下载 helm 客户端
+  - name: 下载 helm3 客户端
+    get_url:
+      url: "{{ helm3_download_url }}"
+      dest: "{{ base_dir }}/"
+      timeout: "{{ download_timeout_online }}"
+
+  - name: Helm3 | 解压 helm3 客户端
     unarchive:
-      src: "{{ helm3_download_url }}"
+      src: "{{ base_dir }}/helm-{{ helm_binaries_v3_version }}-linux-{{ architectures }}.tar.gz"
       dest: "{{ base_dir }}/helm"
-      mode: 0755
       remote_src: yes
 
-  - name: Helm3 | 拷贝 helm 二进制文件
+  - name: Helm3 | 拷贝 helm3 客户端
     copy:
       src: "{{ base_dir }}/helm/linux-{{architectures}}/helm"
       dest: "{{ bin_dir }}/helm"

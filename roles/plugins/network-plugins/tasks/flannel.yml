@@ -1,22 +1,57 @@
 - block:
+  - name: 拷贝 loopback 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/loopback"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: 拷贝 flannel 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/flannel"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: 拷贝 bridge 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/bridge"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: 拷贝 host-local 二进制文件
+    copy:
+      src: "{{ cni_bin_dir }}/host-local"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+  when: container_runtime == 'containerd'
+
+- block:
   - name: Flannel amd64 | 渲染 flannel 配置文件 | amd64 host
     template:
       src: flannel/kube-flannel-amd64.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
-    when: ansible_architecture == 'x86_64'
 
+  - name: Flannel | 部署 flannel | amd64 host
+    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
+  when: architectures == 'amd64'
+
+- block:
   - name: Flannel arm64 | 渲染 flannel 配置文件 | arm64 host
     template:
       src: flannel/kube-flannel-arm64.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
-    when: ansible_architecture == 'aarch64'
-
-  - name: Flannel | 部署 flannel | amd64 host
-    shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
-    when: ansible_architecture == 'x86_64'
 
   - name: Flannel | 部署 flannel | arm64 host
     shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
-    when: ansible_architecture == 'aarch64'
-  delegate_to: "{{ groups['kube-master'][0] }}"
-  run_once: true
+  when: architectures == 'arm64'

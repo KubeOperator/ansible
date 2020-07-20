@@ -36,12 +36,9 @@
   roles:
   - post
 
-- hosts: all
-  roles:
-  - role: plugins/network-plugins
-
 - hosts: kube-master[0]
   roles:
+  - plugins/network-plugins
   - plugins/metrics-server
   - plugins/npd
   - helm

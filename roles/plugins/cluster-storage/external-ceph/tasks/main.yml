@@ -37,5 +37,5 @@
     with_items: "{{ rbd_provisioner_templates }}"
     when: inventory_hostname == groups['kube-master'][0]
   when:
-    - ansible_architecture == 'x86_64'
+  - architectures == 'amd64'
 

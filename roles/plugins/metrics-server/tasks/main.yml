@@ -1,28 +1,12 @@
-- block:
-  - name: 在第一台 master 节点创建 metrics-server 配置文件目录
-    file:
-      path: /etc/kubernetes/plugins/metrics-server
-      state: directory
+- name: 在第一台 master 节点创建 metrics-server 配置文件目录
+  file:
+    path: /etc/kubernetes/plugins/metrics-server
+    state: directory
 
-  - name: 渲染 metrics-server arm64 配置文件
-    template:
-      src: metrics-server-arm64.yaml.j2
-      dest: /etc/kubernetes/plugins/metrics-server/metrics-server-arm64.yaml
-    register: metrics_server_arm64_manifest
-    when: ansible_architecture == 'aarch64'
+- name: 渲染 metrics-server 配置文件
+  template:
+    src: metrics-server.yaml.j2
+    dest: /etc/kubernetes/plugins/metrics-server/metrics-server.yaml
 
-  - name: 渲染 metrics-server amd64 配置文件
-    template:
-      src: metrics-server-amd64.yaml.j2
-      dest: /etc/kubernetes/plugins/metrics-server/metrics-server-amd64.yaml
-    register: metrics_server_amd64_manifest
-    when: ansible_architecture == 'x86_64'
-
-  - name: 部署 metrics-server
-    shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server-amd64.yaml"
-    when: ansible_architecture == 'x86_64'
-
-  - name: 部署 metrics-server
-    shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server-arm64.yaml"
-    when: ansible_architecture == 'aarch64'
-  when: metrics_server_enabled|bool
+- name: 部署 metrics-server
+  shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server.yaml"
