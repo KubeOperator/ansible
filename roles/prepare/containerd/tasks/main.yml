@@ -22,12 +22,17 @@
   - "{{ base_dir }}/crictl"
   - "{{ base_dir }}/runc"
 
-- name: 下载解压 containerd 二进制文件
+- name: 下载 containerd 二进制文件
+  get_url:
+    url: "{{ containerd_download_url }}"
+    dest: "{{ base_dir }}/containerd"
+    timeout: "{{ download_timeout_online }}"
+
+- name: 解压 containerd 二进制文件
   unarchive:
-    src: "{{ containerd_download_url }}"
+    src: "{{ base_dir }}/containerd/containerd-{{ containerd_version }}-linux-{{ architectures }}.tar.gz"
     dest: "{{ base_dir}}/containerd"
-    mode: "0755"
-    copy: no
+    remote_src: yes
   
 - name: 拷贝 containerd 二进制文件到 bin_dir
   copy:
@@ -44,12 +49,17 @@
   - ctr
   ignore_errors: true
 
-- name: 下载解压 crictl 二进制文件
+- name: 下载 crictl 二进制文件
+  get_url:
+    url: "{{ crictl_download_url }}"
+    dest: "{{ base_dir }}/crictl"
+    timeout: "{{ download_timeout_online }}"
+
+- name: 解压 crictl 二进制文件
   unarchive:
-    src: "{{ crictl_download_url }}"
+    src: "{{ base_dir }}/crictl/crictl-{{ crictl_version }}-linux-{{ architectures }}.tar.gz"
     dest: "{{ base_dir}}/crictl"
-    mode: "0755"
-    copy: no
+    remote_src: yes
 
 - name: 拷贝 crictl 二进制文件到 bin_dir
   copy:

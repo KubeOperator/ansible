@@ -1,14 +1,19 @@
 - name: prepare some dirs
   file: name={{ item }} state=directory
   with_items:
-  - "/var/lib/etcd"    # etcd 工作目录
+  - "/var/lib/etcd"
 
-- name: 下载解压 etcd 二进制文件
-  unarchive:
-    src: "{{ etcd_download_url }}"
+- name: 下载 etcd 二进制文件
+  get_url:
+    url: "{{ etcd_download_url }}"
     dest: "{{ base_dir }}/"
-    mode: "0755"
-    copy: no
+    timeout: "{{ download_timeout_online }}"
+
+- name: 解压 etcd 二进制文件
+  unarchive:
+    src: "{{ base_dir }}/etcd-{{ etcd_version }}-linux-{{ architectures }}.tar.gz"
+    dest: "{{ base_dir }}/"
+    remote_src: yes
 
 - name: 拷贝 etcd 二进制文件
   copy:

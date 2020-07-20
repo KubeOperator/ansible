@@ -1,9 +1,14 @@
-- name: 下载解压 kubeadm kubelet kubectl 二进制文件
-  unarchive:
-    src: "{{ k8s_upgrade_download_url }}"
+- name: 下载 kubeadm kubelet kubectl 二进制文件
+  get_url:
+    url: "{{ k8s_upgrade_download_url }}"
     dest: "{{ base_dir }}/"
-    mode: "0755"
-    copy: no
+    timeout: "{{ download_timeout_online }}"
+
+- name: 解压 kubeadm kubelet kubectl 二进制文件
+  unarchive:
+    src: "{{ base_dir }}/k8s.tar.gz"
+    dest: "{{ base_dir }}/"
+    remote_src: yes
 
 - name: 拷贝 kubeadm kubelet kubectl 二进制文件
   copy:
