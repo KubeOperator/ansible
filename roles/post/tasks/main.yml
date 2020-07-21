@@ -1,22 +1,7 @@
 - name: 获取当前集群节点信息
   shell: kubectl get node -o name
-  delegate_to: "{{ groups['kube-master'][0] }}"
   ignore_errors: true
-  run_once: true
   register: kubectl_get_node_output
-
-- block:
-  - name: 渲染 SA 配置文件
-    template:
-      src: ko-admin.yaml.j2
-      dest: /etc/kubernetes/ko-admin.yaml
-    register: sa_manifest
-
-  - name: 添加默认集群管理员账户
-    shell: >
-      kubectl apply -f /etc/kubernetes/ko-admin.yaml
-    when: sa_manifest.changed
-  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - block:
   - name: 取消节点原有角色标签
@@ -40,5 +25,16 @@
       kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd='' --overwrite
     when: inventory_hostname in groups['etcd']
   ignore_errors: true
-  delegate_to: "{{ groups['kube-master'][0] }}"
   when: inventory_hostname in kubectl_get_node_output.stdout
+
+- block:
+  - name: 渲染 SA 配置文件
+    template:
+      src: ko-admin.yaml.j2
+      dest: /etc/kubernetes/ko-admin.yaml
+    register: sa_manifest
+
+  - name: 添加默认集群管理员账户
+    shell: >
+      kubectl apply -f /etc/kubernetes/ko-admin.yaml
+    when: sa_manifest.changed
