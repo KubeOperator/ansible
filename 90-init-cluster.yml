@@ -40,6 +40,9 @@
   roles:
   - helm
 
-- hosts: kube-master[0]
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
   roles:
   - post

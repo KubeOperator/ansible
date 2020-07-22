@@ -1,6 +1,8 @@
 - name: 获取当前集群节点信息
   shell: kubectl get node -o name
+  delegate_to: "{{ groups['kube-master'][0] }}"
   ignore_errors: true
+  run_once: true
   register: kubectl_get_node_output
 
 - block:
@@ -24,7 +26,9 @@
     shell: >
       kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd='' --overwrite
     when: inventory_hostname in groups['etcd']
+
   ignore_errors: true
+  delegate_to: "{{ groups['kube-master'][0] }}"
   when: inventory_hostname in kubectl_get_node_output.stdout
 
 - block:
@@ -38,3 +42,5 @@
     shell: >
       kubectl apply -f /etc/kubernetes/ko-admin.yaml
     when: sa_manifest.changed
+  ignore_errors: true
+  delegate_to: "{{ groups['kube-master'][0] }}"
