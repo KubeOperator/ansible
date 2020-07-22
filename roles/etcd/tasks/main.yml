@@ -1,7 +1,7 @@
 - name: prepare some dirs
   file: name={{ item }} state=directory
   with_items:
-  - "/var/lib/etcd"
+  - "{{ etcd_data_dir }}"
 
 - name: 下载 etcd 二进制文件
   get_url:

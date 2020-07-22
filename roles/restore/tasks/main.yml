@@ -1,7 +1,7 @@
 - block:
   - name: 读取所有备份
     find:
-      paths: "{{ (playbook_dir + '/cluster-backup') | realpath  }}"
+      paths: "{{ (playbook_dir + '/' + cluster_name + '/cluster-backup') | realpath  }}"
       patterns: "etcd-snapshot.tar.gz"
     register: etcd_back_paths
 
@@ -30,7 +30,7 @@
 
 - name: 分发 etcd 数据库备份至所有 etcd 节点
   copy:
-    src: "{{ playbook_dir }}/cluster-backup/etcd-snapshot.tar.gz"
+    src: "{{ playbook_dir }}/{{ cluster_name }}/cluster-backup/etcd-snapshot.tar.gz"
     dest: /etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz
 
 - name: 解压 etcd 数据库备份
@@ -46,10 +46,12 @@
   file: name=/backup/k8s/etcd state=absent
 
 - name: 恢复数据至etcd 数据目录
-  shell: "cp -rf /var/lib/etcd/ /backup/k8s/"
+  shell: "cp -rf remote_src: yes /backup/k8s/"
 
 - name: 清除 etcd 数据目录
-  file: name=/var/lib/etcd state=absent
+  file:
+    name: "{{ etcd_data_dir }}"
+    state: absent
 
 - name: etcd 数据恢复
   shell: "cd /etc/kubernetes/backup/etcd && \

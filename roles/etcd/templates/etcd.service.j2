@@ -7,7 +7,7 @@ Documentation=https://github.com/coreos
 
 [Service]
 Type=notify
-WorkingDirectory=/var/lib/etcd/
+WorkingDirectory={{ etcd_data_dir }}
 {% if architectures != "amd64" -%}
 Environment="ETCD_UNSUPPORTED_ARCH={{ architectures }}"
 {%- endif %}
@@ -27,7 +27,7 @@ ExecStart={{ bin_dir }}/etcd \
   --initial-cluster-token=etcd-cluster-token \
   --initial-cluster={{ INITIAL_CLUSTER }} \
   --initial-cluster-state={{ CLUSTER_STATE }} \
-  --data-dir=/var/lib/etcd \
+  --data-dir={{ etcd_data_dir }} \
   --snapshot-count=50000 \
   --auto-compaction-retention=1 \
   --max-request-bytes=10485760 \
