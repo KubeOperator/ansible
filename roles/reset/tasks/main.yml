@@ -78,7 +78,7 @@
   - name: remove files and dirs
     file: name={{ item }} state=absent
     with_items:
-    - "/var/lib/etcd"
+    - "{{ etcd_data_dir }}"
     - "/etc/etcd/"
     - "/backup/k8s"
     - "/etc/systemd/system/etcd.service"
@@ -133,7 +133,7 @@
     path: "{{ item }}"
     state: absent
   with_items:
-  - /var/lib/etcd
+  - "{{ etcd_data_dir }}"
   - /etc/cni/net.d
   - /etc/sysctl.d/95-k8s-sysctl.conf
   - /etc/modules-load.d/10-k8s-modules.conf

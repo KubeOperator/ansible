@@ -29,17 +29,20 @@
   roles:
   - kube-worker
 
-- hosts: 
-  - kube-master
-  - kube-worker
-  - new-worker
-  roles:
-  - post
-
 - hosts: kube-master[0]
   roles:
   - plugins/network-plugins
   - plugins/metrics-server
   - plugins/npd
-  - helm
   - plugins/ingress-controller
+
+- hosts: kube-master
+  roles:
+  - helm
+
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
+  roles:
+  - post

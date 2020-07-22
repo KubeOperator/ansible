@@ -1,3 +1,3 @@
-- hosts: all
+- hosts: etcd[0]
   roles:
   - backup

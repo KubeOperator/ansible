@@ -61,3 +61,13 @@
   when: 
   - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
   - inventory_hostname in groups['kube-master']
+
+- name: 创建 kubeconfig 目录
+  file:
+    name: "/root/.kube"
+    state: directory
+
+- name: 复制 kubeconfig 文件到 .kube 目录
+  copy:
+    src: "{{ playbook_dir }}/{{ cluster_name }}/kubeconfig/config"
+    dest: "/root/.kube/config"
