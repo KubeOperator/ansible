@@ -34,40 +34,30 @@ csi_attacher_image_version: "v2.1.0"
 # ----------------------- 容器镜像地址 ---------------------
 # Pod image 地址
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
-
 # 基础容器 image 地址
 sandbox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/pause:{{ pause_version }}-{{ architectures }}"
-
 # busybox_image image 地址
 busybox_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/busybox:{{ busybox_version }}-{{ architectures }}"
-
 # calico 相关镜像
 calico_typha_image: "{{ local_hostname }}:{{ registry_port }}/calico/typha:{{ calico_version }}-{{ architectures }}"
 calico_cni_image: "{{ local_hostname }}:{{ registry_port }}/calico/cni:{{ calico_version }}-{{ architectures }}"
 calico_node_image: "{{ local_hostname }}:{{ registry_port }}/calico/node:{{ calico_version }}-{{ architectures }}"
 calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/kube-controllers:{{ calico_version }}-{{ architectures }}"
 calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}-{{ architectures }}"
-
 # calicoctl image 地址
 calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}-{{ architectures }}"
-
 # weave image 地址
 weave_kube_image: "{{ local_hostname }}:{{ registry_port }}/weaveworks/weave-kube:{{ weave_version }}"
 weave_npc_image: "{{ local_hostname }}:{{ registry_port }}/weaveworks/weave-npc:{{ weave_version }}"
-
 # flannel image 地址
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}-{{ architectures }}"
-
 # ingress-controller 镜像地址
 nginx_ingress_image: "{{ local_hostname }}:{{ registry_port }}/kubernetes-ingress-controller/nginx-ingress-controller:{{ nginx_ingress_version }}"
 traefik_ingress_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/traefik:{{ traefik_ingress_version }}"
-
 # ceph-rbd provisioner
 rbd_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
-
 # nfs provisioner
 nfs_client_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/nfs-client-provisioner:{{ nfs_provisioner_version }}-{{ architectures }}"
-
 # rook-ceph
 ceph_image: "{{ local_hostname }}:{{ registry_port }}/ceph/ceph:{{ ceph_image_version }}"
 rook_ceph_image: "{{ local_hostname }}:{{ registry_port }}/rook/ceph:{{ rook_ceph_image_version }}"
@@ -77,32 +67,24 @@ rook_csi_resizer_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-res
 rook_csi_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ csi_provisioner_image_version }}"
 rook_csi_snapshotter_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-snapshotter:{{ csi_snapshotter_image_version }}"
 rook_csi_attacher_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ csi_attacher_image_version }}"
-
 # metrics-server image
 metrics_server_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/metrics-server:{{ metrics_server_version }}-{{ architectures }}"
-
 # npd image 地址
 npd_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/node-problem-detector:{{ npd_versioon }}-{{ architectures }}"
-
 # helm2 tiller image
 tiller_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/tiller:{{ helm_binaries_v2_version }}"
 
 # ----------------------- 集群参数设置 ---------------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
-
 # Binaries Directory
 bin_dir: "/usr/local/bin"
-
 # Deploy Directory (ansible workspace)
 base_dir: "/opt/kubeoperator"
-
 # 集群 manifest 配置文件存放目录
 kube_config_dir: "/etc/kubernetes"
-
 # 在线模式文件下载超时时间，默认15 min
 download_timeout_online: "900"
-
 # Yum、二进制文件访问端口
 repo_port: "8081"
 # docker registry 访问端口
@@ -111,11 +93,14 @@ registry_port: "8082"
 kubeadm_token: "abcdef.0123456789abcdef"
 # Kubelet 根目录
 kubelet_root_dir: "/var/lib/kubelet"
+# 应用dns域名
+app_domain: "kubeoperator.org"
+# 分配给节点的 pod 子网掩码位，默认为 24 即 256 个ip
+kube_network_node_prefix: "24"
 # kubernetes组件预留资源
 kube_cpu_reserved: "100m"
 kube_memory_reserved: "256M"
 kube_ephemeral_storage_reserved: "1G"
-
 # 资源保留相关配置
 eviction_hard_imagefs_available: "15%"
 eviction_hard_memory_available: "100Mi"
