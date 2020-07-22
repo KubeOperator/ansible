@@ -46,7 +46,7 @@
   file: name=/backup/k8s/etcd state=absent
 
 - name: 恢复数据至etcd 数据目录
-  shell: "cp -rf remote_src: yes /backup/k8s/"
+  shell: "cp -rf /var/lib/etcd/ /backup/k8s/"
 
 - name: 清除 etcd 数据目录
   file:
@@ -62,6 +62,11 @@
     --initial-cluster {{ INITIAL_CLUSTER }} \
     --initial-cluster-token etcd-cluster-token \
     --initial-advertise-peer-urls https://{{ CURRENT_HOST_IP }}:2380"
+
+- name: etcd 数据目录授权
+  file:
+    path: "{{ etcd_data_dir }}"
+    mode: '0755'
 
 - name: 移除各节点临时 etcd 备份文件
   file:
