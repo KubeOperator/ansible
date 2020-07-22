@@ -26,10 +26,7 @@
     when: inventory_hostname in groups['etcd']
 
   ignore_errors: true
-<<<<<<< HEAD
-=======
   delegate_to: "{{ groups['kube-master'][0] }}"
->>>>>>> dev
   when: inventory_hostname in kubectl_get_node_output.stdout
 
 - block:
@@ -42,10 +39,6 @@
   - name: 添加默认集群管理员账户
     shell: >
       kubectl apply -f /etc/kubernetes/ko-admin.yaml
-<<<<<<< HEAD
-    when: sa_manifest.changed
-=======
     when: sa_manifest.changed
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
->>>>>>> dev
