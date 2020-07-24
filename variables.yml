@@ -95,8 +95,6 @@ kubeadm_token: "abcdef.0123456789abcdef"
 kubelet_root_dir: "/var/lib/kubelet"
 # 应用dns域名
 app_domain: "kubeoperator.org"
-# 分配给节点的 pod 子网掩码位，默认为 24 即 256 个ip
-kube_network_node_prefix: "24"
 # kubernetes组件预留资源
 kube_cpu_reserved: "100m"
 kube_memory_reserved: "256M"
