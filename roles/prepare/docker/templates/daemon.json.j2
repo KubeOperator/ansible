@@ -13,5 +13,6 @@
     "max-file": "{{ docker_log_max_file }}"
     },
   "bip": "{{ docker_subnet }}",
-  "data-root": "{{ docker_storage_dir }}"
+  "data-root": "{{ docker_storage_dir }}",
+  "exec-opts": ["native.cgroupdriver=cgroupfs"]
 }
