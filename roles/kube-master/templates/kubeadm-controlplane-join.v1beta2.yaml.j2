@@ -63,7 +63,7 @@ apiServer:
   extraArgs:
     allow-privileged: "true"
     apiserver-count: "{{ groups['kube-master']|length }}"
-{% if kubernetes_audit == "true" %}
+{% if kubernetes_audit %}
     audit-log-path: /var/log/audit/kube-apiserver-audit.log
     audit-log-maxage: "{{ audit_log_maxage }}"
     audit-log-maxbackup: "{{ audit_log_maxbackups }}"
@@ -95,7 +95,7 @@ apiServer:
       pathType: File
       readOnly: true
       name: localtime
-{% if kubernetes_audit == "true" %}
+{% if kubernetes_audit %}
     - hostPath: "{{ audit_policy_file | dirname }}"
       mountPath: "{{ audit_policy_file | dirname }}"
       pathType: DirectoryOrCreate
