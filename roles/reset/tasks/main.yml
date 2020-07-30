@@ -20,11 +20,15 @@
     ignore_errors: true
 
   - name: unmount docker filesystem-1
-    mount: path=/var/run/docker/netns/default state=unmounted
+    mount:
+      path: /var/run/docker/netns/default
+      state: unmounted
     ignore_errors: true
 
   - name: unmount docker filesystem-2
-    mount: path={{ docker_storage_dir }/overlay state=unmounted
+    mount:
+      path: "{{ docker_storage_dir }/overlay"
+      state: unmounted
     ignore_errors: true
 
   - name: remove files and dirs
