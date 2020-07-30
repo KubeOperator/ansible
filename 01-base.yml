@@ -2,4 +2,5 @@
   roles:
   - prepare/repository
   - prepare/base
+  - prepare/nameserver
   - chrony

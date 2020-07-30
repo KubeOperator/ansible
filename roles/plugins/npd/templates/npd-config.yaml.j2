@@ -58,7 +58,7 @@ data:
             {
                 "type": "temporary",
                 "reason": "CorruptDockerImage",
-                "pattern": "Error trying v2 registry: failed to register layer: rename /var/lib/docker/image/(.+) /var/lib/docker/image/(.+): directory not empty.*"
+                "pattern": "Error trying v2 registry: failed to register layer: rename {{ docker_storage_dir }}/image/(.+) {{ docker_storage_dir }}/image/(.+): directory not empty.*"
             }
         ]
     }
