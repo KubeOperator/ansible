@@ -32,6 +32,8 @@ csi_snapshotter_image_version: "v1.2.2"
 csi_attacher_image_version: "v2.1.0"
 
 # ----------------------- 容器镜像地址 ---------------------
+# coredns
+coredns_image_name: "docker.io/coredns"
 # Pod image 地址
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
 # 基础容器 image 地址
@@ -124,7 +126,6 @@ kube_apiserver_download_url: "http://{{ local_hostname }}:{{ repo_port }}/reposi
 kube_scheduler_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-scheduler.tar"
 kube_proxy_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-proxy.tar"
 pause_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/pause.tar"
-core_dns_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/coredns.tar"
 
 # ----------------------- k8s 升级二进制文件及镜像下载地址 -------------
 k8s_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/k8s.tar.gz"
