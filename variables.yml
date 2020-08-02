@@ -33,7 +33,7 @@ csi_attacher_image_version: "v2.1.0"
 
 # ----------------------- 容器镜像地址 ---------------------
 # coredns
-coredns_image_name: "docker.io/coredns"
+coredns_image_name: "{{ local_hostname }}:{{ registry_port }}/coredns/coredns"
 # Pod image 地址
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
 # 基础容器 image 地址
