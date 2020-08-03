@@ -91,6 +91,7 @@ download_timeout_online: "900"
 repo_port: "8081"
 # docker registry 访问端口
 registry_port: "8082"
+registry_hosted_port: "8083"
 # 加入集群token
 kubeadm_token: "abcdef.0123456789abcdef"
 # Kubelet 根目录

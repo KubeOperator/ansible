@@ -8,6 +8,7 @@ docker_mirror:
 # 信任的不安全镜像库地址，默认为 Pod 和 Service 网段
 docker_insecure_registries:
   - "{{ local_hostname }}:{{ registry_port }}"
+  - "{{ local_hostname }}:{{ registry_hosted_port }}"
   - "{{ dns_repository_hostname }}:{{ registry_port }}"
   - "{{ kube_pod_subnet }}"
   - "{{ kube_service_subnet }}"

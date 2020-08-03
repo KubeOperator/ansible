@@ -55,7 +55,8 @@ oom_score = 0
         # reference from https://www.ilanni.com/?p=14534
         [plugins.cri.registry.mirrors."{{ local_hostname }}:{{ registry_port }}"]
           endpoint = [
-            "http://{{ local_hostname }}:{{ registry_port }}"
+            "http://{{ local_hostname }}:{{ registry_port }}",
+            "http://{{ local_hostname }}:{{ registry_hosted_port }}"
           ]
         [plugins.cri.registry.mirrors."docker.io"]
           endpoint = [
