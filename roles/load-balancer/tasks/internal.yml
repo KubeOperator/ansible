@@ -1,5 +1,9 @@
 - name: 安装 haproxy
-  package: name=haproxy state=present
+  yum:
+    name:
+      - haproxy
+    state: present
+    update_cache: yes
 
 - name: 创建 haproxy 配置目录
   file: name=/etc/haproxy state=directory
