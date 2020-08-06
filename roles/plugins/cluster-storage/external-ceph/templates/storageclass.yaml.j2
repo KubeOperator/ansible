@@ -1,0 +1,20 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ storageClassName }}
+provisioner: {{ storage_rbd_provisioner_name }}
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+parameters:
+  monitors: {{ ceph_monitor }}
+  adminId: {{ ceph_admin_id }}
+  adminSecretName: {{ ceph_admin_secret_name }}
+  adminSecretNamespace: {{ ceph_admin_secret_namespace }}
+  pool: {{ ceph_osd_pool }}
+  userId: {{ ceph_user_id }}
+  userSecretName: {{ ceph_user_secret_name }}
+  fsType: {{ ceph_fsType }}
+  imageFormat: "{{ ceph_imageFormat }}"
+{% if ceph_imageFormat and ceph_imageFormat == '2' %}
+  imageFeatures: "layering"
+{% endif %}

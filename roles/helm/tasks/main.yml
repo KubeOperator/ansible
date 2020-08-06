@@ -107,7 +107,6 @@
           --service-account {{ tiller_sa }} \
           --tiller-namespace {{ helm_namespace }} \
           --tiller-image {{ tiller_image }} \
-          --stable-repo-url {{ helm_stable_repo_url }} \
           --upgrade"
     ignore_errors: true
     run_once: true
@@ -143,9 +142,6 @@
       dest: "{{ bin_dir }}/helm"
       remote_src: yes
       mode: 0755
-
-  - name: Helm3 | 添加 helm stable 仓库
-    command: "{{ bin_dir }}/helm repo add stable {{ helm_stable_repo_url }}"
   when: helm_version is version('v3', '>=')
 
 - name: Helm3 | 添加 helm 命令自动补全
