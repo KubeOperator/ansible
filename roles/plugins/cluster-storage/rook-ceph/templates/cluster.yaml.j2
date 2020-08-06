@@ -166,8 +166,6 @@ spec:
       devices:
 {% for device in storage_rook_path.split(',') %}
       - name: "{{ device }}"
-      config: # configuration can be specified at the node level which overrides the cluster level config
-        storeType: bluestore
 {% endfor %}
 {% endfor %}
 #    - name: "172.17.4.301"
