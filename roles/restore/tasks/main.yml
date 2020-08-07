@@ -1,7 +1,7 @@
 - block:
   - name: 读取所有备份
     find:
-      paths: "{{ (playbook_dir + '/' + cluster_name + '/cluster-backup') | realpath  }}"
+      paths: "{{ ('/backup/' + cluster_name) | realpath  }}"
       patterns: "etcd-snapshot.tar.gz"
     register: etcd_back_paths
 
@@ -30,7 +30,7 @@
 
 - name: 分发 etcd 数据库备份至所有 etcd 节点
   copy:
-    src: "{{ playbook_dir }}/{{ cluster_name }}/cluster-backup/etcd-snapshot.tar.gz"
+    src: "/backup/{{ cluster_name }}/etcd-snapshot.tar.gz"
     dest: /etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz
 
 - name: 解压 etcd 数据库备份

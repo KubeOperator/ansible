@@ -17,7 +17,7 @@
 - name: 拉取备份至本地
   fetch:
     src: /etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz
-    dest: "{{ (playbook_dir + '/' + cluster_name + '/cluster-backup/' + 'etcd-snapshot.tar.gz') }}"
+    dest: "{{ ('/backup/' + cluster_name + '/etcd-snapshot.tar.gz') }}"
     flat: yes
 
 - name: 移除 etcd 临时备份文件
