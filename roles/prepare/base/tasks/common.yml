@@ -67,5 +67,6 @@
     dest: /etc/systemd/system.conf.d/30-k8s-ulimits.conf
 
 - name: 配置主机名
-  hostname:
-    name: "{{ inventory_hostname }}"
+  shell: "hostnamectl set-hostname {{ inventory_hostname }}"
+#  hostname:
+#    name: "{{ inventory_hostname }}"
