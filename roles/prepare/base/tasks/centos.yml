@@ -19,6 +19,7 @@
     - psmisc
     - rsync
     - socat
+    - lvm2
     state: latest
 
 - name: 安装ipvs基础软件包
