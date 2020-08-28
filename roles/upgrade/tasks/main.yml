@@ -1,5 +1,5 @@
 - include_tasks: centos.yml
-  when: ansible_distribution in [ 'CentOS','OracleLinux','RedHat' ]
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
 - name: 重新加载 daemon
   systemd:
