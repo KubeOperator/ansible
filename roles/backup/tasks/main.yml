@@ -25,5 +25,5 @@
     name: "{{ item }}"
     state: absent
   with_items:
-    - "/etc/kubernetes/backup/etcd/etcd-snapshot.db"
-    - "/etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz"
+  - "/etc/kubernetes/backup/etcd/etcd-snapshot.db"
+  - "/etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz"
