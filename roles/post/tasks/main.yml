@@ -1,5 +1,6 @@
 - name: 获取当前集群节点信息
   shell: kubectl get node -o name
+  run_once: true
   ignore_errors: true
   register: kubectl_get_node_output
 
@@ -13,7 +14,7 @@
   - name: 设置 worker 节点 role
     shell: >
       kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker='' --overwrite
-    when: inventory_hostname in (groups['kube-worker'] + groups['new-worker']) 
+    when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
 
   - name: 设置 load balancer 节点 role
     shell: >
@@ -39,16 +40,18 @@
     shell: >
       kubectl apply -f /etc/kubernetes/ko-admin.yaml
     when: sa_manifest.changed
+  run_once: true
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - block:
   - name: 获取当前集群 namespace 信息
-    command: "kubectl get namespace"
+    shell: kubectl get namespace
     register: namespace_output
 
   - name: 创建 kube-operator namespace
     shell: "kubectl create namespace kube-operator"
     when: '"kube-operator" not in namespace_output.stdout'
+  run_once: true
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
