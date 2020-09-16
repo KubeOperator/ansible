@@ -8,12 +8,14 @@
     url: "{{ etcd_download_url }}"
     dest: "{{ base_dir }}/"
     timeout: "{{ download_timeout_online }}"
+  tags: upgrade_etcd
 
 - name: 解压 etcd 二进制文件
   unarchive:
     src: "{{ base_dir }}/etcd-{{ etcd_version }}-linux-{{ architectures }}.tar.gz"
     dest: "{{ base_dir }}/"
     remote_src: yes
+  tags: upgrade_etcd
 
 - name: 拷贝 etcd 二进制文件
   copy:
@@ -24,6 +26,7 @@
   with_items:
   - etcd
   - etcdctl
+  tags: upgrade_etcd
 
 - name: arm | 设置系统 ETCD_UNSUPPORTED_ARCH 变量
   lineinfile:
@@ -43,6 +46,7 @@
 - name: 开启etcd服务
   shell: systemctl daemon-reload && systemctl restart etcd
   ignore_errors: true
+  tags: upgrade_etcd
 
 - name: 以轮询的方式等待服务同步完成
   shell: "systemctl status etcd.service|grep Active"
@@ -50,3 +54,4 @@
   until: '"running" in etcd_status.stdout'
   retries: 8
   delay: 8
+  tags: upgrade_etcd
