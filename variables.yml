@@ -7,7 +7,6 @@ coredns_version: "1.6.7"
 calico_version: "v3.14.1"
 pause_version: "3.2"
 flannel_version: "v0.12.0"
-weave_version: "2.6.5"
 busybox_version: "1.28"
 cni_version: "v0.8.6"
 cni_calico_version: "v3.12.3"
@@ -48,9 +47,6 @@ calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/
 calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}-{{ architectures }}"
 # calicoctl image 地址
 calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}-{{ architectures }}"
-# weave image 地址
-weave_kube_image: "{{ local_hostname }}:{{ registry_port }}/weaveworks/weave-kube:{{ weave_version }}"
-weave_npc_image: "{{ local_hostname }}:{{ registry_port }}/weaveworks/weave-npc:{{ weave_version }}"
 # flannel image 地址
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}-{{ architectures }}"
 # ingress-controller 镜像地址

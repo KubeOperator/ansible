@@ -37,6 +37,3 @@
 
 - include_tasks: calico.yml
   when: network_plugin == 'calico'
-
-- include_tasks: weave.yml
-  when: network_plugin == 'weave'

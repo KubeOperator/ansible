@@ -203,7 +203,6 @@
   - ip link del cilium_vxlan
   - ip link del ovn0
   - ip link del ovs-system
-  - ip link del weave
   ignore_errors: true
 
 - name: 重新加载 daemon
