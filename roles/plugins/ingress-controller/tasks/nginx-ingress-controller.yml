@@ -1,10 +1,10 @@
 - block:
-  - name: 渲染 nginx-ingress-controller 配置文件
+  - name: Copy nginx-ingress-controller file
     template:
       src: nginx-ingress-controller.yaml.j2
       dest: /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml
     register: ingress_nginx_manifest
 
-  - name: 部署 nginx-ingress-controller
+  - name: Deploy nginx-ingress-controller
     shell: kubectl apply -f /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml
     when: ingress_nginx_manifest.changed

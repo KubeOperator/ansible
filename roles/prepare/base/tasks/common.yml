@@ -1,15 +1,15 @@
-- name: 禁用系统 swap
+- name: Disable swap
   shell: "swapoff -a && sysctl -w vm.swappiness=0"
   ignore_errors: true
 
-- name: 删除 fstab swap 相关配置
+- name: Delete fstab swap config
   lineinfile:
     path: /etc/fstab
     regexp: 'swap'
     state: absent
     backup: yes
 
-- name: 加载内核模块
+- name: Load kernel module
   modprobe: 
     name: "{{ item }}"
     state: present
@@ -22,51 +22,51 @@
   - br_netfilter
   ignore_errors: true
 
-- name: 加载nf_conntrack for kernel < 4.19
+- name: Load nf_conntrack for kernel < 4.19
   modprobe: 
     name: nf_conntrack_ipv4
     state: present
   when: ansible_kernel is version('4.19', '<')
   ignore_errors: true
 
-- name: 加载nf_conntrack for kernel >= 4.19
+- name: Load nf_conntrack for kernel >= 4.19
   modprobe: 
     name: nf_conntrack
     state: present
   when: ansible_kernel is version('4.19', '>=')
   ignore_errors: true
 
-- name: 设置 systemd-modules-load 配置
+- name: Setup systemd-modules-load config
   template: 
     src: 10-k8s-modules.conf.j2
     dest: /etc/modules-load.d/10-k8s-modules.conf
 
-- name: 启动/重启 systemd-modules-load
+- name: Restart systemd-modules-load
   service:
     name: systemd-modules-load
     state: restarted
     enabled: yes
 
-- name: 设置系统参数
+- name: Set system parameters
   template: 
     src: 95-k8s-sysctl.conf.j2 
     dest: /etc/sysctl.d/95-k8s-sysctl.conf
 
-- name: 生效系统参数
+- name: Effective system parameters
   shell: "sysctl -p /etc/sysctl.d/95-k8s-sysctl.conf"
   ignore_errors: true
 
-- name: 创建 systemd 配置目录
+- name: Create systemd directory
   file: 
     name: /etc/systemd/system.conf.d 
     state: directory 
 
-- name: 设置系统 ulimits
+- name: Setup system ulimits
   template: 
     src: 30-k8s-ulimits.conf.j2
     dest: /etc/systemd/system.conf.d/30-k8s-ulimits.conf
 
-- name: 配置主机名
+- name: Setup hostname
   shell: "hostnamectl set-hostname {{ inventory_hostname }}"
 #  hostname:
 #    name: "{{ inventory_hostname }}"

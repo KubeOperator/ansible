@@ -1,21 +1,21 @@
-- name: 确认 kubeadm 版本
+- name: Confirm kubeadm version
   command: "kubeadm version -o short"
   register: kubeadm_version_output
 
-- name: 设置 kubeadm api version 为 v1beta1
+- name: Setup kubeadm api version to v1beta1
   set_fact:
     kubeadmConfig_api_version: v1beta1
   when: 
   - kubeadm_version_output.stdout is version('v1.13.0', '>=')
   - kubeadm_version_output.stdout is version('v1.15.0', '<')
 
-- name: 设置 kubeadm api version 为 v1beta2
+- name: Setup kubeadm api version to v1beta2
   set_fact:
     kubeadmConfig_api_version: v1beta2
   when: 
   - kubeadm_version_output.stdout is version('v1.15.0', '>=')
 
-- name: 创建 kubeadm 的配置文件
+- name: Create kubeadm configuration file
   template:
     src: >-
       {% if inventory_hostname == groups['kube-master'][0] -%}

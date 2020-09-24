@@ -1,32 +1,33 @@
-- name: 安装 haproxy
+- name: Install haproxy
   yum:
     name:
       - haproxy
     state: present
     update_cache: yes
 
-- name: 创建 haproxy 配置目录
+- name: Create haproxy directory
   file: name=/etc/haproxy state=directory
 
-- name: 修改 haproxy.service
+- name: Modify haproxy.service
   template:
     src: haproxy/haproxy.service.j2
     dest: /usr/lib/systemd/system/haproxy.service
 
-- name: 配置 haproxy
+- name: Configuration haproxy
   template:
     src: haproxy/haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
 
-- name: daemon-reload for haproxy.service
-  shell: systemctl daemon-reload
+- name: Systemctl daemon-reload
+  systemd:
+    daemon_reload: yes
 
-- name: 开机启用haproxy服务
+- name: Enable haproxy service
   service:
     name: haproxy
     enabled: yes
 
-- name: 开启haproxy服务
+- name: Start haproxy service
   service:
     name: haproxy
     state: started

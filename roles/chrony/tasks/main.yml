@@ -1,10 +1,10 @@
-- name: yum 卸载 ntp
+- name: Remove ntp
   shell: 'yum remove -y ntp'
   args:
     warn: false
   ignore_errors: true
 
-- name: 安装 chrony 相关依赖
+- name: Install chrony
   yum:
     name:
       - chrony
@@ -12,24 +12,24 @@
     update_cache: yes
 
 - block:
-  - name: 配置 chrony server
+  - name: Setup chrony server
     template:
       src: server-centos.conf.j2
       dest: /etc/chrony.conf
 
-  - name: 启动 chrony server
+  - name:  chrony server
     service: name=chronyd state=restarted enabled=yes
   when: 'inventory_hostname == groups.chrony[0]'
 
 - block:
-  - name: 配置 chrony client
+  - name: Config chrony client
     template:
       src: client-centos.conf.j2
       dest: /etc/chrony.conf
 
-  - name: 启动 chrony client 
+  - name: Start chrony client
     service: name=chronyd state=restarted enabled=yes
 
-  - name: 主动同步时间
+  - name: Active sync time
     shell: "chronyc -a makestep"
   when: 'inventory_hostname != groups.chrony[0]'

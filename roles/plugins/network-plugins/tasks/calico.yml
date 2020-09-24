@@ -1,5 +1,5 @@
 - block:
-  - name: 拷贝 loopback 二进制文件
+  - name: Copy loopback file
     copy:
       src: "{{ cni_bin_dir }}/loopback"
       dest: "{{ bin_dir }}/"
@@ -8,7 +8,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: 拷贝 portmap 二进制文件
+  - name: Copy portmap file
     copy:
       src: "{{ cni_bin_dir }}/portmap"
       dest: "{{ bin_dir }}/"
@@ -17,7 +17,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: 下载 calico 二进制文件
+  - name: Download calico file
     get_url:
       url: "{{ cni_calico_download_url }}"
       dest: "{{ cni_bin_dir }}"
@@ -25,7 +25,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: 拷贝 calico 二进制文件
+  - name: Copy calico file
     copy:
       src: "{{ cni_bin_dir}}/calico-{{ architectures }}"
       dest: "{{ bin_dir }}/calico"
@@ -34,7 +34,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: 下载 calico-ipam 二进制文件
+  - name: Download calico-ipam file
     get_url:
       url: "{{ cni_calico_ipam_download_url }}"
       dest: "{{ cni_bin_dir }}"
@@ -42,7 +42,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: 拷贝 calico-ipam 二进制文件
+  - name: Copy calico-ipam file
     copy:
       src: "{{ cni_bin_dir}}/calico-ipam-{{ architectures }}"
       dest: "{{ bin_dir }}/calico-ipam"
@@ -52,26 +52,26 @@
     with_items: "{{ groups['all'] }}"
   when: container_runtime == 'containerd'
 
-- name: Calico | 渲染 calico crds 配置文件
+- name: Calico | Copy calico crds file
   template:
     src: calico/crds.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/crds.yaml
 
-- name: Calico | 渲染 calico typha 配置文件
+- name: Calico | Copy calico typha file
   template:
     src: calico/calico-typha.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
 
-- name: Calico | 渲染 calico daemonset 配置文件
+- name: Calico | Copy calico daemonset file
   template:
     src: calico/calicoctl-daemonset.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
 
-- name: Calico | 部署 calico crds
+- name: Calico | Deploy calico crds
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml
 
-- name: Calico | 部署 calico typha
+- name: Calico | Deploy calico typha
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
 
-- name: Calico | 部署 calico daemonset
+- name: Calico | Deploy calico daemonset
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml

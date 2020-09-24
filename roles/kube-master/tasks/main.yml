@@ -1,4 +1,4 @@
-- name: 创建 kubernetes 相关目录
+- name: Create kubernetes directory
   file: 
     name: "{{ item }}"
     state: directory
@@ -11,7 +11,7 @@
   - /var/log/kubernetes/audit
   - /usr/share/bash-completion/completions
 
-- name: 读取 kubelet.conf 文件 stat 信息
+- name: Read kubelet.conf file stat info
   stat: 
     path: /etc/kubernetes/kubelet.conf
   register: kubelet_conf_stat
@@ -19,7 +19,7 @@
 # 生成 kubeadm 配置
 - include_tasks: kubeadm-config.yml
 
-- name: 创建 EncryptionConfiguration 配置文件
+- name: Create EncryptionConfiguration configuration file
   template:
     src: secrets-encryption.yaml.j2
     dest: /etc/kubernetes/pki/secrets-encryption.yaml
@@ -27,7 +27,7 @@
     group: root
     mode: 0644
 
-- name: 创建 apiserver 审计日志策略配置文件
+- name: Create apiserver audit policy configuration file
   template:
     src: apiserver-audit-policy.yaml.j2
     dest: "{{ audit_policy_file }}"
@@ -49,7 +49,7 @@
   - inventory_hostname != groups['kube-master'][0]
   - inventory_hostname in groups['kube-master']
 
-- name: 确认 kubelet 配置是否有修改
+- name: Confirm kubelet configuration modify
   template:
     src: kubelet-config.v1beta1.yaml.j2
     dest: /var/lib/kubelet/config.yaml
@@ -57,7 +57,7 @@
     mode: 0644
   register: configuration_result
 
-- name: 启动/重启 kubelet
+- name: Restart kubelet service
   service:
     name: kubelet
     state: restarted

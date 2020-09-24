@@ -1,52 +1,52 @@
 - block:
-  - name: 下载解压 govc 二进制文件
+  - name: Download govc file
     get_url:
       url: "{{ govc_download_url }}"
       dest: "{{ base_dir }}/"
       timeout: "{{ download_timeout_online }}"
 
-  - name: 解压 govc 二进制文件
+  - name: Unarchive govc file
     shell: "gunzip {{ base_dir }}/govc_linux_{{ architectures }}.gz"
 
-  - name: 拷贝 govc 二进制文件
+  - name: Copy govc file
     copy:
       src: "{{ base_dir}}/govc_linux_{{ architectures }}"
       dest: "{{ bin_dir }}/govc"
       remote_src: yes
       mode: "0755"
 
-  - name: 移除 govc 二进制文件
+  - name: Remove govc file
     file:
       name: "{{ base_dir }}/govc_linux_{{ architectures }}"
       state: absent
 
-  - name: 创建 cloud-config 目录
+  - name: Create cloud-config directory
     file:
       name: "{{ cloud_config_dir }}"
       state: directory
 
-  - name: prepare vsphere.conf
+  - name: Prepare vsphere.conf
     template:
       src: vsphere.conf.j2
       dest: "{{ cloud_config_dir }}/vsphere.conf"
 
-  - name: install jq
+  - name: Install jq
     yum:
       name:
       - jq
 
-  - name: prepare setup.sh
+  - name: Prepare setup.sh
     template:
       src: setup.sh.j2
       dest: "{{ cloud_config_dir }}/setup.sh"
 
-  - name: set disk.enableuuid to true for all vms
+  - name: Set disk.enableuuid to true for all vms
     shell: "bash setup.sh"
     args:
       chdir: "{{ cloud_config_dir }}"
     run_once: true
 
-  - name: add cloud provider
+  - name: Add cloud provider
     blockinfile:
       dest: "{{ item }}"
       block: |2
@@ -58,7 +58,7 @@
     - /etc/kubernetes/manifests/kube-apiserver.yaml
     - /etc/kubernetes/manifests/kube-controller-manager.yaml
 
-  - name: add volumeMounts
+  - name: Add volumeMounts
     blockinfile:
       dest: "{{ item }}"
       block: |2
@@ -71,7 +71,7 @@
     - /etc/kubernetes/manifests/kube-apiserver.yaml
     - /etc/kubernetes/manifests/kube-controller-manager.yaml
 
-  - name: add volumes
+  - name: Add volumes
     blockinfile:
       dest: "{{ item }}"
       block: |2
@@ -85,7 +85,7 @@
     - /etc/kubernetes/manifests/kube-apiserver.yaml
     - /etc/kubernetes/manifests/kube-controller-manager.yaml
 
-  - name: modify kubelet cloud provider params on worker
+  - name: Modify kubelet cloud provider params on worker
     lineinfile:
       dest: /etc/sysconfig/kubelet
       regexp: '^KUBELET_EXTRA_ARGS'
@@ -96,7 +96,7 @@
     - "{{ groups['new-worker'] }}"
     run_once: true
 
-  - name: restart kubelet on worker
+  - name: Restart kubelet on worker
     shell: "systemctl daemon-reload && systemctl restart kubelet"
     delegate_to: "{{ item }}"
     with_items:
@@ -104,13 +104,13 @@
     - "{{ groups['new-worker'] }}"
     run_once: true
 
-  - name: modify kubelet cloud provider params on master
+  - name: Modify kubelet cloud provider params on master
     lineinfile:
       dest: /etc/sysconfig/kubelet
       regexp: '^KUBELET_EXTRA_ARGS'
       line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs --cloud-provider=vsphere --cloud-config={{ cloud_config_dir }}/vsphere.conf'
 
-  - name: restart kubelet on master
+  - name: Restart kubelet on master
     shell: "systemctl daemon-reload && systemctl restart kubelet"
   when:
   - architectures == 'amd64'

@@ -1,28 +1,28 @@
-- name: 确认 kubelet 已停止运行
+- name: Confirm kubelet has stopped
   service:
     name: kubelet
     state: stopped
     enabled: yes
 
-- name: 初始化第一个 master 节点
+- name: Initial the first master node
   shell: kubeadm init --config=/etc/kubernetes/kubeadm-config.yaml
 
-- name:  节点配置 kubeconfig
+- name:  Node config kubeconfig
   include_role:
     name: kube-config
     tasks_from: kubeconfig
 
-- name: 重新加载 daemon
+- name: Systemctl daemon-reload
   systemd:
     daemon_reload: yes
 
-- name: 重新启动 kubelet
+- name: Restart kubelet service
   service:
     name: kubelet
     state: restarted
     enabled: yes
 
-- name: 等待 apiserver 运行
+- name: Waiting for apiserver to running
   uri:
     url: "https://{{ CURRENT_HOST_IP }}:6443/healthz"
     validate_certs: no
@@ -31,7 +31,7 @@
   retries: 60
   delay: 5
 
-- name: 等待 kube-scheduler 运行
+- name: Waiting for kube-scheduler to running
   uri:
     url: "https://127.0.0.1:10259/healthz"
     validate_certs: no
@@ -40,7 +40,7 @@
   retries: 60
   delay: 5
 
-- name: 等待 kube-controller-manager 运行
+- name: Waiting for kube-controller-manager to running
   uri:
     url: "https://127.0.0.1:10257/healthz"
     validate_certs: no
@@ -49,7 +49,7 @@
   retries: 60
   delay: 5
 
-- name: 创建 kubelet 自动轮换服务端证书配置
+- name: Create kubelet certificate configuration
   template:
     src: kubelet-certificates-renewal.yaml.j2
     dest: /etc/kubernetes/config/kubelet-certificates-renewal.yaml
@@ -57,11 +57,11 @@
     group: root
     mode: 0644
 
-- name: 授权 kubelet 自动轮换服务端证书
+- name: Authorize kubelet to automatically rotate server certificates
   shell: kubectl apply -f /etc/kubernetes/config/kubelet-certificates-renewal.yaml
 
 - block:
-  - name: 创建 Pod 安全策略配置文件
+  - name: Create Pod security policy configuration file
     template:
       src: pod-security-policy.yaml.j2
       dest: /etc/kubernetes/config/pod-security-policy.yaml
@@ -69,6 +69,6 @@
       group: root
       mode: 0644
   
-  - name: 配置 Pod 安全策略
+  - name: Configure Pod security policy
     shell: kubectl apply -f /etc/kubernetes/config/pod-security-policy.yaml
   when: '"PodSecurityPolicy" in kube_apiserver_enable_admission_plugins'

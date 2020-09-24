@@ -1,8 +1,8 @@
-- name: 使用 kubeadm 重置节点
+- name: Reset the node using kubeadm
   command: kubeadm reset -f
   ignore_errors: true
 
-- name: 停止相关服务
+- name: Stop kubelet service
   service:
     name: "{{ item }}"
     state: stopped
@@ -12,26 +12,26 @@
   ignore_errors: true
 
 - block:
-  - name: stop and disable docker service
+  - name: Stop and disable docker service
     service:
       name: docker
       state: stopped
       enabled: no
     ignore_errors: true
 
-  - name: unmount docker filesystem-1
+  - name: Unmount docker filesystem-1
     mount:
       path: /var/run/docker/netns/default
       state: unmounted
     ignore_errors: true
 
-  - name: unmount docker filesystem-2
+  - name: Unmount docker filesystem-2
     mount:
       path: "{{ docker_storage_dir }}/overlay"
       state: unmounted
     ignore_errors: true
 
-  - name: remove files and dirs
+  - name: Remove files and dirs
     file: name={{ item }} state=absent
     with_items:
     - "{{ docker_storage_dir }}"
@@ -46,20 +46,20 @@
   when: container_runtime == 'docker'
 
 - block:
-  - name: stop and disable containerd service
+  - name: Stop and disable containerd service
     service:
       name: containerd
       state: stopped
       enabled: no
     ignore_errors: true
 
-  - name: umount containerd filesystems
+  - name: Umount containerd filesystems
     shell: "mount | grep 'containerd/io.containerd'| awk '{print $3}'|xargs umount || exit 0"
     args:
       warn: false
     ignore_errors: true
 
-  - name: remove files and dirs
+  - name: Remove files and dirs
     file: name={{ item }} state=absent
     with_items:
     - "/etc/containerd/"
@@ -72,14 +72,14 @@
   when: container_runtime == 'containerd'
 
 - block:
-  - name: stop and disable etcd service
+  - name: Stop and disable etcd service
     service:
       name: etcd
       state: stopped
       enabled: no
     ignore_errors: true
 
-  - name: remove files and dirs
+  - name: Remove files and dirs
     file: name={{ item }} state=absent
     with_items:
     - "{{ etcd_data_dir }}"
@@ -90,24 +90,24 @@
   when: "inventory_hostname in groups['etcd']"
 
 - block:
-  - name: rm service haproxy
+  - name: Remove service haproxy
     service: name={{ item }} state=stopped enabled=no
     with_items:
     - haproxy
     ignore_errors: true
 
-  - name: remove files and dirs
+  - name: Remove files and dirs
     file: name={{ item }} state=absent
     with_items:
     - "/etc/haproxy"
     - "/usr/lib/systemd/system/haproxy.service"
     ignore_errors: true
 
-- name: stop and disable chronyd
+- name: Stop and disable chronyd
   service: name=chronyd state=stopped enabled=no
   ignore_errors: true
 
-- name: 卸载 kubelet 相关目录
+- name: Remove kubelet directory
   mount: 
     path: "{{ item }}"
     state: unmounted
@@ -116,7 +116,7 @@
   - /var/run/kubelet
   ignore_errors: true
 
-- name: 删除 kubelet 相关文件或目录
+- name: Remove kubelet related file or directory
   file: 
     name: "{{ item }}"
     state: absent
@@ -132,7 +132,7 @@
   - "/etc/systemd/system/kubelet.service.d/20-kubelet-override.conf"
   ignore_errors: true
 
-- name: 移除其他相关文件或目录
+- name: Remove other related files or directories
   file:
     path: "{{ item }}"
     state: absent
@@ -152,7 +152,7 @@
   - /var/log/openvswitch
   ignore_errors: true
 
-- name: 删除 ulimits 相关配置
+- name: Remove ulimits related configuration
   file: 
     name: "{{ item }} "
     state: absent
@@ -160,7 +160,7 @@
   - /etc/systemd/system.conf.d/30-k8s-ulimits.conf
   ignore_errors: true
 
-- name: 清理 iptables
+- name: Clean up iptables
   shell: "{{ item }} || true"
   with_items:
   - iptables -F
@@ -173,7 +173,7 @@
   - iptables -X -t mangle
   ignore_errors: true
 
-- name: 刷新 iptables
+- name: Refresh iptables
   iptables:
     table: "{{ item }}"
     flush: yes
@@ -182,13 +182,13 @@
   - nat
   ignore_errors: true
 
-- name: 清理 ipvsadm
+- name: Clean up ipvsadm
   shell: "{{ item }} || true"
   with_items:
   - ipvsadm --clear
   ignore_errors: true
 
-- name: 清除虚拟网卡
+- name: remove virtual network
   shell: "{{ item }} || true"
   with_items:
   - ip link del docker0
@@ -205,12 +205,12 @@
   - ip link del ovs-system
   ignore_errors: true
 
-- name: 重新加载 daemon
+- name: Systemctl daemon-reload
   systemd:
     daemon_reload: yes
   ignore_errors: true
 
-- name: 移除添加的 hosts 信息
+- name: Remove the hosts information added
   blockinfile:
     path: "/etc/hosts"
     state: absent
@@ -218,7 +218,7 @@
     marker: "# Ansible inventory hosts {mark}"
   ignore_errors: true
 
-- name: 重启网络
+- name: Restart network
   systemd:
     name: >-
       {% if ansible_os_family == "RedHat" -%}

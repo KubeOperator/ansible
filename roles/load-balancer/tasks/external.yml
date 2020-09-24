@@ -1,4 +1,4 @@
-- name: 确认没有运行其他负载均衡器
+- name: Make sure no other load balancer is running
   file: 
     name: "{{ item }}"
     state: absent

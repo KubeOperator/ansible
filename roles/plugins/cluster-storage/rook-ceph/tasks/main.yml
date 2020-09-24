@@ -1,28 +1,28 @@
 - block:
   - block:
-      - name: rook-ceph | prepare rook-ceph deploy directory
+      - name: rook-ceph | Prepare rook-ceph deploy directory
         file: name={{ kube_config_dir }}/plugins/storage-plugin/rook-ceph state=directory
 
-      - name: rook-ceph | prepare rook-crd file
+      - name: rook-ceph | Prepare rook-crd file
         template:
           src: common.yaml.j2
           dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/common.yaml"
 
-      - name: rook-ceph | deploy rook-crd
+      - name: rook-ceph | Deploy rook-crd
         shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/common.yaml"
         ignore_errors: truec
 
-      - name: rook-ceph | prepare rook-operator file
+      - name: rook-ceph | Prepare rook-operator file
         template:
           src: operator.yaml.j2
           dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/operator.yaml"
 
-      - name: rook-ceph | deploy rook-operator
+      - name: rook-ceph | Deploy rook-operator
         shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/operator.yaml"
         ignore_errors: true
 
   - block:
-      - name: rook-ceph | wait for operator to running
+      - name: rook-ceph | Waiting for operator to running
         shell: "{{ bin_dir }}/kubectl -n rook-ceph get pod -o wide | grep rook-discover | grep '{{ inventory_hostname }}' | awk '{print $3}'"
         register: pod_status
         until: pod_status.stdout == "Running"
@@ -30,28 +30,28 @@
         delay: 15
 
   - block:
-      - name: rook-ceph | prepare rook-cluster file
+      - name: rook-ceph | Prepare rook-cluster file
         template:
           src: cluster.yaml.j2
           dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/cluster.yaml"
 
-      - name: rook-ceph | deploy rook-cluster
+      - name: rook-ceph | Deploy rook-cluster
         shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/cluster.yaml"
 
-      - name: rook-ceph | prepare rook-replicapool file
+      - name: rook-ceph | Prepare rook-replicapool file
         template:
           src: replicapool.yaml.j2
           dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/replicapool.yaml"
 
-      - name: rook-ceph | deploy rook-replicapool
+      - name: rook-ceph | Deploy rook-replicapool
         shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/replicapool.yaml"
 
-      - name: rook-ceph | prepare rook-dashboard file
+      - name: rook-ceph | Prepare rook-dashboard file
         template:
           src: dashboard.yaml.j2
           dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/dashboard.yaml"
 
-      - name: rook-ceph | deploy rook-dashboard-service
+      - name: rook-ceph | Deploy rook-dashboard-service
         shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/dashboard.yaml"
   when:
   - storage_rook_path is defined

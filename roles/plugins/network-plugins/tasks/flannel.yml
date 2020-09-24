@@ -1,5 +1,5 @@
 - block:
-  - name: 拷贝 loopback 二进制文件
+  - name: Copy loopback file
     copy:
       src: "{{ cni_bin_dir }}/loopback"
       dest: "{{ bin_dir }}/"
@@ -8,7 +8,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: 拷贝 flannel 二进制文件
+  - name: Copy flannel file
     copy:
       src: "{{ cni_bin_dir }}/flannel"
       dest: "{{ bin_dir }}/"
@@ -17,7 +17,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: 拷贝 bridge 二进制文件
+  - name: Copy bridge file
     copy:
       src: "{{ cni_bin_dir }}/bridge"
       dest: "{{ bin_dir }}/"
@@ -26,7 +26,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: 拷贝 host-local 二进制文件
+  - name: Copy host-local file
     copy:
       src: "{{ cni_bin_dir }}/host-local"
       dest: "{{ bin_dir }}/"
@@ -35,7 +35,7 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: 拷贝 portmap 二进制文件
+  - name: Copy portmap file
     copy:
       src: "{{ cni_bin_dir }}/portmap"
       dest: "{{ bin_dir }}/"
@@ -46,21 +46,21 @@
   when: container_runtime == 'containerd'
 
 - block:
-  - name: Flannel amd64 | 渲染 flannel 配置文件 | amd64 host
+  - name: Flannel amd64 | Copy flannel file | amd64 host
     template:
       src: flannel/kube-flannel-amd64.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
 
-  - name: Flannel | 部署 flannel | amd64 host
+  - name: Flannel | Deploy flannel | amd64 host
     shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-amd64.yaml
   when: architectures == 'amd64'
 
 - block:
-  - name: Flannel arm64 | 渲染 flannel 配置文件 | arm64 host
+  - name: Flannel arm64 | Copy flannel file | arm64 host
     template:
       src: flannel/kube-flannel-arm64.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
 
-  - name: Flannel | 部署 flannel | arm64 host
+  - name: Flannel | Deploy flannel | arm64 host
     shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel-arm64.yaml
   when: architectures == 'arm64'

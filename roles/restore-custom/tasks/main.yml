@@ -1,40 +1,40 @@
-- name: 确认 kubelet 已停止运行
+- name: Confirm kubelet has stopped running
   service:
     name: kubelet
     state: stopped
 
-- name: 确认 etcd 已停止运行
+- name: Confirm etcd has stopped running
   service:
     name: etcd
     state: stopped
 
-- name: 确认 etcd 数据相关目录存在
+- name: Confirm etcd data related directories exist
   file:
     name: "{{ item }}"
     state: directory
   with_items:
   - /etc/kubernetes/backup/etcd
 
-- name: 分发 etcd 数据库备份至所有 etcd 节点
+- name:  Copy etcd backup file to all etcd node
   copy:
     src: "/backup/{{ cluster_name }}/{{ custom_etcd_snapshot }}"
     dest: "/etc/kubernetes/backup/etcd/{{ custom_etcd_snapshot }}"
 
-- name: 确认备份目录存在
+- name: Confirm backup directory exist
   file: name=/backup/k8s state=directory
 
-- name: 清理上次备份恢复数据
+- name: Clean up the last backup and restore data
   file: name=/backup/k8s/etcd state=absent
 
-- name: 恢复数据至etcd 数据目录
+- name: Restore the data to the etcd data directory
   shell: "cp -rf /var/lib/etcd/ /backup/k8s/"
 
-- name: 清除 etcd 数据目录
+- name: Clean up etcd data directory
   file:
     name: "{{ etcd_data_dir }}"
     state: absent
 
-- name: etcd 数据恢复
+- name: Restore etcd data
   shell: "cd /etc/kubernetes/backup/etcd && \
   ETCDCTL_API=3 {{ bin_dir }}/etcdctl snapshot restore \
   {{ custom_etcd_snapshot }} \
@@ -44,29 +44,29 @@
   --initial-cluster-token etcd-cluster-token \
   --initial-advertise-peer-urls https://{{ CURRENT_HOST_IP }}:2380"
 
-- name: etcd 数据目录授权
+- name: Authorization etcd data directory
   file:
     path: "{{ etcd_data_dir }}"
     mode: '0755'
 
-- name: 移除各节点临时 etcd 备份文件
+- name: Remove temporary etcd backup files from each node
   file:
     name: "{{ item }}"
     state: absent
   with_items:
   - "/etc/kubernetes/backup/etcd/{{ custom_etcd_snapshot }}"
 
-- name: 重新加载 daemon
+- name: Systemctl daemon-reload
   systemd:
     daemon_reload: yes
 
-- name: 启动 etcd
+- name: Restart etcd service
   service:
     name: etcd
     state: restarted
     enabled: yes
 
-- name: 启动 kubelet
+- name: Start kubelet service
   service:
     name: kubelet
     state: restarted

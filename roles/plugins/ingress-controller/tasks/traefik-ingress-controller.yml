@@ -1,11 +1,11 @@
 - block:
-  - name: 渲染 traefik-ingress-controller crds 配置文件
+  - name: Copy traefik-ingress-controller crds file
     template:
       src: traefik-ingress-controller/crds.yaml.j2
       dest: /etc/kubernetes/plugins/ingress-controller/crds.yaml
     register: ingress_traefik_crd_manifest
 
-  - name: 渲染 traefik-ingress-controller 配置文件
+  - name: Copy traefik-ingress-controller file
     template:
       src: traefik-ingress-controller/traefik-ingress-controller.yaml.j2
       dest: /etc/kubernetes/plugins/ingress-controller/traefik-ingress-controller.yaml
@@ -29,10 +29,10 @@
   #     --cert=/etc/kubernetes/plugins/ingress-controller/tls.crt \
   #     --dry-run -o yaml | kubectl apply -f -
 
-  - name: 部署 traefik-ingress-controller crds
+  - name: Deploy traefik-ingress-controller crds
     shell: kubectl apply -f /etc/kubernetes/plugins/ingress-controller/crds.yaml
     when: ingress_traefik_crd_manifest.changed
 
-  - name: 部署 traefik-ingress-controller
+  - name: Deploy traefik-ingress-controller
     shell: kubectl apply -f /etc/kubernetes/plugins/ingress-controller/traefik-ingress-controller.yaml
     when: ingress_traefik_manifest.changed

@@ -1,4 +1,4 @@
-- name: 创建 kubernetes 相关目录
+- name: Create kubernetes directory
   file: 
     name: "{{ item }}"
     state: directory
@@ -7,7 +7,7 @@
   - /etc/kubernetes
   - /usr/share/bash-completion/completions
 
-- name: 读取 kubelet.conf 文件 stat 信息
+- name: Read kubelet.conf file stat info
   stat:
     path: /etc/kubernetes/kubelet.conf
   register: kubelet_conf_stat
@@ -18,13 +18,13 @@
   - inventory_hostname not in groups['kube-master']
 
 - block:
-  - name: 确认 kubelet 已停止运行
+  - name: Confirm kubelet has stopped
     service:
       name: kubelet
       state: stopped
       enabled: yes
 
-  - name: Worker 节点加入集群
+  - name: Worker node join the cluster
     shell: >
       kubeadm join --config /etc/kubernetes/kubeadm-config.yaml 
       --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
@@ -34,7 +34,7 @@
   - not kubelet_conf_stat.stat.exists
 
 - block:
-  - name: 确认 kubelet 配置是否有修改
+  - name: Confirm kubelet configuration modify
     template:
       src: kubelet-config.v1beta1.yaml.j2
       dest: /var/lib/kubelet/config.yaml
@@ -42,7 +42,7 @@
       mode: 0644
     register: configuration_result
   
-  - name: 启动/重启 kubelet
+  - name: Restart kubelet service
     service:
       name: kubelet
       state: restarted
@@ -52,7 +52,7 @@
   - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
   - inventory_hostname not in groups['kube-master']
 
-- name: 取消在 worker 组的 master 节点 taint，使 master 节点可以调度
+- name: Cancel the master node taint in the worker group
   shell: >
     kubectl taint nodes {{inventory_hostname}} node-role.kubernetes.io/master='':NoSchedule --overwrite &&
     kubectl taint nodes {{inventory_hostname}} node-role.kubernetes.io/master-
@@ -62,12 +62,12 @@
   - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
   - inventory_hostname in groups['kube-master']
 
-- name: 创建 kubeconfig 目录
+- name: Create kubeconfig directory
   file:
     name: "/root/.kube"
     state: directory
 
-- name: 复制 kubeconfig 文件到 .kube 目录
+- name: Copy kubeconfig file to .kube directory
   copy:
     src: "{{ playbook_dir }}/{{ cluster_name }}/kubeconfig/config"
     dest: "/root/.kube/config"

@@ -1,9 +1,9 @@
-- name: "禁止 worker 节点：{{ inventory_hostname }} 进行调度"
+- name: "Cordon worker node：{{ inventory_hostname }}"
   shell: kubectl cordon {{ inventory_hostname }}
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
-- name: "驱逐 worker 节点：{{ inventory_hostname }} 上运行的 Pod"
+- name: "Drain worker node：Pod running on {{ inventory_hostname }}"
   shell: >
     kubectl drain
     --force
@@ -14,14 +14,14 @@
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
-- name: 取消节点原有 worker 角色标签
+- name: Remove the worker role label from the node
   shell: >
     kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker='' --overwrite &&
     kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker-
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
-- name: "移除节点：{{ inventory_hostname }}"
+- name: "Remove node：{{ inventory_hostname }}"
   shell: kubectl delete node {{ inventory_hostname }}
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"

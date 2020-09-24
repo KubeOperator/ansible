@@ -1,27 +1,27 @@
-- name: 获取当前集群节点信息
+- name: Get cluster node info
   shell: kubectl get node -o name
   run_once: true
   ignore_errors: true
   register: kubectl_get_node_output
 
 - block:
-  - name: 取消节点原有角色标签
+  - name: Cancel node role label
     shell: >
       kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker- &&
       kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb- &&
       kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd-
 
-  - name: 设置 worker 节点 role
+  - name: Setup worker node role
     shell: >
       kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker='' --overwrite
     when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
 
-  - name: 设置 load balancer 节点 role
+  - name: Setup load balancer node role
     shell: >
       kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb='' --overwrite
     when: inventory_hostname in groups['lb']
 
-  - name: 设置 etcd 节点 role
+  - name: Setup etcd node role
     shell: >
       kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd='' --overwrite
     when: inventory_hostname in groups['etcd']
@@ -30,13 +30,13 @@
   when: inventory_hostname in kubectl_get_node_output.stdout
 
 - block:
-  - name: 渲染 SA 配置文件
+  - name: Copy serviceAccount file
     template:
       src: ko-admin.yaml.j2
       dest: /etc/kubernetes/ko-admin.yaml
     register: sa_manifest
 
-  - name: 添加默认集群管理员账户
+  - name: Deploy serviceAccount
     shell: >
       kubectl apply -f /etc/kubernetes/ko-admin.yaml
     when: sa_manifest.changed
@@ -45,11 +45,11 @@
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - block:
-  - name: 获取当前集群 namespace 信息
+  - name: Get cluster namespace info
     shell: kubectl get namespace
     register: namespace_output
 
-  - name: 创建 kube-operator namespace
+  - name: Create kube-operator namespace
     shell: "kubectl create namespace kube-operator"
     when: '"kube-operator" not in namespace_output.stdout'
   run_once: true

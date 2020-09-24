@@ -5,7 +5,7 @@
 - include_tasks: centos.yml
   when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
-- name: prepare some dirs
+- name: Prepare some directory
   file: name={{ item }} state=directory
   with_items:
     - "{{ bin_dir }}"

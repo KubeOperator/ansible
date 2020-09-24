@@ -1,10 +1,10 @@
-- name: 插入 repository 记录
+- name: Insert repository record
   lineinfile:
     path: "/etc/hosts"
     regexp: '{{ local_hostname }}'
     line: "{{local_hostname}}  {{ dns_repository_hostname }}"
 
-- name: 插入 hosts 记录
+- name: Insert hosts record
   lineinfile:
     path: "/etc/hosts"
     regexp: "{{ item }}"

@@ -1,40 +1,40 @@
-- name: 获取是否已经安装docker
+- name: Get whether docker has been installed
   shell: 'systemctl status docker|grep Active || echo "NOT FOUND"'
   register: docker_status
 
-- name: fail info
+- name: Fail info
   fail: msg="Docker already installed!"
   when: '"running" in docker_status.stdout'
 
-- name: 准备containerd相关目录
+- name: Prepare containerd directory
   file: name={{ item }} state=directory
   with_items:
   - "{{ bin_dir }}"
   - "/etc/containerd"
 
-- name: 加载内核模块 overlay
+- name: Load kernel module overlay
   modprobe: name=overlay state=present
 
-- name: 创建 containerd 安装目录
+- name: Create containerd directory
   file: name={{ item }} state=directory
   with_items:
   - "{{ base_dir }}/containerd"
   - "{{ base_dir }}/crictl"
   - "{{ base_dir }}/runc"
 
-- name: 下载 containerd 二进制文件
+- name: Download containerd file
   get_url:
     url: "{{ containerd_download_url }}"
     dest: "{{ base_dir }}/containerd"
     timeout: "{{ download_timeout_online }}"
 
-- name: 解压 containerd 二进制文件
+- name: Unarchive containerd file
   unarchive:
     src: "{{ base_dir }}/containerd/containerd-{{ containerd_version }}-linux-{{ architectures }}.tar.gz"
     dest: "{{ base_dir}}/containerd"
     remote_src: yes
   
-- name: 拷贝 containerd 二进制文件到 bin_dir
+- name: Copy containerd file to bin_dir
   copy:
     src: "{{ base_dir}}/containerd/bin/{{ item }}"
     dest: "{{ bin_dir }}/"
@@ -49,19 +49,19 @@
   - ctr
   ignore_errors: true
 
-- name: 下载 crictl 二进制文件
+- name: Download crictl file
   get_url:
     url: "{{ crictl_download_url }}"
     dest: "{{ base_dir }}/crictl"
     timeout: "{{ download_timeout_online }}"
 
-- name: 解压 crictl 二进制文件
+- name: Unarchive crictl file
   unarchive:
     src: "{{ base_dir }}/crictl/crictl-{{ crictl_version }}-linux-{{ architectures }}.tar.gz"
     dest: "{{ base_dir}}/crictl"
     remote_src: yes
 
-- name: 拷贝 crictl 二进制文件到 bin_dir
+- name: Copy crictl file to bin_dir
   copy:
     src: "{{ base_dir}}/crictl/crictl"
     dest: "{{ bin_dir }}/"
@@ -69,43 +69,43 @@
     mode: "0755"
   ignore_errors: true
 
-- name: 下载 runc 二进制文件
+- name: Download runc file
   get_url:
     url: "{{ runc_download_url }}"
     dest: "{{ base_dir }}/runc"
     timeout: "{{ download_timeout_online }}"
 
-- name: 拷贝 runc 二进制文件
+- name: Copy runc file
   copy:
     src: "{{ base_dir}}/runc/runc.{{ architectures }}"
     dest: "{{ bin_dir }}/runc"
     remote_src: yes
     mode: "0755"
 
-- name: 创建 containerd 配置文件
+- name: Create containerd configuration file
   template: src=config.toml.j2 dest=/etc/containerd/config.toml
 
-- name: 创建systemd unit文件
+- name: Create systemd unit file
   template: src=containerd.service.j2 dest=/etc/systemd/system/containerd.service
 
-- name: 创建 crictl 配置
+- name: Create crictl configuration file
   template: src=crictl.yaml.j2 dest=/etc/crictl.yaml
 
-- name: 开机启用 containerd 服务
+- name: Enable containerd service
   shell: systemctl enable containerd
   ignore_errors: true
 
-- name: 开启 containerd 服务
+- name: Start containerd service
   shell: systemctl daemon-reload && systemctl restart containerd
 
-- name: 轮询等待containerd服务运行
+- name: Waiting for containerd to running
   shell: "systemctl status containerd.service|grep Active"
   register: containerd_status
   until: '"running" in containerd_status.stdout'
   retries: 10
   delay: 5
 
-- name: 添加 crictl 命令自动补全
+- name: Add crictl command completion
   lineinfile:
     dest: ~/.bashrc
     state: present

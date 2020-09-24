@@ -1,12 +1,12 @@
-- name: 在第一台 master 节点创建 metrics-server 配置文件目录
+- name: Create metrics-server directory
   file:
     path: /etc/kubernetes/plugins/metrics-server
     state: directory
 
-- name: 渲染 metrics-server 配置文件
+- name: Copy metrics-server file
   template:
     src: metrics-server.yaml.j2
     dest: /etc/kubernetes/plugins/metrics-server/metrics-server.yaml
 
-- name: 部署 metrics-server
+- name: Deploy metrics-server
   shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server.yaml"

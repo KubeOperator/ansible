@@ -1,5 +1,5 @@
 - block:
-  - name: Ceph | install ceph-common
+  - name: Ceph | Install ceph-common
     yum:
       name:
         - ceph-common

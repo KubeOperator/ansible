@@ -1,26 +1,26 @@
-- name: 创建 etcd 备份目录
+- name: Create etcd backup directory
   file:
     name: /etc/kubernetes/backup/etcd
     state: directory
 
-- name: 备份 etcd 数据库
+- name: Backup etcd database
   shell: "cd /etc/kubernetes/backup/etcd && \
       ETCDCTL_API=3 {{ bin_dir }}/etcdctl snapshot save etcd-snapshot.db"
 
-- name: 压缩备份文件
+- name: Archive backup file
   archive:
     path: "/etc/kubernetes/backup/etcd/etcd-snapshot.db"
     dest: "/etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz"
     format: gz
     force_archive: true
 
-- name: 拉取备份至本地
+- name: Fetch backup file
   fetch:
     src: /etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz
     dest: "{{ ('/backup/' + cluster_name + '/etcd-snapshot.tar.gz') }}"
     flat: yes
 
-- name: 移除 etcd 临时备份文件
+- name: Remove etcd temp backup file
   file:
     name: "{{ item }}"
     state: absent

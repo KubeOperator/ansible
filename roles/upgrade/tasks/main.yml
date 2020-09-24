@@ -1,15 +1,15 @@
 - include_tasks: centos.yml
   when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
-- name: 重新加载 daemon
+- name: Systemctl daemon-reload
   systemd:
     daemon_reload: yes
 
-- name: 重新启动 kubelet
+- name: Restart kubelet service
   service:
     name: kubelet
     state: restarted
     enabled: yes
 
-- name: 更新 kubectl 命令行自动补全
+- name: Upgrade kubectl command completions
   shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl
