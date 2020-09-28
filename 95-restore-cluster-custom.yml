@@ -1,4 +1,0 @@
-- hosts:
-  - etcd
-  roles:
-  - restore-custom

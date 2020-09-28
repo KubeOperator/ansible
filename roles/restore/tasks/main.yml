@@ -1,11 +1,11 @@
 - block:
-  - name: Read all backup file
+  - name: Read etcd backup file
     find:
-      paths: "{{ ('/backup/' + cluster_name) | realpath  }}"
-      patterns: "etcd-snapshot.tar.gz"
+      paths: "{{ ('/var/ko/data/backup/' + cluster_name) | realpath  }}"
+      patterns: "{{ etcd_snapshot_name }}"
     register: etcd_back_paths
 
-  - name: Verify that the backup file exists
+  - name: Verify the backup file exists
     assert:
       that: etcd_back_paths.files|length >= 1
       msg: "未获取到etcd备份文件。"
@@ -30,23 +30,21 @@
 
 - name: Copy etcd backup file to all etcd node
   copy:
-    src: "/backup/{{ cluster_name }}/etcd-snapshot.tar.gz"
-    dest: /etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz
-
-- name: Unarchive etcd backup file
-  unarchive:
-    src: "/etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz"
-    dest: "/etc/kubernetes/backup/etcd/"
-    remote_src: yes
+    src: "/var/ko/data/backup/{{ cluster_name }}/{{ etcd_snapshot_name }}"
+    dest: "/etc/kubernetes/backup/etcd/{{ etcd_snapshot_name }}"
 
 - name: Confirm backup directory exist
-  file: name=/backup/k8s state=directory
+  file:
+    name: "/var/ko/data/backup/k8s"
+    state: directory
 
 - name: Clean up the last backup and restore data
-  file: name=/backup/k8s/etcd state=absent
+  file:
+    name: "/var/ko/data/backup/k8s/etcd"
+    state: absent
 
 - name: Restore the data to the etcd data directory
-  shell: "cp -rf /var/lib/etcd/ /backup/k8s/"
+  shell: "cp -rf /var/lib/etcd/ /var/ko/data/backup/k8s/"
 
 - name: Clean up etcd data directory
   file:
@@ -56,7 +54,7 @@
 - name: Restore etcd data
   shell: "cd /etc/kubernetes/backup/etcd && \
     ETCDCTL_API=3 {{ bin_dir }}/etcdctl snapshot restore \
-    etcd-snapshot.db \
+    {{ etcd_snapshot_name }} \
     --data-dir={{ etcd_data_dir }} \
     --name etcd-{{ inventory_hostname }} \
     --initial-cluster {{ INITIAL_CLUSTER }} \
@@ -70,11 +68,8 @@
 
 - name: Remove temporary etcd backup files from each node
   file:
-    name: "{{ item }}"
+    name: "/etc/kubernetes/backup/etcd/{{ etcd_snapshot_name }}"
     state: absent
-  with_items:
-  - "/etc/kubernetes/backup/etcd/etcd-snapshot.tar.gz"
-  - "/etc/kubernetes/backup/etcd/etcd-snapshot.db"
 
 - name: Systemctl daemon-reload
   systemd:

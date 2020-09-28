@@ -75,6 +75,8 @@ tiller_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/tiller:{{ h
 # ----------------------- 集群参数设置 ---------------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
+# Etcd 备份文件名称
+etcd_snapshot_name: "etcd-snapshot.db"
 # Binaries Directory
 bin_dir: "/usr/local/bin"
 # Deploy Directory (ansible workspace)
