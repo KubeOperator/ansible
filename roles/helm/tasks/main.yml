@@ -1,11 +1,12 @@
 - block:
   - name: Helm2 | Create helm directory
-    file: name="{{ base_dir }}/helm" state=directory
-
-  - name: Helm2 | Create helm certificate directory
     file:
-      name: /etc/kubernetes/pki/helm
+      name: "{{ item }}"
       state: directory
+    with_items:
+    - "{{ base_dir }}/helm"
+    - "/etc/kubernetes/pki/helm"
+    - "{{ helm_home_dir }}"
 
   - name: Download helm2 client
     get_url:
@@ -25,9 +26,6 @@
       dest: "{{ bin_dir }}/helm"
       remote_src: yes
       mode: "0755"
-    with_items:
-    - helm
-    when: helm_version == "v2"
 
   - name: Helm2 | Create helm-ca root certificate private key
     shell: openssl genrsa -out /etc/kubernetes/pki/helm/ca.key 2048
@@ -96,6 +94,12 @@
     ignore_errors: true
     run_once: true
 
+  - name: Helm2 | Config helm client
+    shell: "cp -f /etc/kubernetes/pki/helm/ca.crt {{ helm_home_dir }}/ca.pem && \
+            cp -f /etc/kubernetes/pki/helm/helm.crt {{ helm_home_dir }}/cert.pem && \
+            cp -f /etc/kubernetes/pki/helm/helm.key {{ helm_home_dir }}/key.pem"
+    ignore_errors: true
+
   - name: Helm2 | Intall tiller
     shell: "{{ bin_dir }}/helm init \
           --history-max {{ history_max }} \
@@ -110,12 +114,6 @@
           --upgrade"
     ignore_errors: true
     run_once: true
-
-  - name: Helm2 | Config helm client
-    shell: "cp -f /etc/kubernetes/pki/helm/ca.crt {{ helm_home_dir }}/ca.pem && \
-            cp -f /etc/kubernetes/pki/helm/helm.crt {{ helm_home_dir }}/cert.pem && \
-            cp -f /etc/kubernetes/pki/helm/helm.key {{ helm_home_dir }}/key.pem"
-    ignore_errors: true
   when:
   - helm_version is version('v3', '<')
   - architectures == 'amd64'
@@ -144,14 +142,14 @@
       mode: 0755
   when: helm_version is version('v3', '>=')
 
-- name: Helm3 | Add helm command completion
+- name: Add helm command completion
   lineinfile:
     dest: ~/.bashrc
     state: present
     regexp: 'helm completion'
     line: 'source <(helm completion bash)'
 
-- name: Helm3 | Config helm tls environment
+- name: Config helm tls environment
   lineinfile:
     dest: ~/.bashrc
     state: present
