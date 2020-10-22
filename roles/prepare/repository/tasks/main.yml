@@ -1,17 +1,17 @@
-- name: Create repository backup directory
-  file:
-    path: /etc/yum.repos.d/bak
-    state: directory
-
-- name: Backup the old repository
-  shell: "mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1  || ls /etc/yum.repos.d/ >/dev/null 2>&1"
-
-- name: Remove other repository
-  file:
-    path: /etc/yum.repos.d/*
-    state: absent
-
 - block:
+  - name: Create repository backup directory
+    file:
+      path: /etc/yum.repos.d/bak
+      state: directory
+
+  - name: Backup the old repository
+    shell: "mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1  || ls /etc/yum.repos.d/ >/dev/null 2>&1"
+
+  - name: Remove other repository
+    file:
+      path: /etc/yum.repos.d/*
+      state: absent
+
   - name: Add offline repository
     template:
       src: kubeops.repo.amd64.j2
@@ -24,17 +24,3 @@
       dest: /etc/yum.repos.d/kubeops.repo
     when: architectures == 'arm64'
   when: ansible_distribution in [ 'CentOS','RedHat' ]
-
-- block:
-    - name: Add offline repository
-      template:
-        src: kubeops.repo.amd64-euler.j2
-        dest: /etc/yum.repos.d/kubeops.repo
-      when: architectures == 'amd64'
-
-    - name: Add offline repository
-      template:
-        src: kubeops.repo.arm64-euler.j2
-        dest: /etc/yum.repos.d/kubeops.repo
-      when: architectures == 'arm64'
-  when: ansible_distribution in [ 'EulerOS' ]
