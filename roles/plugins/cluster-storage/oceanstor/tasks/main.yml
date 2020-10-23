@@ -1,15 +1,16 @@
-- name: OceanStor | Install iscsi-initiator-utils
-  yum:
-    name:
-    - iscsi-initiator-utils
-    state: present
-    update_cache: yes
-  when: oceanstor_type == "iscsi"
+- block:
+  - name: OceanStor | Install iscsi-initiator-utils
+    yum:
+      name:
+      - iscsi-initiator-utils
+      state: present
+      update_cache: yes
 
-- name: Enable iscsi service
-  service:
-    name: iscsi
-    enabled: yes
+  - name: OceanStor | Enable iscsi service
+    service:
+      name: iscsi
+      enabled: yes
+  when: oceanstor_type == "iscsi"
 
 - name: OceanStor | Install nfs-utils
   yum:
