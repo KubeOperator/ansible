@@ -1,21 +1,20 @@
-- block:
-  - name: Create npd directory
-    file:
-      path: /etc/kubernetes/plugins/npd
-      state: directory
+- name: Create npd directory
+  file:
+    path: /etc/kubernetes/plugins/npd
+    state: directory
 
-  - name: Copy npd config file
-    template:
-      src: npd-config.yaml.j2
-      dest: /etc/kubernetes/plugins/npd/npd-config.yaml
+- name: Copy npd config file
+  template:
+    src: npd-config.yaml.j2
+    dest: /etc/kubernetes/plugins/npd/npd-config.yaml
 
-  - name: Copy npd ds file
-    template:
-      src: npd-ds.yaml.j2
-      dest: /etc/kubernetes/plugins/npd/npd-ds.yaml
+- name: Copy npd ds file
+  template:
+    src: npd-ds.yaml.j2
+    dest: /etc/kubernetes/plugins/npd/npd-ds.yaml
 
-  - name: Deploy npd config
-    shell: kubectl apply -f /etc/kubernetes/plugins/npd/npd-config.yaml
+- name: Deploy npd config
+  shell: kubectl apply -f /etc/kubernetes/plugins/npd/npd-config.yaml
 
-  - name: Deploy npd ds
-    shell: kubectl apply -f /etc/kubernetes/plugins/npd/npd-ds.yaml
+- name: Deploy npd ds
+  shell: kubectl apply -f /etc/kubernetes/plugins/npd/npd-ds.yaml

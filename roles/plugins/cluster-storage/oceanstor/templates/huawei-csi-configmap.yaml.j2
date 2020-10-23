@@ -1,0 +1,29 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: huawei-csi-configmap
+  namespace: kube-system
+data:
+  csi.json: |
+    {
+        "backends": [
+            {
+                "storage": "oceanstor-san",
+                "product": "{{ oceanstor_product }}",
+                "name": "oceanstor",
+                "urls": [
+                    {{ HUAWEI_OCEANSTOR_URLS }}
+                ],
+                "user": "{{ oceanstor_user }}",
+                "password": "{{ HUAWEI_OCEANSTOR_PASSWORD }}",
+                "pools": ["{{ HUAWEI_OCEANSTOR_POOLS }}"],
+{% if oceanstor_type == "iscsi" %}
+                "parameters": {"protocol": "iscsi", "portals": ["{{ HUAWEI_OCEANSTOR_PORTAL }}"]}
+{% elif oceanstor_type == "fc" %}
+                "parameters": {"protocol": "fc"}
+{% else %}
+                "parameters": {"portal": "{{ HUAWEI_OCEANSTOR_PORTAL }}"}
+{% endif %}
+            }
+        ]
+    }

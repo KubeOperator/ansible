@@ -29,6 +29,10 @@ csi_resizer_image_version: "v0.4.0"
 csi_provisioner_image_version: "v1.4.0"
 csi_snapshotter_image_version: "v1.2.2"
 csi_attacher_image_version: "v2.1.0"
+huawei_csi_driver_version: "2.2.9"
+huawei_csi_provisioner_version: "v1.4.0"
+huawei_csi_attacher_version: "v1.2.1"
+huawei_csi_node_driver_registrar_version: "v1.2.0"
 
 # ----------------------- 容器镜像地址 ---------------------
 # coredns
@@ -71,6 +75,11 @@ metrics_server_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/met
 npd_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/node-problem-detector:{{ npd_versioon }}-{{ architectures }}"
 # helm2 tiller image
 tiller_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/tiller:{{ helm_binaries_v2_version }}"
+# huawei-csi
+huawei_csi_driver_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/huawei-csi:{{ huawei_csi_driver_version }}"
+huawei_csi_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ huawei_csi_provisioner_version }}"
+huawei_csi_attacher_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ huawei_csi_attacher_version }}"
+huawei_csi_node_driver_registrar_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ huawei_csi_node_driver_registrar_version }}"
 
 # ----------------------- 集群参数设置 ---------------------------
 # Etcd 数据根目录
@@ -136,9 +145,12 @@ pause_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/reposit
 
 # ----------------------- 存储所需二进制文件下载地址 --------------------
 govc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/govc/{{ govc_version }}/{{ architectures }}/govc_linux_{{ architectures }}.gz"
+huawei_csi_passwdencrypt_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/oceanstor/{{ architectures }}/passwdEncrypt"
 
 # ----------------------- helm 仓库地址 --------------------
 helm2_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/{{ helm_binaries_v2_version }}/helm-{{ helm_binaries_v2_version }}-linux-{{ architectures }}.tar.gz"
 helm3_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/{{ helm_binaries_v3_version }}/helm-{{ helm_binaries_v3_version }}-linux-{{ architectures }}.tar.gz"
+
+# ----------------------- dns --------------------
 dns_repository_hostname: "registry.kubeoperator.io"
 dns_registry_hostname: "registry.{{ app_domain }}"
