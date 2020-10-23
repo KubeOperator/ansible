@@ -6,6 +6,11 @@
     update_cache: yes
   when: oceanstor_type == "iscsi"
 
+- name: Enable iscsi service
+  service:
+    name: iscsi
+    enabled: yes
+
 - name: OceanStor | Install nfs-utils
   yum:
     name:

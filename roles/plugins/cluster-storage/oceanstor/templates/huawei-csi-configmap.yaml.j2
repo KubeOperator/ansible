@@ -16,13 +16,13 @@ data:
                 ],
                 "user": "{{ oceanstor_user }}",
                 "password": "{{ HUAWEI_OCEANSTOR_PASSWORD }}",
-                "pools": ["{{ HUAWEI_OCEANSTOR_POOLS }}"],
+                "pools": [{{ HUAWEI_OCEANSTOR_POOLS }}],
 {% if oceanstor_type == "iscsi" %}
-                "parameters": {"protocol": "iscsi", "portals": ["{{ HUAWEI_OCEANSTOR_PORTAL }}"]}
+                "parameters": {"protocol": "iscsi", "portals": [{{ HUAWEI_OCEANSTOR_PORTAL }}]}
 {% elif oceanstor_type == "fc" %}
                 "parameters": {"protocol": "fc"}
 {% else %}
-                "parameters": {"portal": "{{ HUAWEI_OCEANSTOR_PORTAL }}"}
+                "parameters": {"portal": {{ HUAWEI_OCEANSTOR_PORTAL }}}
 {% endif %}
             }
         ]
