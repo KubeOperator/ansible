@@ -565,6 +565,9 @@ spec:
             # Use Kubernetes API as the backing datastore.
             - name: DATASTORE_TYPE
               value: "kubernetes"
+            # Specify the network adapter
+            - name: IP_AUTODETECTION_METHOD
+              value: interface={{ network_interface }}
             # Typha support: controlled by the ConfigMap.
             - name: FELIX_TYPHAK8SSERVICENAME
               valueFrom:

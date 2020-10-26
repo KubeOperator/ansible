@@ -2,7 +2,7 @@
   shell: 'systemctl status containerd|grep Active || echo "NOT FOUND"'
   register: containerd_status
 
-- name: Fail info
+- name: Error message
   fail: msg="Containerd already installed!"
   when: '"running" in containerd_status.stdout'
 

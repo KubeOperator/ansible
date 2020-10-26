@@ -2,7 +2,7 @@
   shell: 'systemctl status docker|grep Active || echo "NOT FOUND"'
   register: docker_status
 
-- name: Fail info
+- name: Error message
   fail: msg="Docker already installed!"
   when: '"running" in docker_status.stdout'
 

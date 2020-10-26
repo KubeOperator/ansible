@@ -189,6 +189,7 @@ spec:
         args:
         - --ip-masq
         - --kube-subnet-mgr
+        - --iface={{ network_interface }}
         resources:
           requests:
             cpu: "100m"
