@@ -16,7 +16,7 @@
 
   - name: Helm2 | Unarchive helm2 client
     unarchive:
-      src: "{{ base_dir }}/helm-{{ helm_binaries_v2_version }}-linux-{{ architectures }}.tar.gz"
+      src: "{{ base_dir }}/helm-{{ helm_v2_version }}-linux-{{ architectures }}.tar.gz"
       dest: "{{ base_dir }}/helm"
       remote_src: yes
 
@@ -130,7 +130,7 @@
 
   - name: Helm3 | Unarchive helm3 client
     unarchive:
-      src: "{{ base_dir }}/helm-{{ helm_binaries_v3_version }}-linux-{{ architectures }}.tar.gz"
+      src: "{{ base_dir }}/helm-{{ helm_v3_version }}-linux-{{ architectures }}.tar.gz"
       dest: "{{ base_dir }}/helm"
       remote_src: yes
 
