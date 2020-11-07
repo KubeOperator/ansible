@@ -100,7 +100,12 @@
             cp -f /etc/kubernetes/pki/helm/helm.key {{ helm_home_dir }}/key.pem"
     ignore_errors: true
 
-  - name: Helm2 | Intall tiller
+  - name: Helm2 | Pull tiller image
+    shell: "{{ bin_dir }}/docker pull {{ tiller_image }}"
+    ignore_errors: true
+    run_once: true
+
+  - name: Helm2 | Install tiller
     shell: "{{ bin_dir }}/helm init \
           --history-max {{ history_max }} \
           --tiller-tls \
@@ -111,7 +116,7 @@
           --service-account {{ tiller_sa }} \
           --tiller-namespace {{ helm_namespace }} \
           --tiller-image {{ tiller_image }} \
-          --upgrade"
+          --skip-refresh"
     ignore_errors: true
     run_once: true
   when:
