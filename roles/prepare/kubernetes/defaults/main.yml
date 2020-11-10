@@ -1,2 +1,4 @@
 # 提权操作
 ansible_become: true
+# 当前节点ip
+CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defined %}{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}{% else %}{{ inventory_hostname }}{% endif %}"
