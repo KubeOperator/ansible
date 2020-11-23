@@ -20,6 +20,17 @@
     update_cache: yes
   when: oceanstor_type == "nfs"
 
+- name: OceanStor | Install multipath
+  yum:
+    name:
+    - device-mapper
+    - device-mapper-multipath
+    state: present
+    update_cache: yes
+  when:
+  - oceanstor_is_multipath == "yes"
+  - oceanstor_type != "nfs"
+
 - block:
   - name: OceanStor | Create passwdEncrypt directory
     file:
