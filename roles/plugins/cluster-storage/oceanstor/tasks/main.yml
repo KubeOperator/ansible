@@ -58,15 +58,29 @@
       src: huawei-csi-configmap.yaml.j2
       dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-configmap.yaml"
 
-  - name: OceanStor | Prepare csi-rbac
-    template:
-      src: huawei-csi-rbac.yaml.j2
-      dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac.yaml"
+  - block:
+    - name: OceanStor | Prepare single csi-rbac
+      template:
+        src: huawei-csi-rbac.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac.yaml"
 
-  - name: OceanStor | Prepare csi-controller
-    template:
-      src: huawei-csi-controller.yaml.j2
-      dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-controller.yaml"
+    - name: OceanStor | Prepare single csi-controller
+      template:
+        src: huawei-csi-controller.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-controller.yaml"
+    when: oceanstor_controller_type == "single"
+
+  - block:
+    - name: OceanStor | Prepare multi csi-rbac
+      template:
+        src: huawei-csi-rbac-for-multi-controller.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac-for-multi-controller.yaml"
+
+    - name: OceanStor | Prepare multi csi-controller
+      template:
+        src: huawei-csi-multi-controller.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-multi-controller.yaml"
+    when: oceanstor_controller_type == "multi"
 
   - name: OceanStor | Prepare csi-node
     template:
@@ -76,11 +90,21 @@
   - name: OceanStor | Deploy csi-configmap
     shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-configmap.yaml"
 
-  - name: OceanStor | Deploy csi-rbac
-    shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac.yaml"
+  - block:
+    - name: OceanStor | Deploy single csi-rbac
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac.yaml"
 
-  - name: OceanStor | Deploy csi-controller
-    shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-controller.yaml"
+    - name: OceanStor | Deploy single csi-controller
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-controller.yaml"
+    when: oceanstor_controller_type == "single"
+
+  - block:
+    - name: OceanStor | Deploy multi csi-rbac
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac-for-multi-controller.yaml"
+
+    - name: OceanStor | Deploy multi csi-controller
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-multi-controller.yaml"
+    when: oceanstor_controller_type == "multi"
 
   - name: OceanStor | Deploy csi-node
     shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-node.yaml"
