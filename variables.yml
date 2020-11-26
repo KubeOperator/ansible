@@ -69,7 +69,8 @@ huawei_csi_driver_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/
 huawei_csi_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ huawei_csi_provisioner_version }}"
 huawei_csi_attacher_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ huawei_csi_attacher_version }}"
 huawei_csi_node_driver_registrar_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ huawei_csi_node_driver_registrar_version }}"
-
+# nvidia gpu
+nvidia_k8s_device_plugin: "{{ local_hostname }}:{{ registry_port }}/nvidia/k8s-device-plugin:1.0.0-beta"
 # ----------------------- 集群参数设置 ---------------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"

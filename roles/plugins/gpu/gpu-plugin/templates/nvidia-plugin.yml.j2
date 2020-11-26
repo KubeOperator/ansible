@@ -28,7 +28,7 @@ spec:
           operator: Exists
           effect: NoSchedule
       containers:
-        - image: "{{ nvida_k8s_device_plugin }}"
+        - image: "{{ nvidia_k8s_device_plugin }}"
           name: nvidia-device-plugin-ctr
           securityContext:
             allowPrivilegeEscalation: false
