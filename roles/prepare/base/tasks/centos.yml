@@ -19,6 +19,7 @@
     - psmisc
     - rsync
     - socat
+    - pciutils
     state: latest
 
 - name: Install ipvs rpm package
