@@ -12,6 +12,13 @@
   template:
     src: haproxy/haproxy.service.j2
     dest: /usr/lib/systemd/system/haproxy.service
+  when: ansible_distribution in [ 'CentOS','RedHat' ]
+
+- name: Modify EulerOS haproxy.service
+  template:
+    src: haproxy/haproxy.euler.service.j2
+    dest: /usr/lib/systemd/system/haproxy.service
+  when: ansible_distribution in [ 'EulerOS' ]
 
 - name: Configuration haproxy
   template:
