@@ -1,3 +1,0 @@
-- hosts: kube-master[0]
-  roles:
-  - { role: plugins/gpu/gpu-plugin, when: "container_runtime == 'docker' and has_gpu is defined and has_gpu" }
