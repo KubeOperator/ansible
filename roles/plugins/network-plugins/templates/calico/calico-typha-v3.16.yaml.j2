@@ -8,11 +8,14 @@ data:
   typha_service_name: "calico-typha"
   # Configure the backend to use.
   calico_backend: "bird"
-
-  # Configure the MTU to use
+  # Configure the MTU to use for workload interfaces and tunnels.
+  # - If Wireguard is enabled, set to your network MTU - 60
+  # - Otherwise, if VXLAN or BPF mode is enabled, set to your network MTU - 50
+  # - Otherwise, if IPIP is enabled, set to your network MTU - 20
+  # - Otherwise, if not using any encapsulation, set to your network MTU.
   veth_mtu: "{{ calico_veth_mtu }}"
 
-  # The CNI network configuration to install on each node.  The special
+  # The CNI network configuration to install on each node. The special
   # values in this config will be automatically populated.
   cni_network_config: |-
     {
@@ -22,6 +25,7 @@ data:
         {
           "type": "calico",
           "log_level": "info",
+          "log_file_path": "/var/log/calico/cni/cni.log",
           "datastore_type": "kubernetes",
           "nodename": "__KUBERNETES_NODE_NAME__",
           "mtu": __CNI_MTU__,
@@ -39,6 +43,10 @@ data:
           "type": "portmap",
           "snat": true,
           "capabilities": {"portMappings": true}
+        },
+        {
+          "type": "bandwidth",
+          "capabilities": {"bandwidth": true}
         }
       ]
     }
@@ -65,7 +73,6 @@ rules:
   - apiGroups: [""]
     resources:
       - nodes
-      - secrets
     verbs:
       - watch
       - list
@@ -80,7 +87,6 @@ rules:
   - apiGroups: ["crd.projectcalico.org"]
     resources:
       - ippools
-      - hostendpoints
     verbs:
       - list
   - apiGroups: ["crd.projectcalico.org"]
@@ -88,6 +94,16 @@ rules:
       - blockaffinities
       - ipamblocks
       - ipamhandles
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+  # kube-controllers manages hostendpoints.
+  - apiGroups: ["crd.projectcalico.org"]
+    resources:
+      - hostendpoints
     verbs:
       - get
       - list
@@ -116,7 +132,6 @@ rules:
       # watch for changes
       - watch
 ---
-
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -129,6 +144,7 @@ subjects:
 - kind: ServiceAccount
   name: calico-kube-controllers
   namespace: kube-system
+
 ---
 
 kind: ClusterRole
@@ -239,7 +255,7 @@ rules:
       - get
       - list
       - watch
-  # These permissions are only requried for upgrade from v2.6, and can
+  # These permissions are only required for upgrade from v2.6, and can
   # be removed after upgrade or on fresh installations.
   - apiGroups: ["crd.projectcalico.org"]
     resources:
@@ -322,11 +338,11 @@ metadata:
   labels:
     k8s-app: calico-typha
 spec:
-  # Number of Typha replicas.  To enable Typha, set this to a non-zero value *and* set the
+  # Number of Typha replicas. To enable Typha, set this to a non-zero value *and* set the
   # typha_service_name variable in the calico-config ConfigMap above.
   #
-  # We recommend using Typha if you have more than 50 nodes.  Above 100 nodes it is essential
-  # (when using the Kubernetes datastore).  Use one replica for every 100-200 nodes.  In
+  # We recommend using Typha if you have more than 50 nodes. Above 100 nodes it is essential
+  # (when using the Kubernetes datastore). Use one replica for every 100-200 nodes. In
   # production, we recommend running at least 3 replicas to reduce the impact of rolling upgrade.
   replicas: {% if (groups['kube-master'] + groups['kube-worker'] + groups['new-worker']) | unique | length > 1 %}2{% else %}1{% endif %}
 
@@ -339,16 +355,10 @@ spec:
       labels:
         k8s-app: calico-typha
       annotations:
-        # prometheus.io/port: "9093"
-        # prometheus.io/scrape: "true"
-        # This, along with the CriticalAddonsOnly toleration below, marks the pod as a critical
-        # add-on, ensuring it gets priority scheduling and that its resources are reserved
-        # if it ever gets evicted.
-        scheduler.alpha.kubernetes.io/critical-pod: ''
         cluster-autoscaler.kubernetes.io/safe-to-evict: 'true'
     spec:
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       hostNetwork: true
       tolerations:
         # Mark the pod as a critical add-on for rescheduling.
@@ -368,11 +378,13 @@ spec:
         - containerPort: 5473
           name: calico-typha
           protocol: TCP
-        # - containerPort: 9093
-        #   name: calico-typha-metrics
-        #   protocol: TCP
+        envFrom:
+        - configMapRef:
+            # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
+            name: kubernetes-services-endpoint
+            optional: true
         env:
-          # Enable "info" logging by default.  Can be set to "debug" to increase verbosity.
+          # Enable "info" logging by default. Can be set to "debug" to increase verbosity.
           - name: TYPHA_LOGSEVERITYSCREEN
             value: "info"
           # Disable logging to file and syslog since those don't make sense in Kubernetes.
@@ -388,7 +400,7 @@ spec:
             value: "kubernetes"
           - name: TYPHA_HEALTHENABLED
             value: "true"
-          # Uncomment these lines to enable prometheus metrics.  Since Typha is host-networked,
+          # Uncomment these lines to enable prometheus metrics. Since Typha is host-networked,
           # this opens a port on the host, which may need to be secured.
           #- name: TYPHA_PROMETHEUSMETRICSENABLED
           #  value: "true"
@@ -446,17 +458,9 @@ spec:
     metadata:
       labels:
         k8s-app: calico-node
-      annotations:
-        # prometheus.io/port: "9091"
-        # prometheus.io/scrape: "true"
-        # This, along with the CriticalAddonsOnly toleration below,
-        # marks the pod as a critical add-on, ensuring it gets
-        # priority scheduling and that its resources are reserved
-        # if it ever gets evicted.
-        scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       hostNetwork: true
       tolerations:
         # Make sure calico-node gets scheduled on all nodes.
@@ -479,6 +483,11 @@ spec:
         - name: upgrade-ipam
           image: {{ calico_cni_image }}
           command: ["{{ cni_bin_dir }}/calico-ipam", "-upgrade"]
+          envFrom:
+          - configMapRef:
+              # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
+              name: kubernetes-services-endpoint
+              optional: true
           env:
             - name: KUBERNETES_NODE_NAME
               valueFrom:
@@ -500,7 +509,12 @@ spec:
         # and CNI network config file on each node.
         - name: install-cni
           image: {{ calico_cni_image }}
-          command: ["/install-cni.sh"]
+          command: ["{{ cni_bin_dir }}/install"]
+          envFrom:
+          - configMapRef:
+              # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
+              name: kubernetes-services-endpoint
+              optional: true
           env:
             # Name of the CNI config file to create.
             - name: CNI_CONF_NAME
@@ -542,11 +556,16 @@ spec:
           securityContext:
             privileged: true
       containers:
-        # Runs calico-node container on each Kubernetes node.  This
+        # Runs calico-node container on each Kubernetes node. This
         # container programs network policy and routes on each
         # host.
         - name: calico-node
           image: {{ calico_node_image }}
+          envFrom:
+          - configMapRef:
+              # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
+              name: kubernetes-services-endpoint
+              optional: true
           env:
             # Use Kubernetes API as the backing datastore.
             - name: DATASTORE_TYPE
@@ -588,8 +607,23 @@ spec:
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP
               value: "{{ calico_ipv4pool_ipip }}"
+            # Enable or Disable VXLAN on the default IP pool.
+            - name: CALICO_IPV4POOL_VXLAN
+              value: "Never"
             # Set MTU for tunnel device used if ipip is enabled
             - name: FELIX_IPINIPMTU
+              valueFrom:
+                configMapKeyRef:
+                  name: calico-config
+                  key: veth_mtu
+            # Set MTU for the VXLAN tunnel device.
+            - name: FELIX_VXLANMTU
+              valueFrom:
+                configMapKeyRef:
+                  name: calico-config
+                  key: veth_mtu
+            # Set MTU for the Wireguard tunnel device.
+            - name: FELIX_WIREGUARDMTU
               valueFrom:
                 configMapKeyRef:
                   name: calico-config
@@ -602,6 +636,11 @@ spec:
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
+{% if kube_proxy_mode == "ipvs" %}
+            # custom node port range.
+            - name: FELIX_KUBENODEPORTRANGES
+              value: "{{ kube_service_node_port_range | regex_replace('-', ':') }}"
+{% endif %}
             # Set Felix endpoint to host default action to ACCEPT.
             - name: FELIX_DEFAULTENDPOINTTOHOSTACTION
               value: "ACCEPT"
@@ -613,10 +652,6 @@ spec:
               value: "{{ calico_felix_log_level }}"
             - name: FELIX_HEALTHENABLED
               value: "true"
-            # - name: FELIX_PROMETHEUSMETRICSENABLED
-            #   value: "true"
-            # - name: FELIX_PROMETHEUSMETRICSPORT
-            #   value: "9091"
           securityContext:
             privileged: true
           resources:
@@ -653,6 +688,13 @@ spec:
               readOnly: false
             - name: policysync
               mountPath: /var/run/nodeagent
+            # For eBPF mode, we need to be able to mount the BPF filesystem at /sys/fs/bpf so we mount in the
+            # parent directory.
+            - name: sysfs
+              mountPath: /sys/fs/
+              # Bidirectional means that, if we mount the BPF filesystem at /sys/fs/bpf it will propagate to the host.
+              # If the host is known to mount that filesystem already then Bidirectional can be omitted.
+              mountPropagation: Bidirectional
       volumes:
         # Used by calico-node.
         - name: lib-modules
@@ -668,6 +710,10 @@ spec:
           hostPath:
             path: /run/xtables.lock
             type: FileOrCreate
+        - name: sysfs
+          hostPath:
+            path: /sys/fs/
+            type: DirectoryOrCreate
         # Used to install CNI.
         - name: cni-bin-dir
           hostPath:
@@ -691,7 +737,6 @@ spec:
           hostPath:
             type: DirectoryOrCreate
             path: /usr/libexec/kubernetes/kubelet-plugins/volume/exec/nodeagent~uds
-
 ---
 
 apiVersion: v1
@@ -723,11 +768,9 @@ spec:
       namespace: kube-system
       labels:
         k8s-app: calico-kube-controllers
-      annotations:
-        scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       tolerations:
         # Mark the pod as a critical add-on for rescheduling.
         - key: CriticalAddonsOnly

@@ -104,6 +104,7 @@
     shell: "{{ bin_dir }}/docker pull {{ tiller_image }}"
     ignore_errors: true
     run_once: true
+    when: container_runtime == 'docker'
 
   - name: Helm2 | Install tiller
     shell: "{{ bin_dir }}/helm init \

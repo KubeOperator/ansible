@@ -45,9 +45,17 @@
   - containerd-shim
   - containerd-shim-runc-v1
   - containerd-shim-runc-v2
-  - containerd-stress
   - ctr
-  ignore_errors: true
+
+- name: Copy containerd-stress file to bin_dir
+  copy:
+    src: "{{ base_dir}}/containerd/bin/{{ item }}"
+    dest: "{{ bin_dir }}/"
+    remote_src: yes
+    mode: "0755"
+  with_items:
+  - containerd-stress
+  when: containerd_version == "1.3.6"
 
 - name: Download crictl file
   get_url:
@@ -67,7 +75,6 @@
     dest: "{{ bin_dir }}/"
     remote_src: yes
     mode: "0755"
-  ignore_errors: true
 
 - name: Download runc file
   get_url:
