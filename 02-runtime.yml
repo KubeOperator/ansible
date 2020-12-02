@@ -1,6 +1,6 @@
 - hosts: all
   roles:
     - { role: prepare/docker, when: "container_runtime == 'docker'" }
-    - { role: plugins/gpu/gpu-driver, when: "container_runtime == 'docker' and has_gpu is defined and has_gpu" }
-    - { role: plugins/gpu/gpu-docker, when: "container_runtime == 'docker' and has_gpu is defined and has_gpu" }
     - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
+    - { role: plugins/gpu/gpu-driver, when: "container_runtime == 'docker' and has_gpu is defined and has_gpu and support_gpu == 'enable'" }
+    - { role: plugins/gpu/gpu-docker, when: "container_runtime == 'docker' and has_gpu is defined and has_gpu and support_gpu == 'enable'" }
