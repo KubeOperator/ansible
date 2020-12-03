@@ -56,12 +56,14 @@ rules:
       - globalnetworkpolicies
       - globalnetworksets
       - ippools
+      - kubecontrollersconfigurations
       - networkpolicies
       - networksets
       - hostendpoints
       - ipamblocks
       - blockaffinities
       - ipamhandles
+      - ipamconfigs
     verbs:
       - create
       - get
@@ -107,8 +109,6 @@ spec:
         k8s-app: calicoctl
     spec:
       serviceAccountName: calicoctl
-      nodeSelector:
-        beta.kubernetes.io/os: linux
       hostNetwork: true
       hostPID: true
       tolerations:
@@ -117,9 +117,13 @@ spec:
       containers:
       - name: calicoctl
         image: {{ calicoctl_image }}
-        stdin: true 
-        tty: true 
+        stdin: true
+        tty: true
+{% if architectures == "amd64" %}
+        command: ["/calicoctl-wait"]
+{% else %}
         command: ["/bin/sh"]
+{% endif %}
         volumeMounts:
         - name: var-run-calico
           mountPath: /var/run/calico

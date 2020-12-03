@@ -17,55 +17,49 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
-  - name: Download calico file
-    get_url:
-      url: "{{ cni_calico_download_url }}"
-      dest: "{{ cni_bin_dir }}"
-      timeout: "{{ download_timeout_online }}"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
-
-  - name: Copy calico file
+  - name: Copy bandwidth file
     copy:
-      src: "{{ cni_bin_dir}}/calico-{{ architectures }}"
-      dest: "{{ bin_dir }}/calico"
-      remote_src: yes
-      mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
-
-  - name: Download calico-ipam file
-    get_url:
-      url: "{{ cni_calico_ipam_download_url }}"
-      dest: "{{ cni_bin_dir }}"
-      timeout: "{{ download_timeout_online }}"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
-
-  - name: Copy calico-ipam file
-    copy:
-      src: "{{ cni_bin_dir}}/calico-ipam-{{ architectures }}"
-      dest: "{{ bin_dir }}/calico-ipam"
+      src: "{{ cni_bin_dir }}/bandwidth"
+      dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
   when: container_runtime == 'containerd'
 
-- name: Calico | Copy calico crds file
-  template:
-    src: calico/crds.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/crds.yaml
+- block:
+  - name: Calico | Copy calico crds file
+    template:
+      src: calico/crds.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/crds.yaml
 
-- name: Calico | Copy calico typha file
-  template:
-    src: calico/calico-typha.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+  - name: Calico | Copy calico typha file
+    template:
+      src: calico/calico-typha.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
 
-- name: Calico | Copy calico daemonset file
-  template:
-    src: calico/calicoctl-daemonset.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  - name: Calico | Copy calico daemonset file
+    template:
+      src: calico/calicoctl-daemonset.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  when: calico_version == "v3.14.1"
+
+- block:
+  - name: Calico | Copy calico crds file
+    template:
+      src: calico/crds-v3.16.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/crds.yaml
+
+  - name: Calico | Copy calico typha file
+    template:
+      src: calico/calico-typha-v3.16.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+
+  - name: Calico | Copy calico daemonset file
+    template:
+      src: calico/calicoctl-daemonset-v3.16.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  when: calico_version == "v3.16.5"
 
 - name: Calico | Deploy calico crds
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml
@@ -75,3 +69,37 @@
 
 - name: Calico | Deploy calico daemonset
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+
+- block:
+  - name: Read calico file
+    shell: "ls {{ cni_bin_dir}} | grep calico"
+    register: calico_status
+    until: '"calico" in calico_status.stdout'
+    retries: 10
+    delay: 5
+
+  - name: Copy calico file
+    copy:
+      src: "{{ cni_bin_dir}}/calico"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: Read calico-ipam file
+    shell: "ls {{ cni_bin_dir}} | grep calico-ipam"
+    register: calico_ipam_status
+    until: '"calico-ipam" in calico_ipam_status.stdout'
+    retries: 10
+    delay: 5
+
+  - name: Copy calico-ipam file
+    copy:
+      src: "{{ cni_bin_dir}}/calico-ipam"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+  when: container_runtime == 'containerd'
