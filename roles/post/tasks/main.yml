@@ -55,3 +55,8 @@
   run_once: true
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Create node Gpu label
+  shell: >
+    kubectl label node {{ inventory_hostname }} has_gpu=true
+  when: has_gpu is defined and has_gpu
