@@ -38,7 +38,7 @@ spec:
             - name: device-plugin
               mountPath: /var/lib/kubelet/device-plugins
       nodeSelector:
-        has_gpu: true
+        hasGpu: "yes"
       volumes:
         - name: device-plugin
           hostPath:

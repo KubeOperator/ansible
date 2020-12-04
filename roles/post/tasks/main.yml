@@ -58,5 +58,10 @@
 
 - name: Create node Gpu label
   shell: >
-    kubectl label node {{ inventory_hostname }} has_gpu=true
-  when: has_gpu is defined and has_gpu
+    kubectl label node {{ inventory_hostname }} hasGpu=yes --overwrite
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - container_runtime == 'docker'
+    - has_gpu is defined
+    - has_gpu
+    - support_gpu == 'enable'
