@@ -9,9 +9,9 @@ ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
 ExecReload=/bin/kill -s HUP $MAINPID
 Restart=always
 RestartSec=5
-LimitNOFILE=infinity
-LimitNPROC=infinity
-LimitCORE=infinity
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=1048576
 Delegate=yes
 KillMode=process
 
