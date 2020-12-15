@@ -1,27 +1,27 @@
-- name: 确认 kubelet 已停止运行
+- name: Confirm kubelet has stopped
   service:
     name: kubelet
     state: stopped
     enabled: yes
 
-- name: 其他 master 节点加入集群
+- name: Other master node to join the cluster
   shell: >
     kubeadm join --config /etc/kubernetes/kubeadm-config.yaml 
     --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
 
 - include_tasks: "{{ (role_path + '/../kube-config/tasks/kubeconfig.yml') | realpath  }}"
 
-- name: 重新加载 daemon
+- name: Systemctl daemon-reload
   systemd:
     daemon_reload: yes
 
-- name: 重新启动 kubelet
+- name: Restart kubelet service
   service:
     name: kubelet
     state: restarted
     enabled: yes
 
-- name: 等待 apiserver 运行
+- name: Waiting for apiserver to running
   uri:
     url: "https://{{ CURRENT_HOST_IP }}:6443/healthz"
     validate_certs: no
@@ -30,7 +30,7 @@
   retries: 60
   delay: 5
 
-- name: 等待 kube-scheduler 运行
+- name: Waiting for kube-scheduler to running
   uri:
     url: "https://127.0.0.1:10259/healthz"
     validate_certs: no
@@ -39,7 +39,7 @@
   retries: 60
   delay: 5
 
-- name: 等待 kube-controller-manager 运行
+- name: Waiting for kube-controller-manager to running
   uri:
     url: "https://127.0.0.1:10257/healthz"
     validate_certs: no

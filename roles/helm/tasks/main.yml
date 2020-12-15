@@ -1,38 +1,36 @@
 - block:
-  - name: Helm2 | 创建 helm 压缩包存放目录
-    file: name="{{ base_dir }}/helm" state=directory
-
-  - name: Helm2 | 创建 helm 证书目录
+  - name: Helm2 | Create helm directory
     file:
-      name: /etc/kubernetes/pki/helm
+      name: "{{ item }}"
       state: directory
+    with_items:
+    - "{{ base_dir }}/helm"
+    - "/etc/kubernetes/pki/helm"
+    - "{{ helm_home_dir }}"
 
-  - name: 下载 helm2 客户端
+  - name: Download helm2 client
     get_url:
       url: "{{ helm2_download_url }}"
       dest: "{{ base_dir }}/"
       timeout: "{{ download_timeout_online }}"
 
-  - name: Helm2 | 解压 helm2 客户端
+  - name: Helm2 | Unarchive helm2 client
     unarchive:
-      src: "{{ base_dir }}/helm-{{ helm_binaries_v2_version }}-linux-{{ architectures }}.tar.gz"
+      src: "{{ base_dir }}/helm-{{ helm_v2_version }}-linux-{{ architectures }}.tar.gz"
       dest: "{{ base_dir }}/helm"
       remote_src: yes
 
-  - name: Helm2 | 拷贝 helm2 客户端
+  - name: Helm2 | Copy helm2 client
     copy:
       src: "{{ base_dir }}/helm/linux-{{architectures}}/helm"
       dest: "{{ bin_dir }}/helm"
       remote_src: yes
       mode: "0755"
-    with_items:
-    - helm
-    when: helm_version == "v2"
 
-  - name: Helm2 | 创建 helm-ca 根证书私钥
+  - name: Helm2 | Create helm-ca root certificate private key
     shell: openssl genrsa -out /etc/kubernetes/pki/helm/ca.key 2048
 
-  - name: Helm2 | 创建 helm-ca 根证书
+  - name: Helm2 | Create helm-ca root certificate
     shell: >
       openssl req -x509 -new -nodes -extensions v3_ca
       -subj "/CN=tiller-ca"
@@ -40,17 +38,17 @@
       -out /etc/kubernetes/pki/helm/ca.crt
       -days {{ certs_expired }}
 
-  - name: Helm2 | 创建 tiller 服务端证书私钥
+  - name: Helm2 | Create tiller server certificate private key
     shell: openssl genrsa -out /etc/kubernetes/pki/helm/tiller.key 2048
 
-  - name: Helm2 | 创建 tiller 服务端证书请求
+  - name: Helm2 | Create tiller service certificate request
     shell: >
       openssl req -new -sha256
       -subj "/CN=tiller-server"
       -key /etc/kubernetes/pki/helm/tiller.key
       -out /etc/kubernetes/pki/helm/tiller.csr
 
-  - name: Helm2 | 创建 tiller 服务端证书
+  - name: Helm2 | Create tiller server certificate
     shell: >
       openssl x509 -req -CAcreateserial
       -CA /etc/kubernetes/pki/helm/ca.crt
@@ -59,17 +57,17 @@
       -out /etc/kubernetes/pki/helm/tiller.crt
       -days {{ certs_expired }}
 
-  - name: Helm2 | 创建 helm 客户端证书私钥
+  - name: Helm2 | Create helm client certificate private key
     shell: openssl genrsa -out /etc/kubernetes/pki/helm/helm.key 2048
 
-  - name: Helm2 | 创建 helm 客户端证书请求
+  - name: Helm2 | Create helm client certificate request
     shell: >
       openssl req -new -sha256
       -subj "/CN=helm-client"
       -key /etc/kubernetes/pki/helm/helm.key
       -out /etc/kubernetes/pki/helm/helm.csr
 
-  - name: Helm2 | 创建 helm 客户端证书
+  - name: Helm2 | Create helm client certificate
     shell: >
       openssl x509 -req -CAcreateserial
       -CA /etc/kubernetes/pki/helm/ca.crt
@@ -78,25 +76,37 @@
       -out /etc/kubernetes/pki/helm/helm.crt
       -days {{ certs_expired }}
 
-  - name: Helm2 | 获取当前集群所有 namespaces
+  - name: Helm2 | Get all namespaces info
     shell: "{{ bin_dir }}/kubectl get ns"
     register: current_ns
     run_once: true
 
-  - name: Helm2 | 创建 helm 部署目录
+  - name: Helm2 | Create helm install directory
     file:
       name: "{{ helm_deploy_dir }}"
       state: directory
 
-  - name: Helm2 | 准备 helm rbac 配置文件
+  - name: Helm2 | Prepare helm rbac configuration file
     template: src=helm-rbac.yaml.j2 dest={{ helm_deploy_dir }}/helm-rbac.yaml
 
-  - name: Helm2 | 创建 helm rbac
+  - name: Helm2 | Create helm rbac
     shell: "{{ bin_dir }}/kubectl apply -f {{ helm_deploy_dir }}/helm-rbac.yaml"
     ignore_errors: true
     run_once: true
 
-  - name: Helm2 | 安装 tiller
+  - name: Helm2 | Config helm client
+    shell: "cp -f /etc/kubernetes/pki/helm/ca.crt {{ helm_home_dir }}/ca.pem && \
+            cp -f /etc/kubernetes/pki/helm/helm.crt {{ helm_home_dir }}/cert.pem && \
+            cp -f /etc/kubernetes/pki/helm/helm.key {{ helm_home_dir }}/key.pem"
+    ignore_errors: true
+
+  - name: Helm2 | Pull tiller image
+    shell: "{{ bin_dir }}/docker pull {{ tiller_image }}"
+    ignore_errors: true
+    run_once: true
+    when: container_runtime == 'docker'
+
+  - name: Helm2 | Install tiller
     shell: "{{ bin_dir }}/helm init \
           --history-max {{ history_max }} \
           --tiller-tls \
@@ -107,55 +117,45 @@
           --service-account {{ tiller_sa }} \
           --tiller-namespace {{ helm_namespace }} \
           --tiller-image {{ tiller_image }} \
-          --stable-repo-url {{ helm_stable_repo_url }} \
-          --upgrade"
+          --skip-refresh"
     ignore_errors: true
     run_once: true
-
-  - name: Helm2 | 配置 helm 客户端
-    shell: "cp -f /etc/kubernetes/pki/helm/ca.crt {{ helm_home_dir }}/ca.pem && \
-            cp -f /etc/kubernetes/pki/helm/helm.crt {{ helm_home_dir }}/cert.pem && \
-            cp -f /etc/kubernetes/pki/helm/helm.key {{ helm_home_dir }}/key.pem"
-    ignore_errors: true
   when:
   - helm_version is version('v3', '<')
   - architectures == 'amd64'
 
 - block:
-  - name: Helm3 | 创建 helm 压缩包存放目录
+  - name: Helm3 | Create helm directory
     file: name="{{ base_dir }}/helm" state=directory
 
-  - name: 下载 helm3 客户端
+  - name: Download helm3 client
     get_url:
       url: "{{ helm3_download_url }}"
       dest: "{{ base_dir }}/"
       timeout: "{{ download_timeout_online }}"
 
-  - name: Helm3 | 解压 helm3 客户端
+  - name: Helm3 | Unarchive helm3 client
     unarchive:
-      src: "{{ base_dir }}/helm-{{ helm_binaries_v3_version }}-linux-{{ architectures }}.tar.gz"
+      src: "{{ base_dir }}/helm-{{ helm_v3_version }}-linux-{{ architectures }}.tar.gz"
       dest: "{{ base_dir }}/helm"
       remote_src: yes
 
-  - name: Helm3 | 拷贝 helm3 客户端
+  - name: Helm3 | Copy helm3 client
     copy:
       src: "{{ base_dir }}/helm/linux-{{architectures}}/helm"
       dest: "{{ bin_dir }}/helm"
       remote_src: yes
       mode: 0755
-
-  - name: Helm3 | 添加 helm stable 仓库
-    command: "{{ bin_dir }}/helm repo add stable {{ helm_stable_repo_url }}"
   when: helm_version is version('v3', '>=')
 
-- name: Helm3 | 添加 helm 命令自动补全
+- name: Add helm command completion
   lineinfile:
     dest: ~/.bashrc
     state: present
     regexp: 'helm completion'
     line: 'source <(helm completion bash)'
 
-- name: Helm3 | 配置helm tls环境变量
+- name: Config helm tls environment
   lineinfile:
     dest: ~/.bashrc
     state: present

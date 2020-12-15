@@ -1,4 +1,4 @@
-- name: 读取 kubelet.conf 文件 stat 信息
+- name: Read kubelet.conf file stat info
   stat: 
     path: /etc/kubernetes/kubelet.conf
   register: kubelet_conf_stat

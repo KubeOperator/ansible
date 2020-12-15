@@ -1,10 +1,10 @@
-- name: 在 etcd 节点创建 etcd 相关目录
+- name: On etcd node Create etcd directory
   file: 
     name: /etc/kubernetes/pki/etcd
     state: directory
   when: inventory_hostname in groups['etcd']
 
-- name: 在 master 节点创建 etcd 证书相关目录
+- name: On master node create etcd certificate directory
   file: 
     name: /etc/kubernetes/pki/etcd
     state: directory

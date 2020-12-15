@@ -1,50 +1,42 @@
-- name: NFS | install nfs-utils
+- name: NFS | Install nfs-utils
   yum:
     name:
-      - nfs-utils # 挂载nfs 共享文件需要 (创建基于 nfs的PV 需要)
+      - nfs-utils
     state: present
     update_cache: yes
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['all'] }}"
 
 - block:
-    - name: NFS| set defaultvers
+    - name: NFS| Set defaultvers
       replace:
         path: /etc/nfsmount.conf
         regexp: '# Defaultvers=4'
         replace: "Defaultvers=3"
-      delegate_to: "{{ item }}"
-      with_items: "{{ groups['all'] }}"
 
-    - name: set nfsvers
+    - name: Set nfsvers
       replace:
         path: /etc/nfsmount.conf
         regexp: '# Nfsvers=4'
         replace: "Nfsvers=3"
-      delegate_to: "{{ item }}"
-      with_items: "{{ groups['all'] }}"
 
-    - name: NFS| set nfslock
+    - name: NFS| Set nfslock
       replace:
         path: /etc/nfsmount.conf
         regexp: '# Lock=True'
         replace: "Lock=False"
-      delegate_to: "{{ item }}"
-      with_items: "{{ groups['all'] }}"
   when:
     - storage_nfs_server_version is defined and storage_nfs_server_version == "3"
   ignore_errors: true
 
 - block:
-    - name: NFS| prepare nfs-client directory
+    - name: NFS| Prepare nfs-client directory
       file: name={{ kube_config_dir }}/plugins/storage-plugin/nfs state=directory
 
-    - name: NFS| prepare nfs-client file
+    - name: NFS| Prepare nfs-client file
       template:
         src: nfs-client-provisioner.yaml.j2
         dest: "{{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
 
-    - name: NFS|  deploy nfs-client
+    - name: NFS| Deploy nfs-client
       shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
       ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"

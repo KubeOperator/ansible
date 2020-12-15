@@ -2,6 +2,7 @@
   roles:
   - prepare/repository
   - prepare/base
+  - prepare/nameserver
   - chrony
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
@@ -25,10 +26,6 @@
 - hosts: new-worker
   roles:
   - post
-
-- hosts: new-worker
-  roles:
-  - add-worker
 
 - hosts: kube-master[0]
   roles:

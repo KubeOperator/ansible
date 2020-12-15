@@ -1,27 +1,18 @@
 [Unit]
 Description=Docker Application Container Engine
-Documentation=https://docs.docker.com
-After=network.target
+Documentation=http://docs.docker.io
 
 [Service]
-Type=notify
-# the default is not to use systemd for cgroups because the delegate issues still
-# exists and systemd currently does not support the cgroup feature set required
-# for containers run by docker
+Environment="PATH={{ bin_dir }}:/bin:/sbin:/usr/bin:/usr/sbin"
 ExecStart={{ bin_dir }}/dockerd
+ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
 ExecReload=/bin/kill -s HUP $MAINPID
-# Having non-zero Limit*s causes performance problems due to accounting overhead
-# in the kernel. We recommend using cgroups to do container-local accounting.
-LimitNOFILE=infinity
-LimitNPROC=infinity
-LimitCORE=infinity
-# Uncomment TasksMax if your systemd version supports it.
-# Only systemd 226 and above support this version.
-#TasksMax=infinity
-TimeoutStartSec=0
-# set delegate yes so that systemd does not reset the cgroups of docker containers
+Restart=always
+RestartSec=5
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=1048576
 Delegate=yes
-# kill only the docker process, not all processes in the cgroup
 KillMode=process
 
 [Install]

@@ -1,23 +1,11 @@
 # ----------------------- 版本设置 -----------------------
-docker_version: "19.03.9"
-containerd_version: "1.3.6"
 crictl_version: "v1.18.0"
 runc_version: "v1.0.0-rc91"
-coredns_version: "1.6.7"
-calico_version: "v3.14.1"
 pause_version: "3.2"
-flannel_version: "v0.12.0"
-weave_version: "2.6.5"
 busybox_version: "1.28"
 cni_version: "v0.8.6"
 cni_calico_version: "v3.12.3"
-etcd_version: "v3.4.9"
-metrics_server_version: "v0.3.6"
 npd_versioon: "v0.8.1"
-helm_binaries_v2_version: "v2.16.9"
-helm_binaries_v3_version: "v3.2.4"
-nginx_ingress_version: "0.32.0"
-traefik_ingress_version: "v2.2.1"
 # 存储类镜像版本设置
 rbd_provisioner_version: "v2.1.1-k8s1.11"
 nfs_provisioner_version: "v3.1.0-k8s1.11"
@@ -30,8 +18,14 @@ csi_resizer_image_version: "v0.4.0"
 csi_provisioner_image_version: "v1.4.0"
 csi_snapshotter_image_version: "v1.2.2"
 csi_attacher_image_version: "v2.1.0"
+huawei_csi_driver_version: "2.2.9"
+huawei_csi_provisioner_version: "v1.4.0"
+huawei_csi_attacher_version: "v1.2.1"
+huawei_csi_node_driver_registrar_version: "v1.2.0"
 
 # ----------------------- 容器镜像地址 ---------------------
+# coredns
+coredns_image_name: "{{ local_hostname }}:{{ registry_port }}/coredns"
 # Pod image 地址
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
 # 基础容器 image 地址
@@ -46,9 +40,6 @@ calico_kube_controllers_image: "{{ local_hostname }}:{{ registry_port }}/calico/
 calico_pod2daemon_flexvol_image: "{{ local_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}-{{ architectures }}"
 # calicoctl image 地址
 calicoctl_image: "{{ local_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}-{{ architectures }}"
-# weave image 地址
-weave_kube_image: "{{ local_hostname }}:{{ registry_port }}/weaveworks/weave-kube:{{ weave_version }}"
-weave_npc_image: "{{ local_hostname }}:{{ registry_port }}/weaveworks/weave-npc:{{ weave_version }}"
 # flannel image 地址
 flannel_image: "{{ local_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}-{{ architectures }}"
 # ingress-controller 镜像地址
@@ -72,11 +63,19 @@ metrics_server_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/met
 # npd image 地址
 npd_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/node-problem-detector:{{ npd_versioon }}-{{ architectures }}"
 # helm2 tiller image
-tiller_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/tiller:{{ helm_binaries_v2_version }}"
-
+tiller_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/tiller:{{ helm_v2_version }}"
+# huawei-csi
+huawei_csi_driver_image: "{{ local_hostname }}:{{ registry_port }}/kubeoperator/huawei-csi:{{ huawei_csi_driver_version }}"
+huawei_csi_provisioner_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ huawei_csi_provisioner_version }}"
+huawei_csi_attacher_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ huawei_csi_attacher_version }}"
+huawei_csi_node_driver_registrar_image: "{{ local_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ huawei_csi_node_driver_registrar_version }}"
+# nvidia gpu
+nvidia_k8s_device_plugin: "{{ local_hostname }}:{{ registry_port }}/nvidia/k8s-device-plugin:1.0.0-beta"
 # ----------------------- 集群参数设置 ---------------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
+# Etcd 备份文件名称
+etcd_snapshot_name: "etcd-snapshot.db"
 # Binaries Directory
 bin_dir: "/usr/local/bin"
 # Deploy Directory (ansible workspace)
@@ -89,14 +88,13 @@ download_timeout_online: "900"
 repo_port: "8081"
 # docker registry 访问端口
 registry_port: "8082"
+registry_hosted_port: "8083"
 # 加入集群token
 kubeadm_token: "abcdef.0123456789abcdef"
 # Kubelet 根目录
 kubelet_root_dir: "/var/lib/kubelet"
 # 应用dns域名
 app_domain: "kubeoperator.org"
-# 分配给节点的 pod 子网掩码位，默认为 24 即 256 个ip
-kube_network_node_prefix: "24"
 # kubernetes组件预留资源
 kube_cpu_reserved: "100m"
 kube_memory_reserved: "256M"
@@ -110,38 +108,37 @@ eviction_hard_nodefs_inodes_free: "5%"
 cloud_config_dir: "/etc/kubernetes/cloud-config"
 
 # ----------------------- k8s 二进制文件下载地址 --------------------
-k8s_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/k8s.tar.gz"
-etcd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-{{ architectures }}.tar.gz"
-cni_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ cni_version }}/cni-plugins-linux-{{ architectures }}-{{ cni_version }}.tgz"
-docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ ansible_architecture }}/docker-{{ docker_version }}.tgz"
-containerd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ architectures }}.tar.gz"
-crictl_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-{{ architectures }}.tar.gz"
-runc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ runc_version }}/runc.{{ architectures }}"
-cni_calico_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ cni_calico_version }}/calico-{{ architectures }}"
-cni_calico_ipam_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ cni_calico_version }}/calico-ipam-{{ architectures }}"
+k8s_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_version }}/{{ architectures }}/k8s.tar.gz"
+etcd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/etcd/{{ etcd_version }}/{{ architectures }}/etcd-{{ etcd_version }}-linux-{{ architectures }}.tar.gz"
+cni_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/containernetworking/{{ cni_version }}/{{ architectures }}/cni-plugins-linux-{{ architectures }}-{{ cni_version }}.tgz"
+docker_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/docker/{{ docker_version }}/{{ architectures }}/docker-{{ docker_version }}.tgz"
+containerd_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/containerd/{{ containerd_version }}/{{ architectures }}/containerd-{{ containerd_version }}-linux-{{ architectures }}.tar.gz"
+crictl_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/crictl/{{ crictl_version }}/{{ architectures }}/crictl-{{ crictl_version }}-linux-{{ architectures }}.tar.gz"
+runc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/runc/{{ runc_version }}/{{ architectures }}/runc.{{ architectures }}"
 
 # ----------------------- 离线镜像文件下载地址 ----------------------
-kube_controller_manager_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-controller-manager.tar"
-kube_apiserver_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-apiserver.tar"
-kube_scheduler_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-scheduler.tar"
-kube_proxy_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/kube-proxy.tar"
-pause_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/pause.tar"
-core_dns_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_version }}/{{ architectures }}/coredns.tar"
+kube_controller_manager_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_version }}/{{ architectures }}/kube-controller-manager.tar"
+kube_apiserver_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_version }}/{{ architectures }}/kube-apiserver.tar"
+kube_scheduler_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_version }}/{{ architectures }}/kube-scheduler.tar"
+kube_proxy_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_version }}/{{ architectures }}/kube-proxy.tar"
+pause_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_version }}/{{ architectures }}/pause.tar"
 
 # ----------------------- k8s 升级二进制文件及镜像下载地址 -------------
-k8s_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/k8s.tar.gz"
-kube_controller_manager_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-controller-manager.tar"
-kube_apiserver_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-apiserver.tar"
-kube_scheduler_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-scheduler.tar"
-kube_proxy_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/kube-proxy.tar"
-pause_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/version/{{ kube_upgrade_version }}/{{ architectures }}/pause.tar"
+k8s_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_upgrade_version }}/{{ architectures }}/k8s.tar.gz"
+kube_controller_manager_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_upgrade_version }}/{{ architectures }}/kube-controller-manager.tar"
+kube_apiserver_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_upgrade_version }}/{{ architectures }}/kube-apiserver.tar"
+kube_scheduler_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_upgrade_version }}/{{ architectures }}/kube-scheduler.tar"
+kube_proxy_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_upgrade_version }}/{{ architectures }}/kube-proxy.tar"
+pause_upgrade_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_upgrade_version }}/{{ architectures }}/pause.tar"
 
 # ----------------------- 存储所需二进制文件下载地址 --------------------
-govc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/{{ govc_version }}/govc_linux_{{ architectures }}.gz"
+govc_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/govc/{{ govc_version }}/{{ architectures }}/govc_linux_{{ architectures }}.gz"
+huawei_csi_passwdencrypt_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/oceanstor/{{ architectures }}/passwdEncrypt"
 
 # ----------------------- helm 仓库地址 --------------------
-helm2_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/version/{{ helm_binaries_v2_version }}/{{ architectures }}/helm-{{ helm_binaries_v2_version }}-linux-{{ architectures }}.tar.gz"
-helm3_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/version/{{ helm_binaries_v3_version }}/{{ architectures }}/helm-{{ helm_binaries_v3_version }}-linux-{{ architectures }}.tar.gz"
-helm_stable_repo_url: "https://apphub.aliyuncs.com"
+helm2_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/{{ helm_v2_version }}/helm-{{ helm_v2_version }}-linux-{{ architectures }}.tar.gz"
+helm3_download_url: "http://{{ local_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/{{ helm_v3_version }}/helm-{{ helm_v3_version }}-linux-{{ architectures }}.tar.gz"
+
+# ----------------------- dns --------------------
 dns_repository_hostname: "registry.kubeoperator.io"
 dns_registry_hostname: "registry.{{ app_domain }}"

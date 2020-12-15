@@ -1,4 +1,4 @@
-- name: 创建 kubernetes 证书存放目录
+- name: Create kubernetes certificate directory
   file: 
     name: "{{ item }}"
     state: directory
@@ -16,12 +16,12 @@
 # 分发证书
 - include_tasks: distribute.yml
 
-- name: 读取 kubelet.conf 文件 stat 信息
+- name: Read kubelet.conf file stat info
   stat: 
     path: /etc/kubernetes/kubelet.conf
   register: kubelet_conf_stat
 
-- name: 配置 kubeconfig
+- name: Configuration kubeconfig
   include_role:
     name: kube-config
     tasks_from: kubeconfig

@@ -1,28 +1,28 @@
-- name: 删除不需要的参数
+- name: Remove unwanted parameters
   lineinfile:
     path: /etc/kubernetes/kubeadm-config.yaml
     regexp: 'max:'
     state: absent
 
-- name: 更新 kubeadm config 版本
+- name: Upgrade kubeadm config version
   lineinfile:
     path: /etc/kubernetes/kubeadm-config.yaml
     regexp: '^kubernetesVersion'
     line: "kubernetesVersion: {{ kube_upgrade_version }}"
 
-- name: "迁移 kubeadm config 至 {{ kube_upgrade_version }} 版本"
+- name: "Migration kubeadm config to {{ kube_upgrade_version }} version"
   shell: >
     kubeadm config migrate
     --old-config=/etc/kubernetes/kubeadm-config.yaml
     --new-config=/etc/kubernetes/kubeadm-config.yaml
 
-- name: "升级第一个 master 节点： {{ inventory_hostname }} 至 {{ kube_upgrade_version }}"
+- name: "Upgrade the first master node: {{ inventory_hostname }} to {{ kube_upgrade_version }}"
   shell: >
     kubeadm upgrade apply --config=/etc/kubernetes/kubeadm-config.yaml --force
     --ignore-preflight-errors=CoreDNSUnsupportedPlugins,CoreDNSMigration
   when: inventory_hostname == groups['kube-master'][0]
 
-- name: "升级剩余 master 节点： {{ inventory_hostname }} 至 {{ kube_upgrade_version }}"
+- name: "Upgrade the remaining master nodes: {{ inventory_hostname }} to {{ kube_upgrade_version }}"
   shell: >
     kubeadm upgrade node
     {% if kube_upgrade_version.split('.')[1]|int == 14 %}
@@ -32,7 +32,7 @@
   - inventory_hostname != groups['kube-master'][0]
   - inventory_hostname in groups['kube-master']
 
-- name: "升级 worker 节点： {{ inventory_hostname }} 至 {{ kube_upgrade_version }}"
+- name: "Upgrade worker node: {{ inventory_hostname }} to {{ kube_upgrade_version }}"
   shell: >
     kubeadm upgrade node
     {% if kube_upgrade_version.split('.')[1]|int == 14 %}

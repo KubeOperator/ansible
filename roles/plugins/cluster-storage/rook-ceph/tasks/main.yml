@@ -1,68 +1,58 @@
 - block:
   - block:
-      - name: rook-cceph | prepare rook-ceph deploy directory
+      - name: rook-ceph | Prepare rook-ceph deploy directory
         file: name={{ kube_config_dir }}/plugins/storage-plugin/rook-ceph state=directory
 
-      - name: rook-cceph | prepare rook-crd file
+      - name: rook-ceph | Prepare rook-crd file
         template:
           src: common.yaml.j2
           dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/common.yaml"
 
-      - name: rook-cceph | deploy rook-crd
+      - name: rook-ceph | Deploy rook-crd
         shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/common.yaml"
         ignore_errors: truec
 
-      - name: rook-cceph | prepare rook-operator file
+      - name: rook-ceph | Prepare rook-operator file
         template:
           src: operator.yaml.j2
           dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/operator.yaml"
 
-      - name: rook-cceph | deploy rook-operator
+      - name: rook-ceph | Deploy rook-operator
         shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/operator.yaml"
         ignore_errors: true
-    delegate_to: "{{ groups['kube-master'][0] }}"
-    run_once: true
 
   - block:
-      - name: rook-cceph | wait for operator to running
+      - name: rook-ceph | Waiting for operator to running
         shell: "{{ bin_dir }}/kubectl -n rook-ceph get pod -o wide | grep rook-discover | grep '{{ inventory_hostname }}' | awk '{print $3}'"
         register: pod_status
         until: pod_status.stdout == "Running"
         retries: 60
         delay: 15
-    delegate_to: "{{ groups['kube-master'][0] }}"
-    run_once: true
 
   - block:
-      - name: rook-cceph | prepare rook-cluster file
+      - name: rook-ceph | Prepare rook-cluster file
         template:
           src: cluster.yaml.j2
           dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/cluster.yaml"
 
-      - name: rook-cceph | deploy rook-cluster
+      - name: rook-ceph | Deploy rook-cluster
         shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/cluster.yaml"
-        ignore_errors: true
 
-  #     - name: rook-cceph | prepare rook-dashboard file
-  #       template:
-  #         src: dashboard.yaml.j2
-  #         dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/dashboard.yaml"
-  #
-  #     - name: rook-cceph | deploy rook-dashboard-service
-  #       shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/dashboard.yaml"
-  #       ignore_errors: true
-    delegate_to: "{{ groups['kube-master'][0] }}"
-    run_once: true
+      - name: rook-ceph | Prepare rook-replicapool file
+        template:
+          src: replicapool.yaml.j2
+          dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/replicapool.yaml"
 
-  - block:
-      - name: rook-cceph | wait for all component complete
-        shell: "{{ bin_dir }}/kubectl -n rook-ceph get pod -o wide | grep ceph-osd-prepare | head -1 | awk '{print $3}'"
-        register: pod_status
-        until: pod_status.stdout == "Completed"
-        retries: 30
-        delay: 15
-    delegate_to: "{{ groups['kube-master'][0] }}"
-    run_once: true
+      - name: rook-ceph | Deploy rook-replicapool
+        shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/replicapool.yaml"
+
+      - name: rook-ceph | Prepare rook-dashboard file
+        template:
+          src: dashboard.yaml.j2
+          dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/dashboard.yaml"
+
+      - name: rook-ceph | Deploy rook-dashboard-service
+        shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/dashboard.yaml"
   when:
   - storage_rook_path is defined
   - architectures == 'amd64'

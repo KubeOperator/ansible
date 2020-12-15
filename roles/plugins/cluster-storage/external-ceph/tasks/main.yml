@@ -1,5 +1,5 @@
 - block:
-  - name: Ceph | install ceph-common
+  - name: Ceph | Install ceph-common
     yum:
       name:
         - ceph-common
@@ -22,7 +22,6 @@
     set_fact:
       rbd_provisioner_templates:
         - { file: 'ceph-rbd-provisioner.yaml' }
-        - { file: 'secret-rbd-provisioner.yaml' }
 
   - name: RBD Provisioner | Create manifests
     template:
@@ -38,4 +37,3 @@
     when: inventory_hostname == groups['kube-master'][0]
   when:
   - architectures == 'amd64'
-

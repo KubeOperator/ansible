@@ -1,0 +1,4 @@
+HUAWEI_OCEANSTOR_URLS: "{% for url in oceanstor_urls.split(',') %}\"https://{{ url }}:8088/deviceManager/rest\"{% if not loop.last %}, {% endif %}{% endfor %}"
+HUAWEI_OCEANSTOR_POOLS: "{% for pool in oceanstor_pools.split(',') %}\"{{ pool }}\"{% if not loop.last %}, {% endif %}{% endfor %}"
+HUAWEI_OCEANSTOR_PORTAL: "{% for portal in oceanstor_portal.split(',') %}\"{{ portal }}\"{% if not loop.last %}, {% endif %}{% endfor %}"
+HUAWEI_OCEANSTOR_PASSWORD: "{{ oceanstor_encryption_password.stdout.split(':')[1] | trim }}"

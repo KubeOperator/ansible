@@ -1,5 +1,5 @@
 # 分发证书
-- name: 获取 etcd 相关证书
+- name: Get etcd certificate
   slurp:
     src: /etc/kubernetes/pki/etcd/{{ item }} 
   with_items:
@@ -15,7 +15,7 @@
   delegate_to: "{{ groups['etcd'][0] }}"
   run_once: true
 
-- name: 分发 etcd 相关证书到 etcd 节点
+- name: Distribute etcd certificate to etcd node
   copy:
     dest: "{{ item.source }}"
     content: "{{ item.content | b64decode }}"
@@ -28,7 +28,7 @@
   - inventory_hostname != groups['etcd'][0] 
   - inventory_hostname in groups['etcd']
 
-- name: 获取 apiserver etcd client 证书
+- name: Get apiserver etcd client certificate
   slurp:
     src: /etc/kubernetes/pki/{{ item }} 
   with_items:
@@ -39,7 +39,7 @@
   delegate_to: "{{ groups['etcd'][0] }}"
   run_once: true
 
-- name: 分发 apiserver etcd client 证书到 master 节点
+- name: Distribute apiserver etcd client certificate to master node
   copy:
     dest: "{{ item.source }}"
     content: "{{ item.content | b64decode }}"

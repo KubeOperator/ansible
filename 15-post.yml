@@ -4,3 +4,7 @@
   - new-worker
   roles:
   - post
+
+- hosts: kube-master[0]
+  roles:
+    - { role: plugins/gpu/gpu-plugin, when: "container_runtime == 'docker' and support_gpu == 'enable'" }

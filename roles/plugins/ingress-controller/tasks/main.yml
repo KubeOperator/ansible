@@ -1,9 +1,9 @@
-- name: 在第一台 master 节点创建 ingress-controller 配置文件目录
+- name: Create ingress directory
   file:
     path: /etc/kubernetes/plugins/ingress-controller
     state: directory
 
-- name: 获取当前 kubernetes 版本
+- name: Get kubernetes version
   shell: "kubeadm version -o short"
   register: kubeadm_version_output
 

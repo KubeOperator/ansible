@@ -1,6 +1,0 @@
-  - hosts: all
-    tasks:
-      - name: test
-        shell: ps
-      - name: test
-        shell: ko list
