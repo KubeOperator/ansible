@@ -1,53 +1,70 @@
-# 分发证书
-- name: Get etcd certificate
-  slurp:
-    src: /etc/kubernetes/pki/etcd/{{ item }} 
-  with_items:
-  - ca.crt
-  - ca.key
-  - healthcheck-client.crt
-  - healthcheck-client.key
-  - peer.crt
-  - peer.key
-  - server.crt
-  - server.key
-  register: etcd_certs
-  delegate_to: "{{ groups['etcd'][0] }}"
-  run_once: true
+## 分发证书
+#- name: Get etcd certificate
+#  slurp:
+#    src: /etc/kubernetes/pki/etcd/{{ item }}
+#  with_items:
+#  - ca.crt
+#  - ca.key
+#  - healthcheck-client.crt
+#  - healthcheck-client.key
+#  - peer.crt
+#  - peer.key
+#  - server.crt
+#  - server.key
+#  register: etcd_certs
+#  delegate_to: "{{ groups['etcd'][0] }}"
+#  run_once: true
 
 - name: Distribute etcd certificate to etcd node
-  copy:
-    dest: "{{ item.source }}"
-    content: "{{ item.content | b64decode }}"
-    owner: root
-    group: root
-    mode: 0644
+  synchronize:
+    src: "/etc/kubernetes/pki/etcd/{{ item }}"
+    dest: "/etc/kubernetes/pki/etcd/"
+    owner: yes
+    group: yes
+    checksum: yes # 开启校验
+    perms: yes  # 保留权限
   no_log: true
-  with_items: "{{ etcd_certs.results }}"
-  when: 
+  with_items:
+    - ca.crt
+    - ca.key
+    - healthcheck-client.crt
+    - healthcheck-client.key
+    - peer.crt
+    - peer.key
+    - server.crt
+    - server.key
+  when:
   - inventory_hostname != groups['etcd'][0] 
   - inventory_hostname in groups['etcd']
-
-- name: Get apiserver etcd client certificate
-  slurp:
-    src: /etc/kubernetes/pki/{{ item }} 
-  with_items:
-  - etcd/ca.crt
-  - apiserver-etcd-client.crt
-  - apiserver-etcd-client.key
-  register: etcd_client_certs
   delegate_to: "{{ groups['etcd'][0] }}"
   run_once: true
 
+#- name: Get apiserver etcd client certificate
+#  slurp:
+#    src: /etc/kubernetes/pki/{{ item }}
+#  with_items:
+#  - etcd/ca.crt
+#  - apiserver-etcd-client.crt
+#  - apiserver-etcd-client.key
+#  register: etcd_client_certs
+#  delegate_to: "{{ groups['etcd'][0] }}"
+#  run_once: true
+
 - name: Distribute apiserver etcd client certificate to master node
-  copy:
-    dest: "{{ item.source }}"
-    content: "{{ item.content | b64decode }}"
-    owner: root
-    group: root
-    mode: 0644
+  synchronize:
+    src: "/etc/kubernetes/pki/{{ item }}"
+    dest: "/etc/kubernetes/pki"
+    owner: yes
+    group: yes
+    checksum: yes # 开启校验
+    perms: yes  # 保留权限
   no_log: true
-  with_items: "{{ etcd_client_certs.results }}"
-  when: 
+  with_items:
+    - etcd/ca.crt
+    - apiserver-etcd-client.crt
+    - apiserver-etcd-client.key
+  when:
   - inventory_hostname != groups['etcd'][0] 
   - inventory_hostname in groups['kube-master']
+  delegate_to: "{{ groups['etcd'][0] }}"
+  run_once: true
