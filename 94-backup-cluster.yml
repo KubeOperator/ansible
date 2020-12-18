@@ -1,3 +1,4 @@
 - hosts: etcd[0]
+  gather_facts: false
   roles:
   - backup

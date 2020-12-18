@@ -4,50 +4,94 @@
   - prepare/base
   - prepare/nameserver
   - chrony
+
+- hosts: all
+  gather_facts: false
+  roles:
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
-  - { role: plugins/gpu/gpu-driver, when: "container_runtime == 'docker' and has_gpu is defined and has_gpu and support_gpu == 'enable'" }
-  - { role: plugins/gpu/gpu-docker, when: "container_runtime == 'docker' and has_gpu is defined and has_gpu and support_gpu == 'enable'" }
+  - { role: plugins/gpu/gpu-driver, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
+  - { role: plugins/gpu/gpu-docker, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
+
+- hosts: all
+  gather_facts: false
+  roles:
   - prepare/kubernetes
-  - prepare/etcd-certificates
-  - prepare/kube-certificates
 
 - hosts: all
   roles:
-  - role: load-balancer
+  - load-balancer
 
-- hosts: 
+- hosts: all
+  gather_facts: false
+  roles:
+  - prepare/etcd-certificates
+  - prepare/kube-certificates
+
+- hosts:
   - etcd
   - kube-master
+  gather_facts: false
   roles:
   - etcd
 
-- hosts: kube-master
+- hosts:
+  - kube-master
+  gather_facts: false
   roles:
   - kube-master
 
-- hosts: 
+- hosts:
   - kube-worker
   - new-worker
+  gather_facts: false
   roles:
   - kube-worker
 
 - hosts: kube-master[0]
+  gather_facts: false
   roles:
   - plugins/network-plugins
-  - plugins/metrics-server
-  - plugins/npd
-  - plugins/ingress-controller
-  - { role: plugins/gpu/gpu-plugin, when: "container_runtime == 'docker' and has_gpu is defined and has_gpu and support_gpu == 'enable'" }
-
 
 - hosts: kube-master
+  gather_facts: false
   roles:
   - helm
+
+- hosts: kube-master[0]
+  gather_facts: false
+  roles:
+  - plugins/npd
+
+- hosts: kube-master[0]
+  gather_facts: false
+  roles:
+  - plugins/metrics-server
+
+- hosts: kube-master[0]
+  gather_facts: false
+  roles:
+  - plugins/ingress-controller
 
 - hosts:
   - kube-master
   - kube-worker
   - new-worker
+  gather_facts: false
   roles:
   - post
+
+- hosts: kube-master[0]
+  gather_facts: false
+  roles:
+  - { role: plugins/gpu/gpu-plugin, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
+
+
+
+
+
+
+
+
+
+

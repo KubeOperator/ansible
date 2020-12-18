@@ -1,5 +1,6 @@
 - hosts:
   - etcd
   - kube-master
+  gather_facts: false
   roles:
   - etcd

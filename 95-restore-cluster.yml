@@ -1,3 +1,4 @@
 - hosts: etcd
+  gather_facts: false
   roles:
   - restore

@@ -1,6 +1,7 @@
 - hosts: all
+  gather_facts: false
   roles:
-    - { role: prepare/docker, when: "container_runtime == 'docker'" }
-    - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
-    - { role: plugins/gpu/gpu-driver, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
-    - { role: plugins/gpu/gpu-docker, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
+  - { role: prepare/docker, when: "container_runtime == 'docker'" }
+  - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
+  - { role: plugins/gpu/gpu-driver, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
+  - { role: plugins/gpu/gpu-docker, when: "container_runtime == 'docker' and support_gpu == 'enable'" }

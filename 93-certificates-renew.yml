@@ -1,6 +1,7 @@
 - hosts: 
   - etcd
   - kube-master
+  gather_facts: false
   roles:
   - prepare/etcd-certificates
   - prepare/kube-certificates

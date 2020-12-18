@@ -4,29 +4,43 @@
   - prepare/base
   - prepare/nameserver
   - chrony
+
+- hosts: new-worker
+  gather_facts: false
+  roles:
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
+  - { role: plugins/gpu/gpu-driver, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
+  - { role: plugins/gpu/gpu-docker, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
+
+- hosts: new-worker
+  gather_facts: false
+  roles:
   - prepare/kubernetes
 
 - hosts: new-worker
   roles:
   - load-balancer
 
-- hosts: 
+- hosts:
   - kube-master
   - kube-worker
   - new-worker
+  gather_facts: false
   roles:
   - prepare/kube-certificates
 
 - hosts: new-worker
+  gather_facts: false
   roles:
   - kube-worker
 
 - hosts: new-worker
+  gather_facts: false
   roles:
   - post
 
 - hosts: kube-master[0]
+  gather_facts: false
   roles:
   - plugins/network-plugins

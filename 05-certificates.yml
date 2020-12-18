@@ -1,4 +1,5 @@
 - hosts: all
+  gather_facts: false
   roles:
   - prepare/etcd-certificates
   - prepare/kube-certificates

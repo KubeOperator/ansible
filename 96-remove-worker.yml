@@ -1,4 +1,8 @@
 - hosts: del-worker
+  gather_facts: false
   roles:
   - remove
+
+- hosts: del-worker
+  roles:
   - reset

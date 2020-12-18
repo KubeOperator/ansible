@@ -1,4 +1,5 @@
 - hosts: etcd[0]
+  gather_facts: false
   roles:
   - backup
 
@@ -9,6 +10,7 @@
 - hosts: 
   - etcd
   - kube-master
+  gather_facts: false
   roles:
   - prepare/etcd-certificates
   - prepare/kube-certificates
