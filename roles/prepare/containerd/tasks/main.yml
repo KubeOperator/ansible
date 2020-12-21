@@ -34,7 +34,7 @@
     dest: "{{ base_dir}}/containerd"
     remote_src: yes
   
-- name: Copy containerd file to bin_dir
+- name: Copy the containerd file to env
   copy:
     src: "{{ base_dir}}/containerd/bin/{{ item }}"
     dest: "{{ bin_dir }}/"
@@ -47,7 +47,7 @@
   - containerd-shim-runc-v2
   - ctr
 
-- name: Copy containerd-stress file to bin_dir
+- name: Copy the containerd-stress file to env
   copy:
     src: "{{ base_dir}}/containerd/bin/{{ item }}"
     dest: "{{ bin_dir }}/"
@@ -69,7 +69,7 @@
     dest: "{{ base_dir}}/crictl"
     remote_src: yes
 
-- name: Copy crictl file to bin_dir
+- name: Copy the crictl file to env
   copy:
     src: "{{ base_dir}}/crictl/crictl"
     dest: "{{ bin_dir }}/"

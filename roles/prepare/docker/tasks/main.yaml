@@ -30,7 +30,7 @@
     remote_src: yes
   tags: upgrade_docker
 
-- name: Copy docker file to bin_dir
+- name: Copy the docker file to env
   copy:
     src: "{{ base_dir}}/docker/{{ item }}"
     dest: "{{ bin_dir }}/"
