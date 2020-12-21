@@ -34,12 +34,10 @@
     template:
       src: ko-admin.yaml.j2
       dest: /etc/kubernetes/ko-admin.yaml
-    register: sa_manifest
 
   - name: Deploy serviceAccount
     shell: >
       kubectl apply -f /etc/kubernetes/ko-admin.yaml
-    when: sa_manifest.changed
   run_once: true
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
