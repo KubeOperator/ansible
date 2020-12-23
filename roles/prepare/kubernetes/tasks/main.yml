@@ -87,26 +87,18 @@
     - "{{ pause_download_url }}"
 
   - block:
-    - name: Docker | Load kube-proxy image
+    - name: Docker | Load kube-worker image
       shell: "{{ bin_dir }}/docker load -i {{ base_dir }}/k8s/{{ item }}"
       with_items:
       - kube-proxy.tar
-
-    - name: Docker | Load pause image
-      shell: "{{ bin_dir }}/docker load -i {{ base_dir }}/k8s/{{ item }}"
-      with_items:
       - pause.tar
     when: container_runtime == 'docker'
 
   - block:
-    - name: Containerd | Load kube-proxy image
+    - name: Containerd | Load kube-worker image
       shell: "{{ bin_dir }}/ctr -n=k8s.io images import {{ base_dir }}/k8s/{{ item }}"
       with_items:
       - kube-proxy.tar
-
-    - name: Containerd | Load pause image
-      shell: "{{ bin_dir }}/ctr -n=k8s.io images import {{ base_dir }}/k8s/{{ item }}"
-      with_items:
       - pause.tar
     when: container_runtime == 'containerd'
   when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])

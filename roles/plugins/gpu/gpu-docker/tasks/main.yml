@@ -3,6 +3,7 @@
   - name: remove packages
     yum:
       name:
+        - pciutils
         - nvidia-docker
         - nvidia-docker2
       state: absent
