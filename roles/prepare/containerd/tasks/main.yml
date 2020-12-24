@@ -24,6 +24,7 @@
 
 - name: Download containerd file
   get_url:
+    validate_certs: no
     url: "{{ containerd_download_url }}"
     dest: "{{ base_dir }}/containerd"
     timeout: "{{ download_timeout_online }}"
@@ -59,6 +60,7 @@
 
 - name: Download crictl file
   get_url:
+    validate_certs: no
     url: "{{ crictl_download_url }}"
     dest: "{{ base_dir }}/crictl"
     timeout: "{{ download_timeout_online }}"
@@ -78,6 +80,7 @@
 
 - name: Download runc file
   get_url:
+    validate_certs: no
     url: "{{ runc_download_url }}"
     dest: "{{ base_dir }}/runc"
     timeout: "{{ download_timeout_online }}"

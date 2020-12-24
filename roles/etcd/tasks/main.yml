@@ -5,6 +5,7 @@
 
 - name: Download etcd file
   get_url:
+    validate_certs: no
     url: "{{ etcd_download_url }}"
     dest: "{{ base_dir }}/"
     timeout: "{{ download_timeout_online }}"

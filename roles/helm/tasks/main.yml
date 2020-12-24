@@ -10,6 +10,7 @@
 
   - name: Download helm2 client
     get_url:
+      validate_certs: no
       url: "{{ helm2_download_url }}"
       dest: "{{ base_dir }}/"
       timeout: "{{ download_timeout_online }}"
@@ -130,6 +131,7 @@
 
   - name: Download helm3 client
     get_url:
+      validate_certs: no
       url: "{{ helm3_download_url }}"
       dest: "{{ base_dir }}/"
       timeout: "{{ download_timeout_online }}"

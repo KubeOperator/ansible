@@ -1,8 +1,8 @@
 - name: Insert repository record
   lineinfile:
     path: "/etc/hosts"
-    regexp: '{{ local_hostname }}'
-    line: "{{local_hostname}}  {{ dns_repository_hostname }}"
+    regexp: '{{ registry_hostname }}'
+    line: "{{registry_hostname}}  {{ dns_repository_hostname }}"
 
 - name: Insert hosts record
   lineinfile:

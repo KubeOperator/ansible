@@ -18,6 +18,7 @@
 
 - name: CNI | Download cni plugins
   get_url:
+    validate_certs: no
     url: "{{ cni_download_url }}"
     dest: "{{ base_dir }}/cni"
     timeout: "{{ download_timeout_online }}"
