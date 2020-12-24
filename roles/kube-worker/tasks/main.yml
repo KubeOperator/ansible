@@ -71,3 +71,4 @@
   copy:
     src: "{{ playbook_dir }}/{{ cluster_name }}/kubeconfig/config"
     dest: "/root/.kube/config"
+    mode: 0700
