@@ -57,7 +57,7 @@
     kubectl taint nodes {{inventory_hostname}} node-role.kubernetes.io/master='':NoSchedule --overwrite &&
     kubectl taint nodes {{inventory_hostname}} node-role.kubernetes.io/master-
   delegate_to: "{{ groups['kube-master'][0] }}"
-  ignore_errors: yes
+  ignore_errors: true
   when: 
   - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
   - inventory_hostname in groups['kube-master']

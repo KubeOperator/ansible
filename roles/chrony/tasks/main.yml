@@ -18,7 +18,10 @@
       dest: /etc/chrony.conf
 
   - name:  chrony server
-    service: name=chronyd state=restarted enabled=yes
+    service:
+      name: chronyd
+      state: restarted
+      enabled: yes
   when: 'inventory_hostname == groups.chrony[0]'
 
 - block:
@@ -28,7 +31,10 @@
       dest: /etc/chrony.conf
 
   - name: Start chrony client
-    service: name=chronyd state=restarted enabled=yes
+    service:
+      name: chronyd
+      state: restarted
+      enabled: yes
 
   - name: Active sync time
     shell: "chronyc -a makestep"

@@ -56,4 +56,7 @@
     line: '#$IMJournalStateFile imjournal.state'
 
 - name: Restart rsyslog service
-  service: name=rsyslog state=restarted
+  service:
+    name: rsyslog
+    state: restarted
+  ignore_errors: true

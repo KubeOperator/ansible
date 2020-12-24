@@ -91,9 +91,10 @@
 
 - block:
   - name: Remove service haproxy
-    service: name={{ item }} state=stopped enabled=no
-    with_items:
-    - haproxy
+    service:
+      name: haproxy
+      state: stopped
+      enabled: no
     ignore_errors: true
 
   - name: Remove files and dirs
@@ -104,7 +105,10 @@
     ignore_errors: true
 
 - name: Stop and disable chronyd
-  service: name=chronyd state=stopped enabled=no
+  service:
+    name: chronyd
+    state: stopped
+    enabled: no
   ignore_errors: true
 
 - name: Remove kubelet directory

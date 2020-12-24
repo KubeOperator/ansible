@@ -10,7 +10,7 @@
 
       - name: rook-ceph | Deploy rook-crd
         shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/common.yaml"
-        ignore_errors: truec
+        ignore_errors: true
 
       - name: rook-ceph | Prepare rook-operator file
         template:
