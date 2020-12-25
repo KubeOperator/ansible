@@ -64,7 +64,7 @@
     - "/etc/crictl.yaml"
     - "/etc/systemd/system/containerd.service"
     - "/opt/containerd/"
-    - "/var/lib/containerd/"
+    - "{{ containerd_storage_dir }}"
     - "/var/run/containerd/"
     ignore_errors: true
   when: container_runtime == 'containerd'
