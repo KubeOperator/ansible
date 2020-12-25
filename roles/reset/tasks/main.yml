@@ -4,11 +4,9 @@
 
 - name: Stop kubelet service
   service:
-    name: "{{ item }}"
+    name: kubelet
     state: stopped
     enabled: no
-  with_items:
-  - kubelet
   ignore_errors: true
 
 - block:
