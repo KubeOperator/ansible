@@ -22,14 +22,14 @@
     url: "{{ docker_download_url }}"
     dest: "{{ base_dir }}/"
     timeout: "{{ download_timeout_online }}"
-  tags: upgrade_docker
+  tags: upgrade
 
 - name: Unarchive docker file(>= 18.09.x)
   unarchive:
     src: "{{ base_dir }}/docker-{{ docker_version }}.tgz"
     dest: "{{ base_dir }}/"
     remote_src: yes
-  tags: upgrade_docker
+  tags: upgrade
 
 - name: Copy the docker file to env
   copy:
@@ -46,7 +46,7 @@
   - ctr
   - dockerd
   - docker-proxy
-  tags: upgrade_docker
+  tags: upgrade
    
 - name: Setup docker command completion
   copy: src=docker dest=/etc/bash_completion.d/docker mode=0644
@@ -63,7 +63,7 @@
 
 - name: Create docker systemd unit file
   template: src=docker.service.j2 dest=/etc/systemd/system/docker.service
-  tags: upgrade_docker
+  tags: upgrade
 
 - name: Enable docker service
   shell: systemctl enable docker
@@ -71,7 +71,7 @@
 
 - name: Start docker service
   shell: systemctl daemon-reload && systemctl restart docker
-  tags: upgrade_docker
+  tags: upgrade
 
 - name: Waiting for docker to running
   shell: "systemctl status docker.service|grep Active"
@@ -79,4 +79,4 @@
   until: '"running" in docker_status.stdout'
   retries: 8
   delay: 2
-  tags: upgrade_docker
+  tags: upgrade

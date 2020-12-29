@@ -28,14 +28,14 @@
     url: "{{ containerd_download_url }}"
     dest: "{{ base_dir }}/containerd"
     timeout: "{{ download_timeout_online }}"
-  tags: upgrade_containerd
+  tags: upgrade
 
 - name: Unarchive containerd file
   unarchive:
     src: "{{ base_dir }}/containerd/containerd-{{ containerd_version }}-linux-{{ architectures }}.tar.gz"
     dest: "{{ base_dir}}/containerd"
     remote_src: yes
-  tags: upgrade_containerd
+  tags: upgrade
   
 - name: Copy the containerd file to env
   copy:
@@ -49,7 +49,7 @@
   - containerd-shim-runc-v1
   - containerd-shim-runc-v2
   - ctr
-  tags: upgrade_containerd
+  tags: upgrade
 
 - block:
   - name: Copy the containerd-stress file to env
@@ -58,7 +58,7 @@
       dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
-    tags: upgrade_containerd
+    tags: upgrade
   when: containerd_version == "1.3.6"
 
 - name: Download crictl file
@@ -97,11 +97,11 @@
 
 - name: Create containerd configuration file
   template: src=config.toml.j2 dest=/etc/containerd/config.toml
-  tags: upgrade_containerd
+  tags: upgrade
 
 - name: Create systemd unit file
   template: src=containerd.service.j2 dest=/etc/systemd/system/containerd.service
-  tags: upgrade_containerd
+  tags: upgrade
 
 - name: Create crictl configuration file
   template: src=crictl.yaml.j2 dest=/etc/crictl.yaml
@@ -112,7 +112,7 @@
 
 - name: Start containerd service
   shell: systemctl daemon-reload && systemctl restart containerd
-  tags: upgrade_containerd
+  tags: upgrade
 
 - name: Waiting for containerd to running
   shell: "systemctl status containerd.service|grep Active"
@@ -120,7 +120,7 @@
   until: '"running" in containerd_status.stdout'
   retries: 10
   delay: 5
-  tags: upgrade_containerd
+  tags: upgrade
 
 - name: Add crictl command completion
   lineinfile:

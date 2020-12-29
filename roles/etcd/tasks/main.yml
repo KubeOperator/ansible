@@ -9,14 +9,14 @@
     url: "{{ etcd_download_url }}"
     dest: "{{ base_dir }}/"
     timeout: "{{ download_timeout_online }}"
-  tags: upgrade_etcd
+  tags: upgrade
 
 - name: Unarchive etcd file
   unarchive:
     src: "{{ base_dir }}/etcd-{{ etcd_version }}-linux-{{ architectures }}.tar.gz"
     dest: "{{ base_dir }}/"
     remote_src: yes
-  tags: upgrade_etcd
+  tags: upgrade
 
 - name: Copy etcd file
   copy:
@@ -27,7 +27,7 @@
   with_items:
   - etcd
   - etcdctl
-  tags: upgrade_etcd
+  tags: upgrade
 
 - name: Arm64 | Setup system ETCD_UNSUPPORTED_ARCH variable
   lineinfile:
@@ -38,7 +38,7 @@
 
 - name: Create etcd systemd unit file
   template: src=etcd.service.j2 dest=/etc/systemd/system/etcd.service
-  tags: upgrade_etcd
+  tags: upgrade
 
 - name: Enable etcd service
   shell: systemctl enable etcd
@@ -47,7 +47,7 @@
 - name: Start etcd service
   shell: systemctl daemon-reload && systemctl restart etcd
   ignore_errors: true
-  tags: upgrade_etcd
+  tags: upgrade
 
 - name: Wait etcd service to start
   shell: "systemctl status etcd.service|grep Active"
@@ -55,4 +55,4 @@
   until: '"running" in etcd_status.stdout'
   retries: 8
   delay: 8
-  tags: upgrade_etcd
+  tags: upgrade
