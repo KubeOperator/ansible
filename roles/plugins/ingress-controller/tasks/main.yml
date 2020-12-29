@@ -4,7 +4,7 @@
     state: directory
 
 - name: Get kubernetes version
-  shell: "kubeadm version -o short"
+  shell: "{{ bin_dir }}/kubeadm version -o short"
   register: kubeadm_version_output
 
 - include_tasks: nginx-ingress-controller.yml

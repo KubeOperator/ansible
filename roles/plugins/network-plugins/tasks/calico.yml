@@ -62,13 +62,13 @@
   when: calico_version == "v3.16.5"
 
 - name: Calico | Deploy calico crds
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml
+  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml"
 
 - name: Calico | Deploy calico typha
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml"
 
 - name: Calico | Deploy calico daemonset
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml"
 
 - block:
   - name: Read calico file

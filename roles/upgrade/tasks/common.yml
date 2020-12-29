@@ -12,19 +12,19 @@
 
 - name: "Migration kubeadm config to {{ kube_upgrade_version }} version"
   shell: >
-    kubeadm config migrate
+    {{ bin_dir }}/kubeadm config migrate
     --old-config=/etc/kubernetes/kubeadm-config.yaml
     --new-config=/etc/kubernetes/kubeadm-config.yaml
 
 - name: "Upgrade the first master node: {{ inventory_hostname }} to {{ kube_upgrade_version }}"
   shell: >
-    kubeadm upgrade apply --config=/etc/kubernetes/kubeadm-config.yaml --force
+    {{ bin_dir }}/kubeadm upgrade apply --config=/etc/kubernetes/kubeadm-config.yaml --force
     --ignore-preflight-errors=CoreDNSUnsupportedPlugins,CoreDNSMigration
   when: inventory_hostname == groups['kube-master'][0]
 
 - name: "Upgrade the remaining master nodes: {{ inventory_hostname }} to {{ kube_upgrade_version }}"
   shell: >
-    kubeadm upgrade node
+    {{ bin_dir }}/kubeadm upgrade node
     {% if kube_upgrade_version.split('.')[1]|int == 14 %}
     experimental-control-plane
     {% endif %}
@@ -34,7 +34,7 @@
 
 - name: "Upgrade worker node: {{ inventory_hostname }} to {{ kube_upgrade_version }}"
   shell: >
-    kubeadm upgrade node
+    {{ bin_dir }}/kubeadm upgrade node
     {% if kube_upgrade_version.split('.')[1]|int == 14 %}
     config --kubelet-version {{ kube_upgrade_version }}
     {% endif %}

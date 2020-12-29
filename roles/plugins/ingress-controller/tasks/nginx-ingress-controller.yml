@@ -6,5 +6,5 @@
     register: ingress_nginx_manifest
 
   - name: Deploy nginx-ingress-controller
-    shell: kubectl apply -f /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml"
     when: ingress_nginx_manifest.changed

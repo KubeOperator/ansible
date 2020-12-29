@@ -9,4 +9,4 @@
     dest: /etc/kubernetes/plugins/metrics-server/metrics-server.yaml
 
 - name: Deploy metrics-server
-  shell: "kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server.yaml"
+  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server.yaml"

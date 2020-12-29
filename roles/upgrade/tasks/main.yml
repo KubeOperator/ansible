@@ -12,4 +12,4 @@
     enabled: yes
 
 - name: Upgrade kubectl command completions
-  shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl
+  shell: "{{ bin_dir }}/kubectl completion bash > /usr/share/bash-completion/completions/kubectl"

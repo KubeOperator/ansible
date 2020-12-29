@@ -1,5 +1,5 @@
 - name: Reset the node using kubeadm
-  command: kubeadm reset -f
+  command: "{{ bin_dir }}/kubeadm reset -f"
   ignore_errors: true
 
 - name: Stop kubelet service

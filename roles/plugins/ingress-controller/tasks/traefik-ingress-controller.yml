@@ -30,9 +30,9 @@
   #     --dry-run -o yaml | kubectl apply -f -
 
   - name: Deploy traefik-ingress-controller crds
-    shell: kubectl apply -f /etc/kubernetes/plugins/ingress-controller/crds.yaml
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/ingress-controller/crds.yaml"
     when: ingress_traefik_crd_manifest.changed
 
   - name: Deploy traefik-ingress-controller
-    shell: kubectl apply -f /etc/kubernetes/plugins/ingress-controller/traefik-ingress-controller.yaml
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/ingress-controller/traefik-ingress-controller.yaml"
     when: ingress_traefik_manifest.changed

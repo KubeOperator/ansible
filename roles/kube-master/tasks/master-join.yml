@@ -6,7 +6,7 @@
 
 - name: Other master node to join the cluster
   shell: >
-    kubeadm join --config /etc/kubernetes/kubeadm-config.yaml 
+    {{ bin_dir }}/kubeadm join --config /etc/kubernetes/kubeadm-config.yaml
     --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests
 
 - include_tasks: "{{ (role_path + '/../kube-config/tasks/kubeconfig.yml') | realpath  }}"

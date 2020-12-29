@@ -1,5 +1,5 @@
 - name: Confirm kubeadm version
-  command: "kubeadm version -o short"
+  command: "{{ bin_dir }}/kubeadm version -o short"
   register: kubeadm_version_output
 
 - name: Setup kubeadm api version to v1beta1

@@ -5,7 +5,7 @@
     enabled: yes
 
 - name: Initial the first master node
-  shell: kubeadm init --config=/etc/kubernetes/kubeadm-config.yaml
+  shell: "{{ bin_dir }}/kubeadm init --config=/etc/kubernetes/kubeadm-config.yaml"
 
 - name:  Node config kubeconfig
   include_role:
@@ -58,7 +58,7 @@
     mode: 0644
 
 - name: Authorize kubelet to automatically rotate server certificates
-  shell: kubectl apply -f /etc/kubernetes/config/kubelet-certificates-renewal.yaml
+  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/config/kubelet-certificates-renewal.yaml"
 
 - block:
   - name: Create Pod security policy configuration file
@@ -70,5 +70,5 @@
       mode: 0644
   
   - name: Configure Pod security policy
-    shell: kubectl apply -f /etc/kubernetes/config/pod-security-policy.yaml
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/config/pod-security-policy.yaml"
   when: '"PodSecurityPolicy" in kube_apiserver_enable_admission_plugins'

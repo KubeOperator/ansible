@@ -1,5 +1,5 @@
 - name: Get cluster node info
-  shell: kubectl get node -o name
+  shell: "{{ bin_dir }}/kubectl get node -o name"
   run_once: true
   ignore_errors: true
   register: kubectl_get_node_output
@@ -7,23 +7,20 @@
 - block:
   - name: Cancel node role label
     shell: >
-      kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker- &&
-      kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb- &&
-      kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd-
+      {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker- &&
+      {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb- &&
+      {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd-
 
   - name: Setup worker node role
-    shell: >
-      kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker='' --overwrite
+    shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker='' --overwrite"
     when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
 
   - name: Setup load balancer node role
-    shell: >
-      kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb='' --overwrite
+    shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb='' --overwrite"
     when: inventory_hostname in groups['lb']
 
   - name: Setup etcd node role
-    shell: >
-      kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd='' --overwrite
+    shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd='' --overwrite"
     when: inventory_hostname in groups['etcd']
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
@@ -36,27 +33,25 @@
       dest: /etc/kubernetes/ko-admin.yaml
 
   - name: Deploy serviceAccount
-    shell: >
-      kubectl apply -f /etc/kubernetes/ko-admin.yaml
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/ko-admin.yaml"
   run_once: true
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - block:
   - name: Get cluster namespace info
-    shell: kubectl get namespace
+    shell: "{{ bin_dir }}/kubectl get namespace"
     register: namespace_output
 
   - name: Create kube-operator namespace
-    shell: "kubectl create namespace kube-operator"
+    shell: "{{ bin_dir }}/kubectl create namespace kube-operator"
     when: '"kube-operator" not in namespace_output.stdout'
   run_once: true
   ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Create node Gpu label
-  shell: >
-    kubectl label node {{ inventory_hostname }} hasGpu=yes --overwrite
+  shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} hasGpu=yes --overwrite"
   delegate_to: "{{ groups['kube-master'][0] }}"
   when:
     - container_runtime == 'docker'
