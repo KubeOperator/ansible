@@ -8,17 +8,26 @@
 - name: Create haproxy directory
   file: name=/etc/haproxy state=directory
 
-- name: Modify haproxy.service
-  template:
-    src: haproxy/haproxy.service.j2
-    dest: /usr/lib/systemd/system/haproxy.service
-  when: ansible_distribution in [ 'CentOS','RedHat' ]
+- block:
+  - name: Arm64 | Modify EulerOS haproxy.service
+    template:
+      src: haproxy/haproxy.euler.service.j2
+      dest: /usr/lib/systemd/system/haproxy.service
+    when: architectures == 'arm64'
 
-- name: Modify EulerOS haproxy.service
-  template:
-    src: haproxy/haproxy.euler.service.j2
-    dest: /usr/lib/systemd/system/haproxy.service
+  - name: Amd64 | Modify EulerOS haproxy.service
+    template:
+      src: haproxy/haproxy.service.j2
+      dest: /usr/lib/systemd/system/haproxy.service
+    when: architectures == 'amd64'
   when: ansible_distribution in [ 'EulerOS' ]
+
+- block:
+  - name: Modify haproxy.service
+    template:
+      src: haproxy/haproxy.service.j2
+      dest: /usr/lib/systemd/system/haproxy.service
+  when: ansible_distribution in [ 'CentOS','RedHat' ]
 
 - name: Configuration haproxy
   template:
