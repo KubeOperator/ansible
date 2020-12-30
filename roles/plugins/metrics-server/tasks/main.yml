@@ -10,3 +10,4 @@
 
 - name: Deploy metrics-server
   shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server.yaml"
+  ignore_errors: true
