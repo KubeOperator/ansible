@@ -242,3 +242,10 @@
       {%- endif %}
     state: restarted
   ignore_errors: true
+
+- name: Delete cluster directory
+  file:
+    path: "{{ playbook_dir }}/{{ cluster_name }}"
+    state: absent
+  run_once: true
+  delegate_to: localhost
