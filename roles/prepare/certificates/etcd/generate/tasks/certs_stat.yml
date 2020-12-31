@@ -2,30 +2,30 @@
 # 如果已经有etcd证书，为了保证整个安装的幂等性，跳过证书生成的步骤
 - name: Read etcd-ca certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/etcd/ca.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.key"
   register: etcd_ca_key_stat
   
 - name: Read etcd-ca root certificate stat info
   stat: 
-    path: /etc/kubernetes/pki/etcd/ca.crt
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.crt"
   register: etcd_ca_crt_stat
 
 - name: Read healthcheck-client certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/etcd/healthcheck-client.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/etcd/healthcheck-client.key"
   register: etcd_healthcheck_client_key_stat
 
 - name: Read server certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/etcd/server.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/etcd/server.key"
   register: etcd_server_key_stat
 
 - name: Read peer certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/etcd/peer.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/etcd/peer.key"
   register: etcd_peer_key_stat
 
 - name: Read apiserver-etcd-client certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/apiserver-etcd-client.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/apiserver-etcd-client.key"
   register: apiserver_etcd_client_key_stat

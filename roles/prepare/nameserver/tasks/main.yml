@@ -2,7 +2,7 @@
   lineinfile:
     path: "/etc/hosts"
     regexp: '{{ registry_hostname }}'
-    line: "{{registry_hostname}}  {{ dns_repository_hostname }}"
+    line: "{{registry_hostname}} {{ dns_repository_hostname }}"
 
 - name: Insert hosts record
   lineinfile:

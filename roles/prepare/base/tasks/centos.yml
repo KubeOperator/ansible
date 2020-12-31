@@ -19,7 +19,6 @@
     - psmisc
     - rsync
     - socat
-    - sshpass
     state: latest
 
 - name: Install ipvs rpm package

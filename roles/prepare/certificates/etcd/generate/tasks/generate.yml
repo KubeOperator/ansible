@@ -1,0 +1,121 @@
+- name: Create etcd certificate request configuration
+  template: 
+    src: etcd-openssl.cnf.j2
+    dest: "{{ playbook_dir }}/{{ cluster_name }}/pki/etcd/etcd-openssl.cnf"
+    owner: root
+    mode: 0644
+
+- name: Create etcd-ca root certificate private key
+  shell: "openssl genrsa -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.key 2048"
+  when: etcd_ca_key_stat.stat.isreg is not defined
+
+- name: Create etcd-ca root certificate
+  shell: >
+    openssl req -x509 -new -nodes -extensions v3_ca
+    -subj "/CN=kubernetes"
+    -config {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/etcd-openssl.cnf
+    -key {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.key
+    -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.crt
+    -days {{ certs_expired }}
+  when: etcd_ca_crt_stat.stat.isreg is not defined
+
+- name: Create etcd-server certificate private key
+  shell: "openssl genrsa -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/server.key 2048"
+  when: etcd_server_key_stat.stat.isreg is not defined
+
+- name: Create etcd-server certificate request
+  shell: >
+    openssl req -new 
+    -key {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/server.key
+    -subj "/CN=master" 
+    -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/server.csr
+
+- name: Create etcd-server certificate
+  shell: >
+    openssl x509 -req -CAcreateserial 
+    -extensions v3_req_peer 
+    -extfile {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/etcd-openssl.cnf
+    -CA {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.crt
+    -CAkey {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.key
+    -in {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/server.csr
+    -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/server.crt
+    -days {{ certs_expired }}
+
+- name: Create etcd-peer certificate private key
+  shell: "openssl genrsa -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/peer.key 2048"
+  when: etcd_peer_key_stat.stat.isreg is not defined
+
+- name: Create etcd-peer certificate request
+  shell: >
+    openssl req -new 
+    -key {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/peer.key
+    -subj "/CN=master" 
+    -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/peer.csr
+
+- name: Create etcd-peer certificate
+  shell: >
+    openssl x509 -req -CAcreateserial 
+    -extensions v3_req_peer 
+    -extfile {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/etcd-openssl.cnf
+    -CA {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.crt
+    -CAkey {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.key
+    -in {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/peer.csr
+    -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/peer.crt
+    -days {{ certs_expired }}
+
+- name: Create apiserver-etcd-client certificate private key
+  shell: "openssl genrsa -out {{ playbook_dir }}/{{ cluster_name }}/pki/apiserver-etcd-client.key 2048"
+  when: apiserver_etcd_client_key_stat.stat.isreg is not defined
+
+- name: Create apiserver-etcd-client certificate request
+  shell: >
+    openssl req -new 
+    -key {{ playbook_dir }}/{{ cluster_name }}/pki/apiserver-etcd-client.key
+    -subj "/CN=kube-apiserver-etcd-client/O=system:masters" 
+    -out {{ playbook_dir }}/{{ cluster_name }}/pki/apiserver-etcd-client.csr
+
+- name: Create apiserver-etcd-client certificate
+  shell: >
+    openssl x509 -req -CAcreateserial 
+    -extensions v3_req_client 
+    -extfile {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/etcd-openssl.cnf
+    -CA {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.crt
+    -CAkey {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.key
+    -in {{ playbook_dir }}/{{ cluster_name }}/pki/apiserver-etcd-client.csr
+    -out {{ playbook_dir }}/{{ cluster_name }}/pki/apiserver-etcd-client.crt
+    -days {{ certs_expired }}
+
+- name: Create etcd-healthcheck-client certificate private key
+  shell: "openssl genrsa -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/healthcheck-client.key 2048"
+  when: etcd_healthcheck_client_key_stat.stat.isreg is not defined
+
+- name: Create etcd-healthcheck-client certificate request
+  shell: >
+    openssl req -new -key {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/healthcheck-client.key
+    -subj "/CN=kube-etcd-healthcheck-client/O=system:masters" 
+    -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/healthcheck-client.csr
+
+- name: Create etcd-healthcheck-client certificate
+  shell: >
+    cd  &&
+    openssl x509 -req -CAcreateserial 
+    -extensions v3_req_client 
+    -extfile {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/etcd-openssl.cnf
+    -CA {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.crt
+    -CAkey {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/ca.key
+    -in {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/healthcheck-client.csr
+    -out {{ playbook_dir }}/{{ cluster_name }}/pki/etcd/healthcheck-client.crt
+    -days {{ certs_expired }}
+
+- name: Check need to be clean up the etcd certificate request file
+  find:
+    paths: "{{ playbook_dir }}/{{ cluster_name }}/pki/etcd"
+    patterns: '*.csr'
+  register: files_to_purge_for_csr
+
+- name: Clean up etcd node certificate request file
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  no_log: true
+  with_items: "{{ files_to_purge_for_csr.files }}"

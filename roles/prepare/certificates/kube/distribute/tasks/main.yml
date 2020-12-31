@@ -1,0 +1,64 @@
+- name: Create kubernetes certificate directory
+  file:
+    name: "{{ item }}"
+    state: directory
+  with_items:
+  - /etc/kubernetes/pki
+  - /var/lib/kubelet/pki
+
+## 分发certificate
+- name: Distribute kubernetes master certificate to master node
+  synchronize:
+    src: "{{ playbook_dir }}/{{ cluster_name }}/pki/{{ item }}"
+    dest: "/etc/kubernetes/pki"
+    owner: yes
+    group: yes
+    checksum: yes # 开启校验
+    perms: yes  # 保留权限
+  no_log: true
+  with_items:
+  - admin.crt
+  - admin.key
+  - apiserver.crt
+  - apiserver.key
+  - apiserver-kubelet-client.crt
+  - apiserver-kubelet-client.key
+  - ca.crt
+  - ca.key
+  - front-proxy-ca.crt
+  - front-proxy-ca.key
+  - front-proxy-client.crt
+  - front-proxy-client.key
+  - kube-controller-manager.crt
+  - kube-scheduler.crt
+  - kube-scheduler.key
+  - sa.key
+  - sa.pub
+  when:
+  - inventory_hostname in groups['kube-master']
+  delegate_to: localhost
+
+- name: Distribute kubelet service certificate to all nodes
+  synchronize:
+    src: "{{ playbook_dir }}/{{ cluster_name }}/pki/{{ item }}"
+    dest: "/var/lib/kubelet/pki"
+    owner: yes
+    group: yes
+    checksum: yes # 开启校验
+    perms: yes # 开启校验
+  no_log: true
+  with_items:
+  - kubelet.crt
+  - kubelet.key
+  delegate_to: localhost
+
+- name: Read kubelet.conf file stat info
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf_stat
+
+- name: Configuration kubeconfig
+  include_role:
+    name: kube-config
+    tasks_from: kubeconfig
+  when: kubelet_conf_stat.stat.exists

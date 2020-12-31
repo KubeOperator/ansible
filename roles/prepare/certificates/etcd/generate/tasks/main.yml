@@ -1,0 +1,10 @@
+- name: Create etcd certificates directory
+  file:
+    name: "{{ playbook_dir }}/{{ cluster_name }}/pki/etcd"
+    state: directory
+
+# 获取密钥状态
+- include_tasks: certs_stat.yml
+
+# 生成证书
+- include_tasks: generate.yml

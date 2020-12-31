@@ -1,0 +1,41 @@
+- name: On master node create etcd certificate directory
+  file:
+    name: /etc/kubernetes/pki/etcd
+    state: directory
+
+## 分发证书
+- name: Distribute etcd certificate to etcd node
+  synchronize:
+    src: "{{ playbook_dir }}/{{ cluster_name }}/pki/etcd/{{ item }}"
+    dest: "/etc/kubernetes/pki/etcd/"
+    owner: yes
+    group: yes
+    checksum: yes # 开启校验
+    perms: yes  # 保留权限
+  no_log: true
+  with_items:
+  - ca.crt
+  - ca.key
+  - healthcheck-client.crt
+  - healthcheck-client.key
+  - peer.crt
+  - peer.key
+  - server.crt
+  - server.key
+  delegate_to: localhost
+
+- name: Distribute apiserver etcd client certificate to master node
+  synchronize:
+    src: "{{ playbook_dir }}/{{ cluster_name }}/pki/{{ item }}"
+    dest: "/etc/kubernetes/pki"
+    owner: yes
+    group: yes
+    checksum: yes # 开启校验
+    perms: yes  # 保留权限
+  no_log: true
+  with_items:
+  - etcd/ca.crt
+  - etcd/ca.key
+  - apiserver-etcd-client.crt
+  - apiserver-etcd-client.key
+  delegate_to: localhost

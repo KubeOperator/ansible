@@ -2,60 +2,60 @@
 # 如果已经有kubernetescertificate，为了保证整个安装的幂等性，跳过certificate生成的步骤
 - name: Read kubernetes-ca root certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/ca.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/ca.key"
   register: ca_key_stat
 
 - name: Read kubernetes-ca root certificate stat info
   stat: 
-    path: /etc/kubernetes/pki/ca.crt
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/ca.crt"
   register: ca_crt_stat
 
 - name: Read front-proxy-ca root certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/front-proxy-ca.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/front-proxy-ca.key"
   register: front_proxy_ca_key_stat
 
 - name: Read front-proxy-ca root certificate stat info
   stat: 
-    path: /etc/kubernetes/pki/front-proxy-ca.crt
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/front-proxy-ca.crt"
   register: front_proxy_ca_crt_stat
 
 - name: Read apiserver certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/apiserver.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/apiserver.key"
   register: apiserver_key_stat
 
 - name: Read apiserver-kubelet-client certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/apiserver-kubelet-client.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/apiserver-kubelet-client.key"
   register: apiserver_kubelet_client_key_stat
 
 - name: Read front-proxy-client certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/front-proxy-client.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/front-proxy-client.key"
   register: front_proxy_client_key_stat
 
 - name: Read kube-scheduler certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/kube-scheduler.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/kube-scheduler.key"
   register: kube_scheduler_key_stat
 
 - name: Read sa certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/sa.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/sa.key"
   register: sa_key_stat
 
 - name: Read sa certificate public key stat info
   stat: 
-    path: /etc/kubernetes/pki/sa.pub
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/sa.pub"
   register: sa_pud_stat
 
 - name: Read admin certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/admin.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/admin.key"
   register: admin_key_stat
 
 - name: Read kubelet certificate private key stat info
   stat: 
-    path: /etc/kubernetes/pki/kubelet.key
+    path: "{{ playbook_dir }}/{{ cluster_name }}/pki/kubelet.key"
   register: kubelet_key_stat
