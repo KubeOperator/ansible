@@ -212,12 +212,22 @@
     daemon_reload: yes
   ignore_errors: true
 
-- name: Remove the hosts information added
-  blockinfile:
+- name: Remove repository record
+  lineinfile:
     path: "/etc/hosts"
+    regexp: '^{{registry_hostname}} {{ dns_repository_hostname }}'
     state: absent
-    follow: yes
-    marker: "# Ansible inventory hosts {mark}"
+  ignore_errors: true
+
+- name: Remove hosts record
+  lineinfile:
+    path: "/etc/hosts"
+    regexp: "^{{ hostvars[item]['ansible_ssh_host'] }} {{ item }}"
+    state: absent
+  with_items:
+  - "{{ groups['kube-master'] }}"
+  - "{{ groups['kube-worker'] }}"
+  - "{{ groups['kube-worker'] }}"
   ignore_errors: true
 
 - name: Restart network
