@@ -38,12 +38,9 @@ DNS.{{ dns_idx + loop.index }} = kubernetes.default.svc.{% for domain in kube_dn
 
 {% endfor %}
 {% set dns_idx = 4 + (kube_dns_domain.split('.')|length) | int %}
-{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defined %}
-{% set dns_idx = 4 + kube_dns_domain.split('.')|length | int %}
 {% for host in (groups['kube-master'] | default([])) | unique %}
 DNS.{{ dns_idx + loop.index }} = {{ host }}
 {% endfor %}
-{% endif %}
 IP.1 = 127.0.0.1
 IP.2 = 0:0:0:0:0:0:0:1
 IP.3 = {{ KUBERNETES_SERVICE_IP }}
@@ -59,12 +56,10 @@ IP.{{4 + groups['kube-master']|length | int }} = {{ lb_kube_apiserver_ip | trim 
 
 [ alt_kubelet ]
 DNS.1 = localhost
-{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defined %}
 {% set dns_idx = 1 | int %}
 {% for host in (groups['kube-master'] + groups['kube-worker'] + groups['new-worker'] | default([])) | unique %}
 DNS.{{ dns_idx + loop.index }} = {{ host }}
 {% endfor %}
-{% endif %}
 IP.1 = 127.0.0.1
 IP.2 = 0:0:0:0:0:0:0:1
 {% set ip_idx = 2 | int %}
