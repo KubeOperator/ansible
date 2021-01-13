@@ -22,6 +22,7 @@
     owner: root
     group: root
     mode: 0644
+  no_log: true
   with_items: "{{ etcd_certs.results }}"
   when: 
   - inventory_hostname != groups['etcd'][0] 
@@ -45,6 +46,7 @@
     owner: root
     group: root
     mode: 0644
+  no_log: true
   with_items: "{{ etcd_client_certs.results }}"
   when: 
   - inventory_hostname != groups['etcd'][0] 

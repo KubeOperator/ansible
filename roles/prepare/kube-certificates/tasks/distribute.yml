@@ -31,6 +31,7 @@
     owner: root
     group: root
     mode: 0644
+  no_log: true
   with_items: "{{ kubernetes_master_certs.results }}"
   when: 
   - inventory_hostname != groups['kube-master'][0]
@@ -53,6 +54,7 @@
     owner: root
     group: root
     mode: 0644
+  no_log: true
   with_items: "{{ kubelet_certs.results }}"
   when: 
   - inventory_hostname != groups['kube-master'][0]
