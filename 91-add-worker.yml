@@ -21,18 +21,12 @@
   roles:
   - load-balancer
 
-- hosts: localhost
-  gather_facts: false
-  roles:
-  - prepare/certificates/kube/generate
-
 - hosts:
   - kube-master
   - kube-worker
   - new-worker
-  gather_facts: false
   roles:
-  - prepare/certificates/kube/distribute
+  - prepare/kube-certificates
 
 - hosts: new-worker
   gather_facts: false

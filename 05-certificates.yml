@@ -1,22 +1,4 @@
-- hosts: localhost
-  gather_facts: false
+- hosts: all
   roles:
-  - prepare/certificates/etcd/generate
-
-- hosts: kube-master
-  gather_facts: false
-  roles:
-  - prepare/certificates/etcd/distribute
-
-- hosts: localhost
-  gather_facts: false
-  roles:
-  - prepare/certificates/kube/generate
-
-- hosts:
-  - kube-master
-  - kube-worker
-  - new-worker
-  gather_facts: false
-  roles:
-  - prepare/certificates/kube/distribute
+  - prepare/etcd-certificates
+  - prepare/kube-certificates
