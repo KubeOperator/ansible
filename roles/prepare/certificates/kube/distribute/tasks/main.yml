@@ -15,7 +15,6 @@
     group: yes
     checksum: yes # 开启校验
     perms: yes  # 保留权限
-  no_log: true
   with_items:
   - admin.crt
   - admin.key
@@ -46,7 +45,6 @@
     group: yes
     checksum: yes # 开启校验
     perms: yes # 开启校验
-  no_log: true
   with_items:
   - kubelet.crt
   - kubelet.key

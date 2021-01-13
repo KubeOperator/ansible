@@ -210,7 +210,6 @@
   file:
     path: "{{ item.path }}"
     state: absent
-  no_log: true
   with_items: "{{ files_to_purge_for_csr.files }}"
 
 - name: Clean up kubelet certificate request file

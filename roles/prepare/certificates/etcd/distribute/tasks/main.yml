@@ -12,7 +12,6 @@
     group: yes
     checksum: yes # 开启校验
     perms: yes  # 保留权限
-  no_log: true
   with_items:
   - ca.crt
   - ca.key
@@ -32,7 +31,6 @@
     group: yes
     checksum: yes # 开启校验
     perms: yes  # 保留权限
-  no_log: true
   with_items:
   - etcd/ca.crt
   - etcd/ca.key
