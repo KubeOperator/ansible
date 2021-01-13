@@ -35,7 +35,6 @@
   - name: Deploy serviceAccount
     shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/ko-admin.yaml"
   run_once: true
-  ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - block:
@@ -47,14 +46,13 @@
     shell: "{{ bin_dir }}/kubectl create namespace kube-operator"
     when: '"kube-operator" not in namespace_output.stdout'
   run_once: true
-  ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Create node Gpu label
   shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} hasGpu=yes --overwrite"
   delegate_to: "{{ groups['kube-master'][0] }}"
   when:
-    - container_runtime == 'docker'
-    - has_gpu is defined
-    - has_gpu
-    - support_gpu == 'enable'
+  - container_runtime == 'docker'
+  - has_gpu is defined
+  - has_gpu
+  - support_gpu == 'enable'
