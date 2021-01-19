@@ -4,9 +4,11 @@ baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/reposito
 enabled=1
 gpgcheck=1
 gpgkey={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/euler-base/2.5/os/RPM-GPG-KEY-EulerOS
+protect=1
 
 [Centos-epel]
 name=CentOS epel
 baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/centos-epel/7/$basearch/
 enabled=1
 gpgcheck=0
+protect=1

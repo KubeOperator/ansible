@@ -10,6 +10,13 @@
     enabled: no
   when: '"active" in firewalld_already_installed.stdout'
 
+
+- name: Install yum-plugin-protectbase rpm package
+  yum:
+    name:
+    - yum-plugin-protectbase
+    state: latest
+
 - name: Install base rpm package
   yum: 
     name:
