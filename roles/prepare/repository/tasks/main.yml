@@ -1,13 +1,25 @@
 - block:
-  - name: Create repository backup directory
-    file:
-      path: /etc/yum.repos.d/bak
-      state: directory
+  - block:
+    - name: Create repository backup directory
+      file:
+        path: /etc/yum.repos.d/bak
+        state: directory
+
+    - name: Backup the old repository
+      shell: "mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1  || ls /etc/yum.repos.d/ >/dev/null 2>&1"
+
+    - name: Remove other repository
+      file:
+        path: /etc/yum.repos.d/*
+        state: absent
     when: yum_operate == 'replace'
 
-  - name: Backup the old repository
-    shell: "mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1  || ls /etc/yum.repos.d/ >/dev/null 2>&1"
-    when: yum_operate == 'replace'
+  - name: Install yum-plugin-protectbase rpm package
+    yum:
+      name:
+      - yum-plugin-protectbase
+      state: latest
+    when: yum_operate == 'coexist'
 
   - name: Insert yum record
     blockinfile:
@@ -15,23 +27,34 @@
       block: "sslverify=0"
       state: present
 
-  - name: Remove other repository
-    file:
-      path: /etc/yum.repos.d/*
-      state: absent
-    when: yum_operate == 'replace'
+  - block:
+    - name: RedHat | Add arm64 offline repository
+      template:
+        src: kubeops.repo.amd64.j2
+        dest: /etc/yum.repos.d/kubeops.repo
+      when: architectures == 'amd64'
 
-  - name: Add offline repository
-    template:
-      src: kubeops.repo.amd64.j2
-      dest: /etc/yum.repos.d/kubeops.repo
-    when: architectures == 'amd64'
+    - name: RedHat | Add arm64 offline repository
+      template:
+        src: kubeops.repo.arm64.j2
+        dest: /etc/yum.repos.d/kubeops.repo
+      when: architectures == 'arm64'
+    when:
+    - ansible_distribution in [ 'CentOS','RedHat' ]
 
-  - name: Add offline repository
-    template:
-      src: kubeops.repo.arm64.j2
-      dest: /etc/yum.repos.d/kubeops.repo
-    when: architectures == 'arm64'
+  - block:
+    - name: EulerOS | Add amd64 offline repository
+      template:
+        src: kubeops.repo.amd64-euler.j2
+        dest: /etc/yum.repos.d/kubeops.repo
+      when: architectures == 'amd64'
+
+    - name: EulerOS | Add arm64 offline repository
+      template:
+        src: kubeops.repo.arm64-euler.j2
+        dest: /etc/yum.repos.d/kubeops.repo
+      when: architectures == 'arm64'
+    when:
+    - ansible_distribution in [ 'EulerOS' ]
   when:
-  - ansible_distribution in [ 'CentOS','RedHat' ]
   - yum_operate != 'no'
