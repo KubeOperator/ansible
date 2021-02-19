@@ -2,4 +2,3 @@
 *.iml
 target/
 .DS_Store
-hosts.ini
