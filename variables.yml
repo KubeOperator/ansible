@@ -33,15 +33,15 @@ sandbox_image: "{{ registry_hostname }}:{{ registry_port }}/kubeoperator/pause:{
 # busybox_image image 地址
 busybox_image: "{{ registry_hostname }}:{{ registry_port }}/kubeoperator/busybox:{{ busybox_version }}-{{ architectures }}"
 # calico 相关镜像
-calico_typha_image: "{{ registry_hostname }}:{{ registry_port }}/calico/typha:{{ calico_version }}-{{ architectures }}"
-calico_cni_image: "{{ registry_hostname }}:{{ registry_port }}/calico/cni:{{ calico_version }}-{{ architectures }}"
-calico_node_image: "{{ registry_hostname }}:{{ registry_port }}/calico/node:{{ calico_version }}-{{ architectures }}"
-calico_kube_controllers_image: "{{ registry_hostname }}:{{ registry_port }}/calico/kube-controllers:{{ calico_version }}-{{ architectures }}"
-calico_pod2daemon_flexvol_image: "{{ registry_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}-{{ architectures }}"
+calico_typha_image: "{{ registry_hostname }}:{{ registry_port }}/calico/typha:{{ calico_version }}"
+calico_cni_image: "{{ registry_hostname }}:{{ registry_port }}/calico/cni:{{ calico_version }}"
+calico_node_image: "{{ registry_hostname }}:{{ registry_port }}/calico/node:{{ calico_version }}"
+calico_kube_controllers_image: "{{ registry_hostname }}:{{ registry_port }}/calico/kube-controllers:{{ calico_version }}"
+calico_pod2daemon_flexvol_image: "{{ registry_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}"
 # calicoctl image 地址
-calicoctl_image: "{{ registry_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}-{{ architectures }}"
+calicoctl_image: "{{ registry_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}"
 # flannel image 地址
-flannel_image: "{{ registry_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}-{{ architectures }}"
+flannel_image: "{{ registry_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}"
 # ingress-controller 镜像地址
 nginx_ingress_image: "{{ registry_hostname }}:{{ registry_port }}/kubernetes-ingress-controller/nginx-ingress-controller:{{ nginx_ingress_version }}"
 traefik_ingress_image: "{{ registry_hostname }}:{{ registry_port }}/traefik:{{ traefik_ingress_version }}"
