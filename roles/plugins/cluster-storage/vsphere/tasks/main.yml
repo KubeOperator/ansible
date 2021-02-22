@@ -42,6 +42,8 @@
     shell: "bash setup.sh"
     args:
       chdir: "{{ cloud_config_dir }}"
+    no_log: true
+    ignore_errors: true
 
   - name: vSphere | Generate CSI cloud-config
     template:
@@ -61,9 +63,9 @@
       src: "{{ item }}.j2"
       dest: "{{ kube_config_dir }}/plugins/storage-plugin/vsphere/{{ item }}"
     with_items:
-      - vsphere-csi-controller-rbac.yml
-      - vsphere-csi-controller-ss.yml
-      - vsphere-csi-node.yml
+    - vsphere-csi-controller-rbac.yml
+    - vsphere-csi-controller-ss.yml
+    - vsphere-csi-node.yml
     register: vsphere_csi_manifests
 
   - name: vSphere | Generate a CSI secret manifest
@@ -78,14 +80,9 @@
     no_log: true
 
   - name: vSphere | vSphere CSI Driver | Apply Manifests
-    kube:
-      kubectl: "{{ bin_dir }}/kubectl"
-      filename: "{{ kube_config_dir }}/plugins/storage-plugin/vsphere/{{ item.item }}"
-      state: "latest"
+    shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/vsphere/{{ item.item }}"
     with_items:
     - "{{ vsphere_csi_manifests.results }}"
-    when:
-    - not item is skipped
     loop_control:
       label: "{{ item.item }}"
   when:
