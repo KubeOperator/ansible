@@ -1,117 +1,92 @@
 - block:
-  - name: Download govc file
+  - name: vSphere | Download govc file
     get_url:
       validate_certs: no
       url: "{{ govc_download_url }}"
       dest: "{{ base_dir }}/"
       timeout: "{{ download_timeout_online }}"
 
-  - name: Unarchive govc file
+  - name: vSphere | Unarchive govc file
     shell: "gunzip {{ base_dir }}/govc_linux_{{ architectures }}.gz"
 
-  - name: Copy govc file
+  - name: vSphere | Copy govc file
     copy:
       src: "{{ base_dir}}/govc_linux_{{ architectures }}"
       dest: "{{ bin_dir }}/govc"
       remote_src: yes
       mode: "0755"
 
-  - name: Remove govc file
+  - name: vSphere | Remove govc file
     file:
       name: "{{ base_dir }}/govc_linux_{{ architectures }}"
       state: absent
 
-  - name: Create cloud-config directory
-    file:
-      name: "{{ cloud_config_dir }}"
-      state: directory
-
-  - name: Prepare vsphere.conf
-    template:
-      src: vsphere.conf.j2
-      dest: "{{ cloud_config_dir }}/vsphere.conf"
-
-  - name: Install jq
+  - name: vSphere | Install jq
     yum:
       name:
       - jq
 
-  - name: Prepare setup.sh
-    template:
-      src: setup.sh.j2
-      dest: "{{ cloud_config_dir }}/setup.sh"
+  - name: vSphere | Create cloud-config directory
+    file:
+      name: "{{ cloud_config_dir }}"
+      state: directory
 
-  - name: Set disk.enableuuid to true for all vms
+  - name: vSphere | Prepare setup.sh
+    template:
+      src: "{{ item }}.j2"
+      dest: "{{ cloud_config_dir }}/{{ item }}"
+    with_items:
+    - setup.sh
+
+  - name: vSphere | Set disk.enableuuid to true for all vms
     shell: "bash setup.sh"
     args:
       chdir: "{{ cloud_config_dir }}"
-    run_once: true
 
-  - name: Add cloud provider
-    blockinfile:
-      dest: "{{ item }}"
-      block: |2
-            - --cloud-provider=vsphere
-            - --cloud-config={{ cloud_config_dir }}/vsphere.conf
-      marker: "# {mark} add cloud provider"
-      insertbefore: "image:"
+  - name: vSphere | Generate CSI cloud-config
+    template:
+      src: "{{ item }}.j2"
+      dest: "{{ cloud_config_dir }}/{{ item }}"
+      mode: 0640
     with_items:
-    - /etc/kubernetes/manifests/kube-apiserver.yaml
-    - /etc/kubernetes/manifests/kube-controller-manager.yaml
+    - vsphere-csi-cloud-config
 
-  - name: Add volumeMounts
-    blockinfile:
-      dest: "{{ item }}"
-      block: |2
-            - mountPath: {{ cloud_config_dir }}
-              name: cloud-config
-              readOnly: true
-      marker: "# {mark} add volumeMounts"
-      insertafter: "volumeMounts:"
+  - name: vSphere | Prepare vSphere directory
+    file:
+      name: "{{ kube_config_dir }}/plugins/storage-plugin/vsphere"
+      state: directory
+
+  - name: vSphere | Generate Manifests
+    template:
+      src: "{{ item }}.j2"
+      dest: "{{ kube_config_dir }}/plugins/storage-plugin/vsphere/{{ item }}"
     with_items:
-    - /etc/kubernetes/manifests/kube-apiserver.yaml
-    - /etc/kubernetes/manifests/kube-controller-manager.yaml
+      - vsphere-csi-controller-rbac.yml
+      - vsphere-csi-controller-ss.yml
+      - vsphere-csi-node.yml
+    register: vsphere_csi_manifests
 
-  - name: Add volumes
-    blockinfile:
-      dest: "{{ item }}"
-      block: |2
-          - hostPath:
-              path: {{ cloud_config_dir }}
-              type: DirectoryOrCreate
-            name: cloud-config
-      marker: "# {mark} add volumes"
-      insertafter: "volumes:"
+  - name: vSphere | Generate a CSI secret manifest
+    command: "{{ bin_dir }}/kubectl create secret generic vsphere-config-secret --from-file=csi-vsphere.conf={{ cloud_config_dir }}/vsphere-csi-cloud-config -n kube-system --dry-run --save-config -o yaml"
+    register: vsphere_csi_secret_manifest
+    no_log: true
+
+  - name: vSphere | Apply a CSI secret manifest
+    command:
+      cmd: "{{ bin_dir }}/kubectl apply -f -"
+      stdin: "{{ vsphere_csi_secret_manifest.stdout }}"
+    no_log: true
+
+  - name: vSphere | vSphere CSI Driver | Apply Manifests
+    kube:
+      kubectl: "{{ bin_dir }}/kubectl"
+      filename: "{{ kube_config_dir }}/plugins/storage-plugin/vsphere/{{ item.item }}"
+      state: "latest"
     with_items:
-    - /etc/kubernetes/manifests/kube-apiserver.yaml
-    - /etc/kubernetes/manifests/kube-controller-manager.yaml
-
-  - name: Modify kubelet cloud provider params on worker
-    lineinfile:
-      dest: /etc/sysconfig/kubelet
-      regexp: '^KUBELET_EXTRA_ARGS'
-      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs --cloud-provider=vsphere'
-    delegate_to: "{{ item }}"
-    with_items:
-    - "{{ groups['kube-worker'] }}"
-    - "{{ groups['new-worker'] }}"
-    run_once: true
-
-  - name: Restart kubelet on worker
-    shell: "systemctl daemon-reload && systemctl restart kubelet"
-    delegate_to: "{{ item }}"
-    with_items:
-    - "{{ groups['kube-worker'] }}"
-    - "{{ groups['new-worker'] }}"
-    run_once: true
-
-  - name: Modify kubelet cloud provider params on master
-    lineinfile:
-      dest: /etc/sysconfig/kubelet
-      regexp: '^KUBELET_EXTRA_ARGS'
-      line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs --cloud-provider=vsphere --cloud-config={{ cloud_config_dir }}/vsphere.conf'
-
-  - name: Restart kubelet on master
-    shell: "systemctl daemon-reload && systemctl restart kubelet"
+    - "{{ vsphere_csi_manifests.results }}"
+    when:
+    - not item is skipped
+    loop_control:
+      label: "{{ item.item }}"
   when:
   - architectures == 'amd64'

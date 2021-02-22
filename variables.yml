@@ -6,22 +6,6 @@ busybox_version: "1.28"
 cni_version: "v0.8.6"
 cni_calico_version: "v3.12.3"
 npd_versioon: "v0.8.1"
-# 存储类镜像版本设置
-rbd_provisioner_version: "v2.1.1-k8s1.11"
-nfs_provisioner_version: "v3.1.0-k8s1.11"
-govc_version: "v0.23.0"
-ceph_image_version: "v14.2.9"
-rook_ceph_image_version: "v1.3.6"
-csi_ceph_image_version: "v2.1.2"
-csi_registrar_image_version: "v1.2.0"
-csi_resizer_image_version: "v0.4.0"
-csi_provisioner_image_version: "v1.4.0"
-csi_snapshotter_image_version: "v1.2.2"
-csi_attacher_image_version: "v2.1.0"
-huawei_csi_driver_version: "2.2.9"
-huawei_csi_provisioner_version: "v1.4.0"
-huawei_csi_attacher_version: "v1.2.1"
-huawei_csi_node_driver_registrar_version: "v1.2.0"
 
 # ----------------------- 容器镜像地址 ---------------------
 # coredns
@@ -50,14 +34,14 @@ rbd_provisioner_image: "{{ registry_hostname }}:{{ registry_port }}/external_sto
 # nfs provisioner
 nfs_client_provisioner_image: "{{ registry_hostname }}:{{ registry_port }}/kubeoperator/nfs-client-provisioner:{{ nfs_provisioner_version }}-{{ architectures }}"
 # rook-ceph
-ceph_image: "{{ registry_hostname }}:{{ registry_port }}/ceph/ceph:{{ ceph_image_version }}"
-rook_ceph_image: "{{ registry_hostname }}:{{ registry_port }}/rook/ceph:{{ rook_ceph_image_version }}"
-rook_csi_ceph_image: "{{ registry_hostname }}:{{ registry_port }}/cephcsi/cephcsi:{{ csi_ceph_image_version }}"
-rook_csi_registrar_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ csi_registrar_image_version }}"
-rook_csi_resizer_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-resizer:{{ csi_resizer_image_version }}"
-rook_csi_provisioner_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ csi_provisioner_image_version }}"
-rook_csi_snapshotter_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-snapshotter:{{ csi_snapshotter_image_version }}"
-rook_csi_attacher_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ csi_attacher_image_version }}"
+ceph_image: "{{ registry_hostname }}:{{ registry_port }}/ceph/ceph:{{ ceph_version }}"
+rook_ceph_image: "{{ registry_hostname }}:{{ registry_port }}/rook/ceph:{{ rook_ceph_version }}"
+rook_csi_ceph_image: "{{ registry_hostname }}:{{ registry_port }}/cephcsi/cephcsi:{{ rook_csi_ceph_version }}"
+rook_csi_registrar_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ rook_csi_node_driver_registrar_version }}"
+rook_csi_resizer_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-resizer:{{ rook_csi_resizer_version }}"
+rook_csi_provisioner_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ rook_csi_provisioner_version }}"
+rook_csi_snapshotter_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-snapshotter:{{ rook_csi_snapshotter_version }}"
+rook_csi_attacher_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ rook_csi_attacher_version }}"
 # metrics-server image
 metrics_server_image: "{{ registry_hostname }}:{{ registry_port }}/kubeoperator/metrics-server:{{ metrics_server_version }}-{{ architectures }}"
 # npd image 地址
@@ -69,6 +53,13 @@ huawei_csi_driver_image: "{{ registry_hostname }}:{{ registry_port }}/kubeoperat
 huawei_csi_provisioner_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ huawei_csi_provisioner_version }}"
 huawei_csi_attacher_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ huawei_csi_attacher_version }}"
 huawei_csi_node_driver_registrar_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ huawei_csi_node_driver_registrar_version }}"
+# vsphere-csi
+vsphere_csi_driver_image: "{{ registry_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-driver:{{ vsphere_csi_version }}"
+vsphere_csi_syncer_image: "{{ registry_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-syncer:{{ vsphere_csi_version }}"
+vsphere_csi_livenessprobe_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/livenessprobe:{{ vsphere_csi_livenessprobe_version }}"
+vsphere_csi_provisioner_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ vsphere_csi_provisioner_version }}"
+vsphere_csi_attacher_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ vsphere_csi_attacher_version }}"
+vsphere_csi_node_driver_registrar_image: "{{ registry_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ vsphere_csi_node_driver_registrar_version }}"
 # nvidia gpu
 nvidia_k8s_device_plugin: "{{ registry_hostname }}:{{ registry_port }}/nvidia/k8s-device-plugin:1.0.0-beta"
 # ----------------------- 集群参数设置 ---------------------------
