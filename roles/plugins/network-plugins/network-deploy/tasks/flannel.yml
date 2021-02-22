@@ -1,0 +1,8 @@
+- block:
+  - name: Flannel | Copy flannel file
+    template:
+      src: flannel/kube-flannel.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
+
+  - name: Flannel | Deploy flannel | amd64 host
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml"

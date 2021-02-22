@@ -1,0 +1,15 @@
+# 提权操作
+ansible_become: true
+
+# 1.10+ admission plugins
+kube_apiserver_enable_admission_plugins: 
+- NodeRestriction
+# - AlwaysPullImages
+# - PodSecurityPolicy
+
+cni_bin_dir: "/opt/cni/bin"
+
+# calico mtu
+calico_veth_mtu: 1440
+# 设置 Felix 日志级别(debug, info, warning, error)
+calico_felix_log_level: "warning"
