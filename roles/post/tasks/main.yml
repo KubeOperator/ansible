@@ -7,9 +7,17 @@
 - block:
   - name: Cancel node role label
     shell: >
+      {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/control-plane- &&
+      {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/master- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd-
+
+  - name: Setup master node role
+    shell: >
+      {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/control-plane='' --overwrite &&
+      {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/master='' --overwrite
+    when: inventory_hostname in groups['kube-master']
 
   - name: Setup worker node role
     shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker='' --overwrite"
