@@ -44,4 +44,3 @@
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
   when: container_runtime == 'containerd'
-
