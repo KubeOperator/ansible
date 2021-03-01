@@ -134,7 +134,7 @@ data:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: kube-flannel-ds-amd64
+  name: kube-flannel-ds
   namespace: kube-system
   labels:
     tier: node
@@ -158,10 +158,6 @@ spec:
                     operator: In
                     values:
                       - linux
-                  - key: kubernetes.io/arch
-                    operator: In
-                    values:
-                      - amd64
       hostNetwork: true
       tolerations:
       - operator: Exists

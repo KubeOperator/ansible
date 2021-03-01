@@ -1,20 +1,17 @@
 - name: CNI | Create cni directory
   file: name=/etc/cni/net.d state=directory
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['all'] }}"
+  
 
 - name: CNI | Create cni manifests directory
   file: name=/etc/kubernetes/plugins/network-plugin state=directory
 
 - name: CNI | Create cni directory
   file: name="{{ cni_bin_dir }}" state=directory
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['all'] }}"
+  
 
 - name: CNI | Create cni directory
   file: name="{{ base_dir }}/cni" state=directory
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['all'] }}"
+  
 
 - name: CNI | Download cni plugins
   get_url:
@@ -22,16 +19,12 @@
     url: "{{ cni_download_url }}"
     dest: "{{ base_dir }}/cni"
     timeout: "{{ download_timeout_online }}"
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['all'] }}"
 
 - name: CNI | Unarchive cni plugins
   unarchive:
     src: "{{ base_dir }}/cni/cni-plugins-linux-{{ architectures }}-{{ cni_version }}.tgz"
     dest: "{{ cni_bin_dir }}"
     remote_src: yes
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['all'] }}"
 
 - include_tasks: flannel.yml
   when: network_plugin == 'flannel'
