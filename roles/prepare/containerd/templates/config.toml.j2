@@ -52,13 +52,21 @@ oom_score = 0
 {% if ENABLE_MIRROR_REGISTRY %}
     [plugins.cri.registry]
       [plugins.cri.registry.mirrors]
-        # reference from https://www.ilanni.com/?p=14534
         [plugins.cri.registry.mirrors."{{ registry_hostname }}:{{ registry_port }}"]
           endpoint = [
-            "{{ registry_protocol }}://{{ registry_hostname }}:{{ registry_port }}",
-            "{{ registry_protocol }}://{{ registry_hostname }}:{{ registry_hosted_port }}",
-            "http://{{ dns_repository_hostname }}:{{ registry_hosted_port }}",
+            "http://{{ registry_hostname }}:{{ registry_port }}"
+          ]
+        [plugins.cri.registry.mirrors."{{ registry_hostname }}:{{ registry_hosted_port }}"]
+          endpoint = [
+            "http://{{ registry_hostname }}:{{ registry_hosted_port }}"
+          ]
+        [plugins.cri.registry.mirrors."{{ dns_repository_hostname }}:{{ registry_port }}"]
+          endpoint = [
             "http://{{ dns_repository_hostname }}:{{ registry_port }}"
+          ]
+        [plugins.cri.registry.mirrors."{{ dns_repository_hostname }}:{{ registry_hosted_port }}"]
+          endpoint = [
+            "http://{{ dns_repository_hostname }}:{{ registry_hosted_port }}"
           ]
         [plugins.cri.registry.mirrors."docker.io"]
           endpoint = [
