@@ -28,7 +28,7 @@
       state: present
 
   - block:
-    - name: RedHat | Add arm64 offline repository
+    - name: RedHat | Add amd64 offline repository
       template:
         src: kubeops.repo.amd64.j2
         dest: /etc/yum.repos.d/kubeops.repo
