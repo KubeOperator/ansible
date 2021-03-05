@@ -30,7 +30,6 @@
   - name: Setup etcd node role
     shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd='' --overwrite"
     when: inventory_hostname in groups['etcd']
-  ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
   when: inventory_hostname in kubectl_get_node_output.stdout
 
