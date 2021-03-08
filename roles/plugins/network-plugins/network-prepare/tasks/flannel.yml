@@ -5,8 +5,6 @@
       dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
 
   - name: Copy flannel file
     copy:
@@ -14,8 +12,6 @@
       dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
 
   - name: Copy bridge file
     copy:
@@ -23,8 +19,6 @@
       dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
 
   - name: Copy host-local file
     copy:
@@ -32,8 +26,6 @@
       dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
 
   - name: Copy portmap file
     copy:
@@ -41,6 +33,4 @@
       dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
   when: container_runtime == 'containerd'

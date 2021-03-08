@@ -73,4 +73,6 @@
       mode: "0755"
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
-  when: container_runtime == 'containerd'
+  when:
+  - container_runtime == 'containerd'
+  - containerd_version is version('1.3.6', '>')

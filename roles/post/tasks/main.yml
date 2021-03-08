@@ -1,7 +1,6 @@
 - name: Get cluster node info
   shell: "{{ bin_dir }}/kubectl get node -o name"
   run_once: true
-  ignore_errors: true
   register: kubectl_get_node_output
 
 - block:

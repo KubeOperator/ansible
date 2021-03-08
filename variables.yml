@@ -108,6 +108,8 @@ docker_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{
 containerd_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/containerd/{{ containerd_version }}/{{ architectures }}/containerd-{{ containerd_version }}-linux-{{ architectures }}.tar.gz"
 crictl_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/crictl/{{ crictl_version }}/{{ architectures }}/crictl-{{ crictl_version }}-linux-{{ architectures }}.tar.gz"
 runc_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/runc/{{ runc_version }}/{{ architectures }}/runc.{{ architectures }}"
+cni_calico_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/cni-plugin/{{ cni_calico_version }}/{{ architectures }}/calico-{{ architectures }}"
+cni_calico_ipam_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/cni-plugin/{{ cni_calico_version }}/{{ architectures }}/calico-ipam-{{ architectures }}"
 
 # ----------------------- 离线镜像文件下载地址 ----------------------
 kube_controller_manager_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_version }}/{{ architectures }}/kube-controller-manager.tar"

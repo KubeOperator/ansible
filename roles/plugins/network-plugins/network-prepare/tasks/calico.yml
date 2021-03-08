@@ -5,8 +5,6 @@
       dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
 
   - name: Copy portmap file
     copy:
@@ -14,8 +12,6 @@
       dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
 
   - name: Copy bandwidth file
     copy:
@@ -23,6 +19,34 @@
       dest: "{{ bin_dir }}/"
       remote_src: yes
       mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
   when: container_runtime == 'containerd'
+
+- block:
+  - name: Download calico file
+    get_url:
+      url: "{{ cni_calico_download_url }}"
+      dest: "{{ cni_bin_dir }}"
+      timeout: "{{ download_timeout_online }}"
+
+  - name: Copy calico file
+    copy:
+      src: "{{ cni_bin_dir}}/calico-{{ architectures }}"
+      dest: "{{ bin_dir }}/calico"
+      remote_src: yes
+      mode: "0755"
+
+  - name: Download calico-ipam file
+    get_url:
+      url: "{{ cni_calico_ipam_download_url }}"
+      dest: "{{ cni_bin_dir }}"
+      timeout: "{{ download_timeout_online }}"
+
+  - name: Copy calico-ipam file
+    copy:
+      src: "{{ cni_bin_dir}}/calico-ipam-{{ architectures }}"
+      dest: "{{ bin_dir }}/calico-ipam"
+      remote_src: yes
+      mode: "0755"
+  when:
+  - container_runtime == 'containerd'
+  - containerd_version == "1.3.6"
