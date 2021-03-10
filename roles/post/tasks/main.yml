@@ -1,3 +1,10 @@
+- name: Wait for the etcd cluster to connect
+  shell: "{{ bin_dir }}/kubectl get ns"
+  register: etcd_status
+  until: '"kube-system" in etcd_status.stdout'
+  retries: 10
+  delay: 2
+
 - name: Get cluster node info
   shell: "{{ bin_dir }}/kubectl get node -o name"
   run_once: true
