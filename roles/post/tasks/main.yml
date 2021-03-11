@@ -1,7 +1,8 @@
-- name: Wait for the etcd cluster to connect
+- name: Ensure that apiserver accesses the etcd cluster properly
   shell: "{{ bin_dir }}/kubectl get ns"
   register: etcd_status
   until: '"kube-system" in etcd_status.stdout'
+  run_once: true
   retries: 10
   delay: 2
 

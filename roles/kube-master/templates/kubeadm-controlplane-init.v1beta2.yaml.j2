@@ -63,7 +63,9 @@ apiServer:
   extraArgs:
     allow-privileged: "true"
     apiserver-count: "{{ groups['kube-master']|length }}"
+{% if kube_version is version('v1.20.0', '>=') %}
     feature-gates: "RemoveSelfLink=false"
+{% endif %}
 {% if kubernetes_audit == "yes" %}
     audit-log-path: /var/log/audit/kube-apiserver-audit.log
     audit-log-maxage: "{{ audit_log_maxage }}"
