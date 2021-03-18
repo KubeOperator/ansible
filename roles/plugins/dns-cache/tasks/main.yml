@@ -1,0 +1,33 @@
+- name: Get ClusterIP of kube-dns
+  shell: "{{ bin_dir }}/kubectl get svc -n kube-system | grep kube-dns | awk '{ print $3 }'"
+  register: kube_dns_clusterip
+
+- name: Create dns-cache directory
+  file:
+    path: /etc/kubernetes/plugins/dns-cache
+    state: directory
+
+- name: Copy dns-cache file
+  template:
+    src: nodelocaldns.yaml.j2
+    dest: /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml
+
+- name: Deploy dns-cache ds
+  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml"
+
+- block:
+    - name: Modify the kubelet config file
+      lineinfile:
+        path: "/var/lib/kubelet/config.yaml"
+        regexp: '{{ kube_dns_clusterip }}'
+        line: "{{ pillar_local_dns }}"
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups['all'] }}"
+
+    - name: Restart kubelet
+      service:
+        name: kubelet
+        state: restarted
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups['all'] }}"
+  when: kube_proxy_mode == "ipvs"

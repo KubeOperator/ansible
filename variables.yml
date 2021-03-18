@@ -10,6 +10,8 @@ npd_versioon: "v0.8.1"
 # ----------------------- 容器镜像地址 ---------------------
 # coredns
 coredns_image_name: "{{ dns_repository_hostname }}:{{ registry_port }}/coredns"
+# dns-cache
+dns_cache_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/k8s-dns-node-cache:{{ dns_cache_version }}"
 # Pod image 地址
 pod_infra_container_image: "k8s.gcr.io/pause:{{ pause_version }}"
 # 基础容器 image 地址
