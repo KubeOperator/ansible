@@ -9,7 +9,7 @@
 - hosts: kube-master[0]
   gather_facts: false
   roles:
-  - { role: plugin/dns-cache, when: "enable_dns_cache == 'enable'" }
+  - { role: plugins/dns-cache, when: "enable_dns_cache == 'enable'" }
 
 - hosts: kube-master[0]
   gather_facts: false

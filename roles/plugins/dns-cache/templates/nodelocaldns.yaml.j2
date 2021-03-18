@@ -48,7 +48,7 @@ data:
         }
         reload
         loop
-        bind {{ pillar_local_dns }} {{ kube_dns_clusterip }}
+        bind {{ pillar_local_dns }} {{ kube_dns_clusterip.stdout }}
         forward . __PILLAR__CLUSTER__DNS__ {
                 force_tcp
         }
@@ -60,7 +60,7 @@ data:
         cache 30
         reload
         loop
-        bind {{ pillar_local_dns }} {{ kube_dns_clusterip }}
+        bind {{ pillar_local_dns }} {{ kube_dns_clusterip.stdout }}
         forward . __PILLAR__CLUSTER__DNS__ {
                 force_tcp
         }
@@ -71,7 +71,7 @@ data:
         cache 30
         reload
         loop
-        bind {{ pillar_local_dns }} {{ kube_dns_clusterip }}
+        bind {{ pillar_local_dns }} {{ kube_dns_clusterip.stdout }}
         forward . __PILLAR__CLUSTER__DNS__ {
                 force_tcp
         }
@@ -82,7 +82,7 @@ data:
         cache 30
         reload
         loop
-        bind {{ pillar_local_dns }} {{ kube_dns_clusterip }}
+        bind {{ pillar_local_dns }} {{ kube_dns_clusterip.stdout }}
         forward . __PILLAR__UPSTREAM__SERVERS__
         prometheus :9253
         }
@@ -129,7 +129,7 @@ spec:
           requests:
             cpu: 25m
             memory: 5Mi
-        args: [ "-localip", "{{ pillar_local_dns }},{{ kube_dns_clusterip }}", "-conf", "/etc/Corefile", "-upstreamsvc", "kube-dns-upstream" ]
+        args: [ "-localip", "{{ pillar_local_dns }},{{ kube_dns_clusterip.stdout }}", "-conf", "/etc/Corefile", "-upstreamsvc", "kube-dns-upstream" ]
         securityContext:
           privileged: true
         ports:

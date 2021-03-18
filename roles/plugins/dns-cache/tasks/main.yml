@@ -19,8 +19,8 @@
     - name: Modify the kubelet config file
       lineinfile:
         path: "/var/lib/kubelet/config.yaml"
-        regexp: '{{ kube_dns_clusterip }}'
-        line: "{{ pillar_local_dns }}"
+        regexp: '- {{ kube_dns_clusterip.stdout }}'
+        line: "- {{ pillar_local_dns }}"
       delegate_to: "{{ item }}"
       with_items: "{{ groups['all'] }}"
 
