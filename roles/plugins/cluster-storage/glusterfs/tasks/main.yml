@@ -1,0 +1,7 @@
+- name: "Install glusterfs mount utils"
+  become: true
+  yum:
+    name:
+    - glusterfs
+    - glusterfs-fuse
+    state: "present"

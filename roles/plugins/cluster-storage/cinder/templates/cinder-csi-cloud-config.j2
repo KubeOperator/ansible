@@ -1,0 +1,18 @@
+[Global]
+auth-url = "{{ cinder_auth_url }}"
+username = "{{ cinder_username }}"
+password = "{{ cinder_password }}"
+region = "{{ cinder_region }}"
+tenant-name = "{{ cinder_tenant_name }}"
+domain-name = "{{ cinder_domain_name }}"
+
+[BlockStorage]
+{% if cinder_blockstorage_version is defined %}
+bs-version={{ cinder_blockstorage_version }}
+{% endif %}
+{% if node_volume_attach_limit is defined and node_volume_attach_limit != "" %}
+node-volume-attach-limit="{{ node_volume_attach_limit }}"
+{% endif %}
+
+[Metadata]
+search-order = metadataService,configDrive
