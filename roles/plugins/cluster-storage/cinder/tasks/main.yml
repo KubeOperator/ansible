@@ -1,42 +1,42 @@
-- name: vSphere | Prepare vSphere directory
-  file:
-    name: "{{ kube_config_dir }}/plugins/storage-plugin/cinder"
-    state: directory
+- block:
+  - name: vSphere | Prepare vSphere directory
+    file:
+      name: "{{ kube_config_dir }}/plugins/storage-plugin/cinder"
+      state: directory
 
-- name: Cinder | Generate Cinder cloud-config
-  template:
-    src: "cinder-csi-cloud-config.j2"
-    dest: "{{ kube_config_dir }}/plugins/storage-plugin/cinder/cinder_cloud_config"
-    mode: 0640
+  - name: Cinder | Generate Cinder cloud-config
+    template:
+      src: "cinder-csi-cloud-config.j2"
+      dest: "{{ kube_config_dir }}/plugins/storage-plugin/cinder/cinder_cloud_config"
+      mode: 0640
 
-- name: Cinder | Get base64 cloud-config
-  slurp:
-    src: "{{ kube_config_dir }}/plugins/storage-plugin/cinder/cinder_cloud_config"
-  register: cloud_config_secret
-  tags: cinder-csi-driver
+  - name: Cinder | Get base64 cloud-config
+    slurp:
+      src: "{{ kube_config_dir }}/plugins/storage-plugin/cinder/cinder_cloud_config"
+    register: cloud_config_secret
+    tags: cinder-csi-driver
 
-- name: Cinder | Generate Manifests
-  template:
-    src: "{{ item.file }}.j2"
-    dest: "{{ kube_config_dir }}/plugins/storage-plugin/cinder/{{ item.file }}"
-  with_items:
-    - {name: cinder-csi-driver, file: cinder-csi-driver.yml}
-    - {name: cinder-csi-cloud-config-secret, file: cinder-csi-cloud-config-secret.yml}
-    - {name: cinder-csi-controllerplugin, file: cinder-csi-controllerplugin-rbac.yml}
-    - {name: cinder-csi-controllerplugin, file: cinder-csi-controllerplugin.yml}
-    - {name: cinder-csi-nodeplugin, file: cinder-csi-nodeplugin-rbac.yml}
-    - {name: cinder-csi-nodeplugin, file: cinder-csi-nodeplugin.yml}
-    - {name: cinder-csi-poddisruptionbudget, file: cinder-csi-poddisruptionbudget.yml}
-  register: cinder_csi_manifests
+  - name: Cinder | Generate Manifests
+    template:
+      src: "{{ item.file }}.j2"
+      dest: "{{ kube_config_dir }}/plugins/storage-plugin/cinder/{{ item.file }}"
+    with_items:
+      - {name: cinder-csi-driver, file: cinder-csi-driver.yml}
+      - {name: cinder-csi-cloud-config-secret, file: cinder-csi-cloud-config-secret.yml}
+      - {name: cinder-csi-controllerplugin, file: cinder-csi-controllerplugin-rbac.yml}
+      - {name: cinder-csi-controllerplugin, file: cinder-csi-controllerplugin.yml}
+      - {name: cinder-csi-nodeplugin, file: cinder-csi-nodeplugin-rbac.yml}
+      - {name: cinder-csi-nodeplugin, file: cinder-csi-nodeplugin.yml}
+      - {name: cinder-csi-poddisruptionbudget, file: cinder-csi-poddisruptionbudget.yml}
+    register: cinder_csi_manifests
 
-- name: Cinder CSI Driver | Apply Manifests
-  kube:
-    kubectl: "{{ bin_dir }}/kubectl"
-    filename: "{{ kube_config_dir }}/plugins/storage-plugin/cinder/{{ item.item.file }}"
-    state: "latest"
-  with_items:
+  - name: Cinder CSI Driver | Apply Manifests
+    shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/cinder/{{ item.item.file }}"
+    with_items:
     - "{{ cinder_csi_manifests.results }}"
-  when:
+    when:
     - not item is skipped
-  loop_control:
-    label: "{{ item.item.file }}"
+    loop_control:
+      label: "{{ item.item.file }}"
+  when:
+  - architectures == 'amd64'

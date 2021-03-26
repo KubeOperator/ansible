@@ -7,7 +7,7 @@ tenant-name = "{{ cinder_tenant_name }}"
 domain-name = "{{ cinder_domain_name }}"
 
 [BlockStorage]
-{% if cinder_blockstorage_version is defined %}
+{% if cinder_blockstorage_version is defined and cinder_blockstorage_version != "" %}
 bs-version={{ cinder_blockstorage_version }}
 {% endif %}
 {% if node_volume_attach_limit is defined and node_volume_attach_limit != "" %}
