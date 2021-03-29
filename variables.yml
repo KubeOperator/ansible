@@ -28,6 +28,9 @@ calico_pod2daemon_flexvol_image: "{{ dns_repository_hostname }}:{{ registry_port
 calicoctl_image: "{{ dns_repository_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}"
 # flannel image 地址
 flannel_image: "{{ dns_repository_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}"
+# cilium image 地址
+cilium_image: "{{ dns_repository_hostname }}:{{ registry_port }}/cilium/cilium:{{ cilium_version }}"
+cilium_operator_image: "{{ dns_repository_hostname }}:{{ registry_port }}/cilium/operator-generic:{{ cilium_version }}"
 # ingress-controller 镜像地址
 nginx_ingress_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubernetes-ingress-controller/nginx-ingress-controller:{{ nginx_ingress_version }}"
 traefik_ingress_image: "{{ dns_repository_hostname }}:{{ registry_port }}/traefik:{{ traefik_ingress_version }}"

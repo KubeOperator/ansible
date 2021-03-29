@@ -1,0 +1,6 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-cinder-sc
+provisioner: cinder.csi.openstack.org
+allowVolumeExpansion: true

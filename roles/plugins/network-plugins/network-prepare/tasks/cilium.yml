@@ -1,0 +1,16 @@
+- name: Converts kernel versions to floating point numbers
+  set_fact:
+     KERNEL_VER: "{{ ansible_kernel.split('-')[0].split('.')[0]|int + ansible_kernel.split('-')[0].split('.')[1]|int/100 }}"
+
+- name: Check the kernel version
+  fail: msg="kernel {{ ansible_kernel }} is too old for cilium installing"
+  when: "KERNEL_VER|float < 4.8.0"
+
+- block:
+  - name: Copy loopback file
+    copy:
+      src: "{{ cni_bin_dir }}/loopback"
+      dest: "{{ bin_dir }}/"
+      remote_src: yes
+      mode: "0755"
+  when: container_runtime == 'containerd'

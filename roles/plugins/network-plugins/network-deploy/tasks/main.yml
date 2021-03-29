@@ -3,3 +3,6 @@
 
 - include_tasks: calico.yml
   when: network_plugin == 'calico'
+
+- include_tasks: cilium.yml
+  when: network_plugin == 'cilium'

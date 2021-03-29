@@ -1,17 +1,14 @@
 - name: CNI | Create cni directory
   file: name=/etc/cni/net.d state=directory
-  
 
 - name: CNI | Create cni manifests directory
   file: name=/etc/kubernetes/plugins/network-plugin state=directory
 
 - name: CNI | Create cni directory
   file: name="{{ cni_bin_dir }}" state=directory
-  
 
 - name: CNI | Create cni directory
   file: name="{{ base_dir }}/cni" state=directory
-  
 
 - name: CNI | Download cni plugins
   get_url:
@@ -31,3 +28,6 @@
 
 - include_tasks: calico.yml
   when: network_plugin == 'calico'
+
+- include_tasks: cilium.yml
+  when: network_plugin == 'cilium'
