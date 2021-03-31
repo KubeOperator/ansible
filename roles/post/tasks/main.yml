@@ -19,6 +19,7 @@
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd-
+    ignore_errors: true
 
   - name: Setup master node role
     shell: >

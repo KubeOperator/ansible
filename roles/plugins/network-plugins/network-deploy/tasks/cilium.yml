@@ -10,11 +10,11 @@
   - name: Read cilium-cni file
     shell: "ls {{ cni_bin_dir}} | grep cilium-cni"
     register: cilium_cni_status
-    until: '"cilium-cni" in calico_status.stdout'
+    until: '"cilium-cni" in cilium_cni_status.stdout'
     retries: 10
     delay: 5
 
-  - name: Copy calico file
+  - name: Copy cilium file
     copy:
       src: "{{ cni_bin_dir}}/cilium-cni"
       dest: "{{ bin_dir }}/"

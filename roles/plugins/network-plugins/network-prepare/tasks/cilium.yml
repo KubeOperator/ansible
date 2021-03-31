@@ -2,9 +2,9 @@
   set_fact:
      KERNEL_VER: "{{ ansible_kernel.split('-')[0].split('.')[0]|int + ansible_kernel.split('-')[0].split('.')[1]|int/100 }}"
 
-- name: Check the kernel version
+- name: Check the kernel version > 4.9
   fail: msg="kernel {{ ansible_kernel }} is too old for cilium installing"
-  when: "KERNEL_VER|float < 4.8.0"
+  when: "KERNEL_VER|float <= 4.09"
 
 - block:
   - name: Copy loopback file
