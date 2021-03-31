@@ -121,8 +121,12 @@ data:
 
   enable-xt-socket-fallback: "true"
   install-iptables-rules: "true"
-
+{% if cilium_tunnel_mode == "disabled" %}
+  auto-direct-node-routes: "true"
+  native-routing-cidr: {{ cilium_native_routing_cidr }}
+{% else %}
   auto-direct-node-routes: "false"
+{% endif %}
   enable-bandwidth-manager: "false"
   enable-local-redirect-policy: "false"
   kube-proxy-replacement:  "probe"
