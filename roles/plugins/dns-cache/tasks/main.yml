@@ -1,5 +1,5 @@
 - name: Get ClusterIP of kube-dns
-  shell: "{{ bin_dir }}/kubectl get svc -n kube-system | grep kube-dns | awk '{ print $3 }'"
+  shell: "{{ bin_dir }}/kubectl get svc -n kube-system | grep kube-dns | grep -v upstream | awk '{ print $3 }'"
   register: kube_dns_clusterip
 
 - name: Create dns-cache directory
