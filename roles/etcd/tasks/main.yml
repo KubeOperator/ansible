@@ -33,7 +33,6 @@
   lineinfile:
     dest: "/etc/bashrc"
     line: 'export ETCD_UNSUPPORTED_ARCH=arm64'
-    remote_src: yes
   when: architectures == "arm64"
 
 - name: Create etcd systemd unit file
