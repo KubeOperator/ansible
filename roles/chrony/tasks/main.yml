@@ -22,7 +22,7 @@
       name: chronyd
       state: restarted
       enabled: yes
-  when: 'inventory_hostname == groups.chrony[0]'
+  when: inventory_hostname == groups['chrony'][0]
 
 - block:
   - name: Config chrony client
