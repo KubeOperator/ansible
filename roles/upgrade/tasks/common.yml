@@ -1,7 +1,30 @@
-- name: Remove unwanted parameters
+- name: Confirm kubeadm version
+  command: "{{ bin_dir }}/kubeadm version -o short"
+  register: kubeadm_version_output
+
+- name: Setup kubeadm api version to v1beta1
+  set_fact:
+    kubeadmConfig_api_version: v1beta1
+  when:
+  - kubeadm_version_output.stdout is version('v1.13.0', '>=')
+  - kubeadm_version_output.stdout is version('v1.15.0', '<')
+
+- name: Setup kubeadm api version to v1beta2
+  set_fact:
+    kubeadmConfig_api_version: v1beta2
+  when:
+  - kubeadm_version_output.stdout is version('v1.15.0', '>=')
+
+- name: Remove unused parameters iptables.max
   lineinfile:
     path: /etc/kubernetes/kubeadm-config.yaml
     regexp: 'max:'
+    state: absent
+
+- name: Remove unused parameters resourceContainer
+  lineinfile:
+    path: /etc/kubernetes/kubeadm-config.yaml
+    regexp: 'resourceContainer:'
     state: absent
 
 - name: Upgrade kubeadm config version
@@ -15,6 +38,7 @@
     {{ bin_dir }}/kubeadm config migrate
     --old-config=/etc/kubernetes/kubeadm-config.yaml
     --new-config=/etc/kubernetes/kubeadm-config.yaml
+  when: kubeadmConfig_api_version != "v1beta2"
 
 - name: "Upgrade the first master node: {{ inventory_hostname }} to {{ kube_upgrade_version }}"
   shell: >
