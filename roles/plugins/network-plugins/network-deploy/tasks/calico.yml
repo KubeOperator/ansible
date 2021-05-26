@@ -32,6 +32,23 @@
       dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   when: calico_version == "v3.16.5"
 
+- block:
+  - name: Calico | Copy calico crds file
+    template:
+      src: calico/crds-v3.18.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/crds.yaml
+
+  - name: Calico | Copy calico typha file
+    template:
+      src: calico/calico-typha-v3.18.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+
+  - name: Calico | Copy calico daemonset file
+    template:
+      src: calico/calicoctl-daemonset-v3.18.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  when: calico_version == "v3.18.4"
+
 - name: Calico | Deploy calico crds
   shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml"
 
