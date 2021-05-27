@@ -9,8 +9,15 @@
 
 - name: Copy dns-cache file
   template:
-    src: nodelocaldns.yaml.j2
+    src: iptables.yaml.j2
     dest: /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml
+  when: kube_proxy_mode == "iptables"
+
+- name: Copy dns-cache file
+  template:
+    src: ipvs.yaml.j2
+    dest: /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml
+  when: kube_proxy_mode == "ipvs"
 
 - name: Deploy dns-cache ds
   shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml"
