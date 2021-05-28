@@ -61,11 +61,6 @@
 - hosts: kube-master[0]
   gather_facts: false
   roles:
-  - plugins/npd
-
-- hosts: kube-master[0]
-  gather_facts: false
-  roles:
   - plugins/metrics-server
 
 - hosts: kube-master[0]
@@ -80,6 +75,11 @@
   gather_facts: false
   roles:
   - post
+
+- hosts: kube-master[0]
+  gather_facts: false
+  roles:
+  - { role: plugins/dns-cache, when: "enable_dns_cache == 'enable'" }
 
 - hosts: kube-master[0]
   gather_facts: false
