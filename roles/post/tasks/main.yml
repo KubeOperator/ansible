@@ -57,12 +57,3 @@
     shell: " {{ bin_dir }}/kubectl get namespaces | grep kube-operator || {{ bin_dir }}/kubectl create namespace kube-operator"
   run_once: true
   delegate_to: "{{ groups['kube-master'][0] }}"
-
-- name: Create node Gpu label
-  shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} hasGpu=yes --overwrite"
-  delegate_to: "{{ groups['kube-master'][0] }}"
-  when:
-  - container_runtime == 'docker'
-  - has_gpu is defined
-  - has_gpu
-  - support_gpu == 'enable'

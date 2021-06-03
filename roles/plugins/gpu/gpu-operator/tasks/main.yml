@@ -1,0 +1,22 @@
+- block:
+  - name: Copy GPU Operator chart
+    copy: src=gpu-operator-v1.7.0.tgz dest={{ base_dir }}/ mode=0644
+
+  - name: GPU| Create NVIDIA GPU Operator
+    shell: "helm install --wait --generate-name  {{ base_dir }}/gpu-operator-v1.7.0.tgz \
+            --set toolkit.version=1.4.7-ubi8 \
+            --set operator.defaultRuntime=docker \
+            --set validator.repository=registry.kubeoperator.io:8082/kubeoperator \
+            --set operator.repository=registry.kubeoperator.io:8082/kubeoperator \
+            --set operator.initContainer.repository=registry.kubeoperator.io:8082/kubeoperator \
+            --set driver.repository=registry.kubeoperator.io:8082/kubeoperator \
+            --set toolkit.repository=registry.kubeoperator.io:8082/kubeoperator \
+            --set devicePlugin.repository=registry.kubeoperator.io:8082/kubeoperator \
+            --set dcgmExporter.repository=registry.kubeoperator.io:8082/kubeoperator \
+            --set gfd.repository=registry.kubeoperator.io:8082/kubeoperator \
+            --set migManager.repository=registry.kubeoperator.io:8082/kubeoperator \
+            --set migManager.repository=registry.kubeoperator.io:8082/kubeoperator"
+    delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - container_runtime == 'docker'
+    - support_gpu == 'enable'
