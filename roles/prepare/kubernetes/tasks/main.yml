@@ -37,6 +37,13 @@
 
 - name: Create kubelet params file
   template: src=kubelet.config.j2 dest=/etc/sysconfig/kubelet
+  when:
+    - ansible_distribution in ["CentOS","RedHat","EulerOS"]
+
+- name: Create kubelet params file
+  template: src=kubelet.config.j2 dest=/etc/default/kubelet
+  when:
+    - ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - name: Enable kubelet serivce
   shell: systemctl enable kubelet

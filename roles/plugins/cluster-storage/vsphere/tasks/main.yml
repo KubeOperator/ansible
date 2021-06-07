@@ -22,7 +22,7 @@
       state: absent
 
   - name: vSphere | Install jq
-    yum:
+    package:
       name:
       - jq
 

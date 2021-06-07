@@ -1,15 +1,20 @@
+#- name: Remove ntp
+#  shell: 'yum remove -y ntp'
+#  args:
+#    warn: false
+#  ignore_errors: true
 - name: Remove ntp
-  shell: 'yum remove -y ntp'
-  args:
-    warn: false
+  package:
+    name:
+      - ntp
+    state: absent
   ignore_errors: true
 
 - name: Install chrony
-  yum:
+  package:
     name:
       - chrony
     state: present
-    update_cache: yes
 
 - block:
   - name: Setup chrony server
@@ -22,6 +27,14 @@
       name: chronyd
       state: restarted
       enabled: yes
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+
+  - name:  chrony server
+    service:
+      name: chrony
+      state: restarted
+      enabled: yes
+    when: ansible_distribution in [ 'Ubuntu','Debian' ]
   when: inventory_hostname == groups['chrony'][0]
 
 - block:
@@ -35,7 +48,14 @@
       name: chronyd
       state: restarted
       enabled: yes
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
+  - name: Start chrony client
+    service:
+      name: chrony
+      state: restarted
+      enabled: yes
+    when: ansible_distribution in [ 'Ubuntu','Debian' ]
   - name: Active sync time
     shell: "chronyc -a makestep"
   when: 'inventory_hostname != groups.chrony[0]'

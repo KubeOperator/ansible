@@ -1,9 +1,8 @@
 - name: Install haproxy
-  yum:
+  package:
     name:
       - haproxy
     state: present
-    update_cache: yes
 
 - name: Create haproxy directory
   file: name=/etc/haproxy state=directory

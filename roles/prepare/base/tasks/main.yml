@@ -1,9 +1,13 @@
 # 公共系统参数设置
 - include_tasks: common.yml
 
-# 系统基础软件环境
+# CentOS 系列|系统基础软件环境
 - include_tasks: centos.yml
   when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+
+# Debian 系列|系统基础软件环境
+- include_tasks: debian.yml
+  when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - name: Prepare some directory
   file: name={{ item }} state=directory

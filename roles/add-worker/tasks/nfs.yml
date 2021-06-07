@@ -1,9 +1,8 @@
 - name: NFS | install nfs-utils
-  yum:
+  package:
     name:
       - nfs-utils
     state: present
-    update_cache: yes
 
 - block:
     - name: NFS| set defaultvers

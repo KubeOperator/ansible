@@ -1,10 +1,9 @@
 - block:
   - name: OceanStor | Install iscsi-initiator-utils
-    yum:
+    package:
       name:
       - iscsi-initiator-utils
       state: present
-      update_cache: yes
 
   - name: OceanStor | Enable iscsi service
     service:
@@ -13,20 +12,18 @@
   when: oceanstor_type == "iscsi"
 
 - name: OceanStor | Install nfs-utils
-  yum:
+  package:
     name:
     - nfs-utils
     state: present
-    update_cache: yes
   when: oceanstor_type == "nfs"
 
 - name: OceanStor | Install multipath
-  yum:
+  package:
     name:
     - device-mapper
     - device-mapper-multipath
     state: present
-    update_cache: yes
   when:
   - oceanstor_is_multipath == "yes"
   - oceanstor_type != "nfs"

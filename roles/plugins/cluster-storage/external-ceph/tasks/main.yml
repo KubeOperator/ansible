@@ -1,10 +1,9 @@
 - block:
   - name: Ceph | Install ceph-common
-    yum:
+    package:
       name:
         - ceph-common
       state: present
-      update_cache: yes
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
 
