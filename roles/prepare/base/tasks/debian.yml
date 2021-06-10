@@ -1,3 +1,7 @@
+- name: Run "apt-get update"
+  apt:
+    update_cache: yes
+
 - name: Status firewalld
   shell: >
     systemctl status ufw | grep active || echo "not be found"
@@ -10,7 +14,7 @@
     enabled: no
   when: '"active" in ufw_already_installed.stdout'
 
-- name: Debian | Install base rpm package
+- name: Debian | Install base package
   package:
     name:
     - conntrack
@@ -22,7 +26,7 @@
     - sshpass
     state: latest
 
-- name: Debian | Install ipvs rpm package
+- name: Debian | Install ipvs  package
   package:
     name:
     - ipset
