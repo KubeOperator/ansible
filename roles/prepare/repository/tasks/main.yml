@@ -86,9 +86,6 @@
         src: ubuntu_sources.amd64.j2
         dest: /etc/apt/sources.list
       when: architectures == 'amd64'
-
-    - name: Debian | update repository
-      shell: "apt-get update"
     when:
       - ansible_distribution in [ 'Ubuntu','Debian' ]
   when:

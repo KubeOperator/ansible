@@ -1,8 +1,3 @@
-#- name: Remove ntp
-#  shell: 'yum remove -y ntp'
-#  args:
-#    warn: false
-#  ignore_errors: true
 - name: Remove ntp
   package:
     name:
@@ -22,14 +17,14 @@
       src: server-centos.conf.j2
       dest: /etc/chrony.conf
 
-  - name:  chrony server
+  - name:  CentOS | chrony server
     service:
       name: chronyd
       state: restarted
       enabled: yes
     when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
-  - name:  chrony server
+  - name:  Debian | chrony server
     service:
       name: chrony
       state: restarted
@@ -56,6 +51,12 @@
       state: restarted
       enabled: yes
     when: ansible_distribution in [ 'Ubuntu','Debian' ]
+
+  - name: Distribute ntp
+    shell: "chronyc ntpdata"
+
   - name: Active sync time
     shell: "chronyc -a makestep"
+    when: ansible_user == "root"
   when: 'inventory_hostname != groups.chrony[0]'
+
