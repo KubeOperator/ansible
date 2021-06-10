@@ -16,7 +16,7 @@
 
   - name: Amd64 | Modify EulerOS haproxy.service
     template:
-      src: haproxy/haproxy.service.j2
+      src: haproxy/haproxy-centos.service.j2
       dest: /usr/lib/systemd/system/haproxy.service
     when: architectures == 'amd64'
   when: ansible_distribution in [ 'EulerOS' ]
@@ -24,9 +24,16 @@
 - block:
   - name: Modify haproxy.service
     template:
-      src: haproxy/haproxy.service.j2
+      src: haproxy/haproxy-centos.service.j2
       dest: /usr/lib/systemd/system/haproxy.service
   when: ansible_distribution in [ 'CentOS','RedHat' ]
+
+- block:
+    - name: Modify haproxy.service
+      template:
+        src: haproxy/haproxy-ubuntu.service.j2
+        dest: /usr/lib/systemd/system/haproxy.service
+  when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - name: Configuration haproxy
   template:
@@ -40,9 +47,10 @@
 - name: Enable haproxy service
   service:
     name: haproxy
+    state: restarted
     enabled: yes
-
-- name: Start haproxy service
-  service:
-    name: haproxy
-    state: started
+#
+#- name: Start haproxy service
+#  service:
+#    name: haproxy
+#    state: started
