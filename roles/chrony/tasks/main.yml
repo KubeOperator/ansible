@@ -10,6 +10,31 @@
     name:
       - chrony
     state: present
+  when: ansible_distribution != "Ubuntu" or ansible_distribution_major_version|int > 16
+
+
+- block:
+  - name: Create chrony download directory
+    file:
+      name: "{{ base_dir }}/chrony"
+      state: directory
+
+  - name: Download chrony package
+    get_url:
+      validate_certs: no
+      url: "{{ chrony_download_url }}"
+      dest: "{{ base_dir }}/chrony"
+      timeout: "{{ download_timeout_online }}"
+
+  - name: Unarchive chrony package
+    unarchive:
+      src: "{{ base_dir }}/chrony/chrony_xenial.tar.gz"
+      dest: "{{ base_dir }}/chrony"
+      remote_src: yes
+
+  - name: Install chrony
+    shell: "dpkg -i {{ base_dir }}/chrony/*.deb"
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int < 18
 
 - block:
   - name: Setup chrony server
@@ -24,7 +49,7 @@
       enabled: yes
     when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
-  - name:  Debian | chrony server
+  - name:  Debian | start chrony server
     service:
       name: chrony
       state: restarted
@@ -52,8 +77,8 @@
       enabled: yes
     when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
-  - name: Distribute ntp
-    shell: "chronyc ntpdata"
+  - name: Calibration time server
+    shell: "chronyc tracking"
 
   - name: Active sync time
     shell: "chronyc -a makestep"
