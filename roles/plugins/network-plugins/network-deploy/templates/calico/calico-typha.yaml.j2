@@ -555,6 +555,10 @@ spec:
             # Specify the network adapter
             - name: IP_AUTODETECTION_METHOD
               value: interface={{ network_interface }}
+{% elif network_cidr != "" %}
+            # Specify the network adapter
+            - name: IP_AUTODETECTION_METHOD
+              value: cidr={{ network_interface }}
 {% endif %}
             # Typha support: controlled by the ConfigMap.
             - name: FELIX_TYPHAK8SSERVICENAME
