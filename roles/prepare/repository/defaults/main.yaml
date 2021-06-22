@@ -1,0 +1,2 @@
+# ubuntu apt版本
+ubuntu_apt_url: "{% if architectures == 'amd64' %}ubuntu{% else %}ubuntu-ports{% endif %}"

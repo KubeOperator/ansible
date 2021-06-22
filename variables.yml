@@ -149,4 +149,4 @@ helm2_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ 
 helm3_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/helm/{{ helm_v3_version }}/helm-{{ helm_v3_version }}-linux-{{ architectures }}.tar.gz"
 
 # ----------------------- chrony 下载地址 --------------------
-chrony_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/chrony/chrony_xenial.tar.gz"
+chrony_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/chrony/{{ architectures }}/chrony_xenial.tar.gz"

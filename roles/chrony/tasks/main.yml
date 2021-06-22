@@ -14,25 +14,25 @@
 
 
 - block:
-  - name: Create chrony download directory
+  - name: Create chrony download directory ('Ubuntu major version' < 18)
     file:
       name: "{{ base_dir }}/chrony"
       state: directory
 
-  - name: Download chrony package
+  - name: Download chrony package ('Ubuntu major version' < 18)
     get_url:
       validate_certs: no
       url: "{{ chrony_download_url }}"
       dest: "{{ base_dir }}/chrony"
       timeout: "{{ download_timeout_online }}"
 
-  - name: Unarchive chrony package
+  - name: Unarchive chrony package ('Ubuntu major version' < 18)
     unarchive:
       src: "{{ base_dir }}/chrony/chrony_xenial.tar.gz"
       dest: "{{ base_dir }}/chrony"
       remote_src: yes
 
-  - name: Install chrony
+  - name: Install chrony ('Ubuntu major version' < 18)
     shell: "dpkg -i {{ base_dir }}/chrony/*.deb"
   when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int < 18
 

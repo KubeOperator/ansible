@@ -1,6 +1,12 @@
 - name: Run "apt-get update"
-  apt:
-    update_cache: yes
+  shell: "apt-get update -y && apt-get autoremove -y"
+
+
+- name: Install Python-apt （'Ubuntu Magjor Version' = 18）
+  shell: "apt-get install python-apt -y"
+  when:
+    - ansible_distribution == "Ubuntu"
+    - ansible_distribution_major_version == "18"
 
 - name: Status firewalld
   shell: >
@@ -19,7 +25,7 @@
     name:
     - conntrack
     - bash-completion
-    - libseccomp-dev
+    - libseccomp2
     - psmisc
     - rsync
     - socat

@@ -81,11 +81,10 @@
     - ansible_distribution in [ 'EulerOS' ]
 
   - block:
-    - name: Debian | Add amd64 offline repository
+    - name: Debian | Add apt offline repository
       template:
-        src: ubuntu_sources.amd64.j2
+        src: ubuntu_sources.j2
         dest: /etc/apt/sources.list
-      when: architectures == 'amd64'
     when:
       - ansible_distribution in [ 'Ubuntu','Debian' ]
   when:
