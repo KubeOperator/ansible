@@ -16,7 +16,7 @@
   with_items:
   - "{{ base_dir }}"
 
-- name: Download docker file(>= 18.09.x)
+- name: Download the Docker binaries
   get_url:
     validate_certs: no
     url: "{{ docker_download_url }}"
@@ -24,14 +24,21 @@
     timeout: "{{ download_timeout_online }}"
   tags: upgrade
 
-- name: Unarchive docker file(>= 18.09.x)
+- name: Unarchive the Docker binaries
   unarchive:
     src: "{{ base_dir }}/docker-{{ docker_version }}.tgz"
     dest: "{{ base_dir }}/"
     remote_src: yes
   tags: upgrade
 
-- name: Copy the docker file to env
+- name: Converts Docker version information to a floating point number
+  set_fact:
+    DOCKER_VER: "{{ docker_version.split('.')[0]|int + docker_version.split('.')[1]|int/100 }}"
+  connection: local
+  run_once: true
+  tags: upgrade
+
+- name: Copy the docker file to env(>= 18.09.x)
   copy:
     src: "{{ base_dir}}/docker/{{ item }}"
     dest: "{{ bin_dir }}/"
@@ -47,7 +54,19 @@
   - dockerd
   - docker-proxy
   tags: upgrade
-   
+  when: "DOCKER_VER|float >= 18.09"
+
+- name: Copy the docker file to env(>= 20.10.x)
+  copy:
+    src: "{{ base_dir}}/docker/{{ item }}"
+    dest: "{{ bin_dir }}/"
+    remote_src: yes
+    mode: "0755"
+  with_items:
+  - containerd-shim-runc-v2
+  tags: upgrade
+  when: "DOCKER_VER|float >= 20.10"
+
 - name: Setup docker command completion
   copy: src=docker dest=/etc/bash_completion.d/docker mode=0644
 
