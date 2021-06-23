@@ -1,5 +1,5 @@
 - name: Run "apt-get update"
-  shell: "apt-get update -y && apt-get autoremove -y"
+  shell: "apt-get update -y"
 
 
 - name: Install Python-apt （'Ubuntu Magjor Version' = 18）
