@@ -1,10 +1,10 @@
-deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic main restricted universe multiverse
-deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic-security main restricted universe multiverse
-deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic-updates main restricted universe multiverse
-# deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic-proposed main restricted universe multiverse
-# deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic-backports main restricted universe multiverse
-deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic main restricted universe multiverse
-deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic-security main restricted universe multiverse
-deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic-updates main restricted universe multiverse
-# deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic-proposed main restricted universe multiverse
-# deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} bionic-backports main restricted universe multiverse
+deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }} main restricted universe multiverse
+# deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }}-security main restricted universe multiverse
+deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }}-updates main restricted universe multiverse
+# deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }}-proposed main restricted universe multiverse
+deb {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }}-backports main restricted universe multiverse
+# deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }} main restricted universe multiverse
+# deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }}-security main restricted universe multiverse
+# deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }}-updates main restricted universe multiverse
+# deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }}-proposed main restricted universe multiverse
+# deb-src {{ registry_protocol }}://{{ registry_hostname }}:{{ repo_port }}/repository/{{ ubuntu_apt_url }} {{ ubuntu_version }}-backports main restricted universe multiverse
