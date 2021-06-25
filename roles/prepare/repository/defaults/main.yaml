@@ -1,3 +1,3 @@
 # ubuntu apt版本
-ubuntu_apt_url: "{% if architectures == 'amd64' %}ubuntu{% else %}ubuntu-ports{% endif %}"
+ubuntu_apt_url: "{% if architectures == 'amd64' %}apt-proxy{% else %}apt-proxy-arm64{% endif %}"
 ubuntu_version: "{% if ansible_distribution_major_version == '20' %}focal{% elif ansible_distribution_major_version == '18' %}bionic{% elif ansible_distribution_major_version == '16' %}xenial{% endif %}"
