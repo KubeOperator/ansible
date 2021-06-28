@@ -10,8 +10,7 @@
       - chrony
     state: present
     update_cache: yes
-  when:
-    - ansible_distribution in [ 'CentOS','RedHat' ]
+  when: ansible_distribution in [ 'CentOS','RedHat' ]
 
 - block:
   - name: EulerOS amd64 | Install chrony
@@ -20,8 +19,7 @@
         - chrony
       state: present
       update_cache: yes
-    when:
-      - architectures == 'amd64'
+    when: architectures == 'amd64'
 
   - name: EulerOS arm64 | Install chrony
     dnf:
@@ -29,26 +27,8 @@
         - chrony
       state: present
       update_cache: yes
-    when:
-      - architectures == 'arm64'
+    when: architectures == 'arm64'
   when: ansible_distribution in [ 'EulerOS' ]
-
-- name: amd64 | Install chrony
-  yum:
-    name:
-      - chrony
-    state: present
-    update_cache: yes
-
-- name: arm64 | Install chrony
-  dnf:
-    name:
-      - chrony
-    state: present
-    update_cache: yes
-  when:
-    - architectures == 'arm64'
-    - ansible_distribution in [ 'EulerOS' ]
 
 - block:
   - name: Setup chrony server

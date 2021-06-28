@@ -21,23 +21,7 @@
     - socat
     - sshpass
     state: latest
-  when:
-    - architectures != 'arm64'
-    - ansible_distribution != 'EulerOS'
-
-- name: arm64 | Install base rpm package
-  dnf:
-    name:
-      - conntrack-tools
-      - bash-completion
-      - libseccomp
-      - psmisc
-      - rsync
-      - socat
-      - sshpass
-    state: latest
-  when:
-    - ansible_distribution in [ 'CentOS','RedHat' ]
+  when: ansible_distribution in [ 'CentOS','RedHat' ]
 
 - block:
   - name: EulerOS amd64 | Install base rpm package
@@ -52,8 +36,7 @@
         - sshpass
       state: present
       update_cache: yes
-    when:
-      - architectures == 'amd64'
+    when: architectures == 'amd64'
 
   - name: EulerOS arm64 | Install base rpm package
     dnf:
@@ -67,8 +50,7 @@
         - sshpass
       state: present
       update_cache: yes
-    when:
-      - architectures == 'arm64'
+    when: architectures == 'arm64'
   when: ansible_distribution in [ 'EulerOS' ]
 
 - name: Install ipvs rpm package
@@ -77,7 +59,30 @@
     - ipset
     - ipvsadm
     state: latest
-  when: kube_proxy_mode == "ipvs"
+    update_cache: yes
+  when:
+  - kube_proxy_mode == "ipvs"
+  - ansible_distribution in [ 'CentOS','RedHat' ]
+
+- block:
+  - name: EulerOS amd64 | Install ipvs rpm package
+    yum:
+      name:
+        - ipset
+        - ipvsadm
+      state: present
+      update_cache: yes
+    when: architectures == 'amd64'
+
+  - name: EulerOS arm64 | Install ipvs rpm package
+    dnf:
+      name:
+        - ipset
+        - ipvsadm
+      state: present
+      update_cache: yes
+    when: architectures == 'arm64'
+  when: ansible_distribution in [ 'EulerOS' ]
 
 - name: Temp stop selinux
   shell: "setenforce 0"
