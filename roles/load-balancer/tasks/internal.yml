@@ -4,6 +4,28 @@
       - haproxy
     state: present
     update_cache: yes
+  when:
+    - ansible_distribution in [ 'CentOS','RedHat' ]
+
+- block:
+  - name: EulerOS amd64 | Install haproxy
+    yum:
+      name:
+        - haproxy
+      state: present
+      update_cache: yes
+    when:
+      - architectures == 'amd64'
+
+  - name: EulerOS arm64 | Install haproxy
+    dnf:
+      name:
+        - haproxy
+      state: present
+      update_cache: yes
+    when:
+      - architectures == 'arm64'
+  when: ansible_distribution in [ 'EulerOS' ]
 
 - name: Create haproxy directory
   file: name=/etc/haproxy state=directory

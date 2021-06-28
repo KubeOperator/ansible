@@ -10,7 +10,7 @@
     enabled: no
   when: '"active" in firewalld_already_installed.stdout'
 
-- name: Install base rpm package
+- name: amd64 | Install base rpm package
   yum: 
     name:
     - conntrack-tools
@@ -21,6 +21,55 @@
     - socat
     - sshpass
     state: latest
+  when:
+    - architectures != 'arm64'
+    - ansible_distribution != 'EulerOS'
+
+- name: arm64 | Install base rpm package
+  dnf:
+    name:
+      - conntrack-tools
+      - bash-completion
+      - libseccomp
+      - psmisc
+      - rsync
+      - socat
+      - sshpass
+    state: latest
+  when:
+    - ansible_distribution in [ 'CentOS','RedHat' ]
+
+- block:
+  - name: EulerOS amd64 | Install base rpm package
+    yum:
+      name:
+        - conntrack-tools
+        - bash-completion
+        - libseccomp
+        - psmisc
+        - rsync
+        - socat
+        - sshpass
+      state: present
+      update_cache: yes
+    when:
+      - architectures == 'amd64'
+
+  - name: EulerOS arm64 | Install base rpm package
+    dnf:
+      name:
+        - conntrack-tools
+        - bash-completion
+        - libseccomp
+        - psmisc
+        - rsync
+        - socat
+        - sshpass
+      state: present
+      update_cache: yes
+    when:
+      - architectures == 'arm64'
+  when: ansible_distribution in [ 'EulerOS' ]
 
 - name: Install ipvs rpm package
   yum:
