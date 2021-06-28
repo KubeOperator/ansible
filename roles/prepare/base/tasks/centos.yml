@@ -53,36 +53,36 @@
     when: architectures == 'arm64'
   when: ansible_distribution in [ 'EulerOS' ]
 
-- name: Install ipvs rpm package
-  yum:
-    name:
-    - ipset
-    - ipvsadm
-    state: latest
-    update_cache: yes
-  when:
-  - kube_proxy_mode == "ipvs"
-  - ansible_distribution in [ 'CentOS','RedHat' ]
-
 - block:
-  - name: EulerOS amd64 | Install ipvs rpm package
+  - name: Install ipvs rpm package
     yum:
       name:
-        - ipset
-        - ipvsadm
-      state: present
+      - ipset
+      - ipvsadm
+      state: latest
       update_cache: yes
-    when: architectures == 'amd64'
+    when: ansible_distribution in [ 'CentOS','RedHat' ]
 
-  - name: EulerOS arm64 | Install ipvs rpm package
-    dnf:
-      name:
-        - ipset
-        - ipvsadm
-      state: present
-      update_cache: yes
-    when: architectures == 'arm64'
-  when: ansible_distribution in [ 'EulerOS' ]
+  - block:
+    - name: EulerOS amd64 | Install ipvs rpm package
+      yum:
+        name:
+          - ipset
+          - ipvsadm
+        state: present
+        update_cache: yes
+      when: architectures == 'amd64'
+
+    - name: EulerOS arm64 | Install ipvs rpm package
+      dnf:
+        name:
+          - ipset
+          - ipvsadm
+        state: present
+        update_cache: yes
+      when: architectures == 'arm64'
+    when: ansible_distribution in [ 'EulerOS' ]
+  when: kube_proxy_mode == "ipvs"
 
 - name: Temp stop selinux
   shell: "setenforce 0"
