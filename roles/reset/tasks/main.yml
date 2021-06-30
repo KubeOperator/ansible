@@ -133,6 +133,7 @@
     state: absent
   with_items:
   - "{{ kubelet_root_dir }}"
+  - "{{ ansible_env.PWD }}/.kube"
   - "{{ ansible_env.HOME }}/.kube"
   - "/etc/kubernetes"
   - "/var/lib/kubelet"

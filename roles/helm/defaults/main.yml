@@ -1,4 +1,4 @@
-helm_home_dir: /root/.helm
+helm_home_dir: "{{ ansible_env.HOME | default('/root') }}/.helm"
 helm_deploy_dir: /etc/kubernetes/plugins/helm
 helm_namespace: kube-system
 tiller_sa: tiller

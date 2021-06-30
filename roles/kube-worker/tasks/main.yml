@@ -64,11 +64,23 @@
 
 - name: Create kubeconfig directory
   file:
-    name: "/root/.kube"
+    name: "{{ item }}"
     state: directory
+  with_items:
+  - "{{ ansible_env.PWD }}/.kube"
+  - "{{ ansible_env.HOME }}/.kube"
 
 - name: Copy kubeconfig file to .kube directory
   copy:
     src: "{{ playbook_dir }}/{{ cluster_name }}/kubeconfig/config"
-    dest: "/root/.kube/config"
-    mode: 0700
+    dest: "{{ item }}/config"
+    mode: 0600
+  with_items:
+  - "{{ ansible_env.PWD | default('/root') }}/.kube"
+  - "{{ ansible_env.HOME | default('/root') }}/.kube"
+
+- name: Set the permissions for the kubeconfig file
+  file:
+    path: "{{ ansible_env.PWD | default('/root') }}/.kube/config"
+    owner: "{{ ansible_env.SUDO_USER | default('root') }}"
+    mode: '0600'

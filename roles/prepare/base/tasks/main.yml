@@ -10,7 +10,10 @@
   when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - name: Prepare some directory
-  file: name={{ item }} state=directory
+  file:
+    name: "{{ item }}"
+    state: directory
   with_items:
-    - "{{ bin_dir }}"
-    - /root/.kube
+  - "{{ bin_dir }}"
+  - "{{ ansible_env.PWD }}/.kube"
+  - "{{ ansible_env.HOME }}/.kube"
