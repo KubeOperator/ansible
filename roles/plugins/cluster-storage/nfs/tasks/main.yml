@@ -3,6 +3,17 @@
     name:
       - nfs-utils
     state: present
+  when:
+    - ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+
+
+- name: NFS | Install nfs-utils
+  package:
+    name:
+      - nfs-common
+    state: present
+  when:
+    - ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - block:
     - name: NFS| Set defaultvers
