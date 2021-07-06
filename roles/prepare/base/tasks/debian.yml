@@ -1,9 +1,9 @@
 - name: Run "apt-get update"
-  shell: "rm -rf /var/lib/apt/lists/* && apt-get update -y"
+  shell: "rm -rf /var/lib/apt/lists/* && /usr/bin/apt-get update -y"
 
 
 - name: Install Python-apt （'Ubuntu Magjor Version' = 18）
-  shell: "apt-get install python-apt -y"
+  shell: "/usr/bin/apt-get install python-apt -y"
   when:
     - ansible_distribution == "Ubuntu"
     - ansible_distribution_major_version == "18"
