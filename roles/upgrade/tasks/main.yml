@@ -1,5 +1,5 @@
 - include_tasks: centos.yml
-  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Ubuntu','Debian' ]
 
 - name: Systemctl daemon-reload
   systemd:
