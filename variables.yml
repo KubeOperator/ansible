@@ -77,6 +77,7 @@ cinder_csi_registrar_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k
 # nvidia gpu
 nvidia_k8s_device_plugin: "{{ dns_repository_hostname }}:{{ registry_port }}/nvidia/k8s-device-plugin:1.0.0-beta"
 # ----------------------- 集群参数设置 ---------------------------
+pillar_local_dns: "169.254.20.10"
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
 # Etcd 备份文件名称
