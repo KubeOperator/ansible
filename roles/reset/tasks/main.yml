@@ -95,10 +95,18 @@
       enabled: no
     ignore_errors: true
 
+  - name: Remove service keepalived
+    service:
+      name: keepalived
+      state: stopped
+      enabled: no
+    ignore_errors: true
+
   - name: Remove files and dirs
     file: name={{ item }} state=absent
     with_items:
     - "/etc/haproxy"
+    - "/etc/keepalived"
     - "/usr/lib/systemd/system/haproxy.service"
     ignore_errors: true
 

@@ -1,4 +1,7 @@
-- hosts: all
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
   roles:
   - prepare/repository
   - prepare/base

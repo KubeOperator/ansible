@@ -1,7 +1,6 @@
 - name: Run "apt-get update"
   shell: "rm -rf /var/lib/apt/lists/* && /usr/bin/apt-get update -y"
 
-
 - name: Install Python-apt （'Ubuntu Magjor Version' = 18）
   shell: "/usr/bin/apt-get install python-apt -y"
   when:
@@ -40,7 +39,6 @@
     state: latest
   when: kube_proxy_mode == "ipvs"
 
-# 优化设置 journal 日志相关，避免日志重复搜集，浪费系统资源
 - name: Disable rsyslog Get journald log 1
   lineinfile:
     dest: /etc/rsyslog.conf

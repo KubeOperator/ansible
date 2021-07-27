@@ -1,7 +1,5 @@
 - include_tasks: external.yml
-  when: lb_mode == "slb"
+  when: lb_mode == "external"
 
 - include_tasks: internal.yml
-  when: 
-  - lb_mode != "slb"
-  - (inventory_hostname in groups['lb']) or (groups['lb']|length == 0 and inventory_hostname in (groups['kube-master'] + groups['kube-worker'] + groups['new-worker']))
+  when: lb_mode == "internal"

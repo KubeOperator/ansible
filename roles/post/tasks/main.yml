@@ -17,7 +17,6 @@
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/control-plane- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/master- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker- &&
-      {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd-
     ignore_errors: true
 
@@ -30,10 +29,6 @@
   - name: Setup worker node role
     shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker='' --overwrite"
     when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
-
-  - name: Setup load balancer node role
-    shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb='' --overwrite"
-    when: inventory_hostname in groups['lb']
 
   - name: Setup etcd node role
     shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd='' --overwrite"

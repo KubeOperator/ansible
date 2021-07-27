@@ -68,5 +68,3 @@
 
 - name: Setup hostname
   shell: "hostnamectl set-hostname {{ inventory_hostname }}"
-#  hostname:
-#    name: "{{ inventory_hostname }}"

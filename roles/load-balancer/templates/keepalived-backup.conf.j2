@@ -1,0 +1,31 @@
+global_defs {
+    router_id lb-backup-{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}
+    script_user root
+}
+
+vrrp_script check-haproxy {
+    script "/usr/bin/killall -0 haproxy"
+    interval 5
+    weight -60
+}
+
+vrrp_instance VI-kube_master {
+    state BACKUP
+    priority {{ 119 | random(61, 1) }}
+    unicast_src_ip {{ hostvars[inventory_hostname]['ansible_ssh_host'] }}
+    unicast_peer {
+{% for h in groups['ex_lb'] %}{% if h != inventory_hostname %}
+        {{ hostvars[h]['ansible_ssh_host'] }}
+{% endif %}{% endfor %}
+    }
+    dont_track_primary
+    interface {{ LB_IF }}
+    virtual_router_id {{ lb_keepalived_router_id }}
+    advert_int 3
+    track_script {
+        check-haproxy
+    }
+    virtual_ipaddress {
+        {{ lb_kube_apiserver_ip }}
+    }
+}
