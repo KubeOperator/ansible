@@ -245,7 +245,7 @@
   with_items:
   - "{{ groups['kube-master'] }}"
   - "{{ groups['kube-worker'] }}"
-  - "{{ groups['kube-worker'] }}"
+  - "{{ groups['new-worker'] }}"
   ignore_errors: true
 
 - name: Restart network

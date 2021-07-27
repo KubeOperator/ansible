@@ -2,8 +2,14 @@
   roles:
   - prepare/repository
   - prepare/base
-  - prepare/nameserver
   - chrony
+
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
+  roles:
+  - prepare/nameserver
 
 - hosts: new-worker
   roles:
