@@ -1,28 +1,27 @@
-- name: Confirm GPU Operator exist
-  command: "{{ bin_dir }}/kubectl get ns -o name"
-  ignore_errors: true
-  register: nvidia_gpu_operator_exist
-
 - block:
-  - name: Copy GPU Operator chart
-    copy: src=gpu-operator-v1.7.0.tgz dest={{ base_dir }}/ mode=0644
+  - name: Confirm GPU Operator exist
+    command: "{{ bin_dir }}/kubectl get ns -o name"
+    register: nvidia_gpu_operator_exist
 
-  - name: GPU| Create NVIDIA GPU Operator
-    shell: "helm install --wait --generate-name  {{ base_dir }}/gpu-operator-v1.7.0.tgz \
-            --set toolkit.version=1.4.7-ubi8 \
-            --set operator.defaultRuntime=docker \
-            --set validator.repository=registry.kubeoperator.io:8082/kubeoperator \
-            --set operator.repository=registry.kubeoperator.io:8082/kubeoperator \
-            --set operator.initContainer.repository=registry.kubeoperator.io:8082/kubeoperator \
-            --set driver.repository=registry.kubeoperator.io:8082/kubeoperator \
-            --set toolkit.repository=registry.kubeoperator.io:8082/kubeoperator \
-            --set devicePlugin.repository=registry.kubeoperator.io:8082/kubeoperator \
-            --set dcgmExporter.repository=registry.kubeoperator.io:8082/kubeoperator \
-            --set gfd.repository=registry.kubeoperator.io:8082/kubeoperator \
-            --set migManager.repository=registry.kubeoperator.io:8082/kubeoperator \
-            --set node-feature-discovery.image.repository=registry.kubeoperator.io:8082/kubeoperator/node-feature-discovery"
-    delegate_to: "{{ groups['kube-master'][0] }}"
+  - block:
+    - name: Copy GPU Operator chart
+      copy: src=gpu-operator-v1.7.0.tgz dest={{ base_dir }}/ mode=0644
+
+    - name: GPU| Create NVIDIA GPU Operator
+      shell: "helm install --wait --generate-name {{ base_dir }}/gpu-operator-v1.7.0.tgz \
+              --set toolkit.version=1.4.7-ubi8 \
+              --set operator.defaultRuntime=docker \
+              --set validator.repository=registry.kubeoperator.io:8082/kubeoperator \
+              --set operator.repository=registry.kubeoperator.io:8082/kubeoperator \
+              --set operator.initContainer.repository=registry.kubeoperator.io:8082/kubeoperator \
+              --set driver.repository=registry.kubeoperator.io:8082/kubeoperator \
+              --set toolkit.repository=registry.kubeoperator.io:8082/kubeoperator \
+              --set devicePlugin.repository=registry.kubeoperator.io:8082/kubeoperator \
+              --set dcgmExporter.repository=registry.kubeoperator.io:8082/kubeoperator \
+              --set gfd.repository=registry.kubeoperator.io:8082/kubeoperator \
+              --set migManager.repository=registry.kubeoperator.io:8082/kubeoperator \
+              --set node-feature-discovery.image.repository=registry.kubeoperator.io:8082/kubeoperator/node-feature-discovery"
+    when: '"namespace/gpu-operator-resources" not in nvidia_gpu_operator_exist.stdout'
   when:
-    - container_runtime == 'docker'
-    - support_gpu == 'enable'
-    - '"namespace/gpu-operator-resources" not in nvidia_gpu_operator_exist.stdout'
+  - container_runtime == 'docker'
+  - support_gpu == 'enable'
