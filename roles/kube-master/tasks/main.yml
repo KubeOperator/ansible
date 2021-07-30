@@ -49,17 +49,21 @@
   - inventory_hostname != groups['kube-master'][0]
   - inventory_hostname in groups['kube-master']
 
+- name: Modify the apiserver bind address
+  lineinfile:
+    path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
+    regexp: "    - --bind-address="
+    line: "    - --bind-address={{ CURRENT_HOST_IP }}"
+
 - name: Confirm kubelet configuration modify
   template:
     src: kubelet-config.v1beta1.yaml.j2
     dest: /var/lib/kubelet/config.yaml
     owner: root
     mode: 0644
-  register: configuration_result
 
 - name: Restart kubelet service
   service:
     name: kubelet
     state: restarted
     enabled: yes
-  when: configuration_result.changed

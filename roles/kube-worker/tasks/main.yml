@@ -86,13 +86,6 @@
     regexp: "address: "
     line: "address: {{ CURRENT_HOST_IP }}"
 
-- name: Modify the apiserver bind address
-  lineinfile:
-    path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
-    regexp: "    - --bind-address="
-    line: "    - --bind-address={{ CURRENT_HOST_IP }}"
-  when: inventory_hostname in groups['kube-master']
-
 - name: Restart kubelet service
   service:
     name: kubelet
