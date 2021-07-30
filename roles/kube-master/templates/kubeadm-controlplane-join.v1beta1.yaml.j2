@@ -58,6 +58,7 @@ networking:
   serviceSubnet: {{ kube_service_subnet }}
 apiServer:
   extraArgs:
+    bind-address: 0.0.0.0
     allow-privileged: "true"
     apiserver-count: "{{ groups['kube-master']|length }}"
 {% if kubernetes_audit == "yes" %}

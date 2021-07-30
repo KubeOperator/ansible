@@ -58,6 +58,7 @@ networking:
   serviceSubnet: {{ kube_service_subnet }}
 apiServer:
   extraArgs:
+    bind-address: 0.0.0.0
     allow-privileged: "true"
     apiserver-count: "{{ groups['kube-master']|length }}"
 {% if kubernetes_audit == "yes" %}
@@ -136,7 +137,7 @@ apiServer:
 {% endfor %}
 controllerManager:
   extraArgs:
-    bind-address: {{ CURRENT_HOST_IP }}
+    bind-address: 127.0.0.1
     experimental-cluster-signing-duration: "{{certs_expired|int * 24}}h0m0s"
     feature-gates: "RotateKubeletServerCertificate=true"
     profiling: "false"

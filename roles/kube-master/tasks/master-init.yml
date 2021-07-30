@@ -24,7 +24,7 @@
 
 - name: Waiting for apiserver to running
   uri:
-    url: "https://{{ CURRENT_HOST_IP }}:6443/healthz"
+    url: "https://127.0.0.1:6443/healthz"
     validate_certs: no
   register: apiserver_result
   until: apiserver_result.status == 200
