@@ -61,6 +61,7 @@ networking:
   serviceSubnet: {{ kube_service_subnet }}
 apiServer:
   extraArgs:
+    bind-address: {{ CURRENT_HOST_IP }}
     allow-privileged: "true"
     apiserver-count: "{{ groups['kube-master']|length }}"
 {% if kube_version is version('v1.20.0', '>=') %}
@@ -281,7 +282,7 @@ volumeStatsAggPeriod: 1m0s
 ---
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
-bindAddress: 0.0.0.0
+bindAddress: 127.0.0.1
 clientConnection:
   acceptContentTypes: ""
   burst: 10
@@ -296,7 +297,7 @@ conntrack:
   tcpCloseWaitTimeout: 1h0m0s
   tcpEstablishedTimeout: 24h0m0s
 enableProfiling: false
-healthzBindAddress: 0.0.0.0:10256
+healthzBindAddress: 127.0.0.1:10256
 hostnameOverride: ""
 iptables:
   masqueradeAll: true
@@ -309,9 +310,9 @@ ipvs:
   scheduler: rr
   strictARP: false
   syncPeriod: 30s
-metricsBindAddress: 0.0.0.0:10249
+metricsBindAddress: 127.0.0.1:10249
 mode: {{ kube_proxy_mode }}
-nodePortAddresses: null
+nodePortAddresses: [{{ hostvars[groups['kube-master'][0]]['ansible_ssh_host'] }}/32]
 oomScoreAdj: -999
 portRange: ""
 udpIdleTimeout: 250ms

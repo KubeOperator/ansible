@@ -72,3 +72,22 @@
     src: "{{ playbook_dir }}/{{ cluster_name }}/kubeconfig/config"
     dest: "/root/.kube/config"
     mode: 0700
+
+- name: Change the APiserver address
+  lineinfile:
+    path: "/root/.kube/config"
+    regexp: "    server: "
+    line: "    server: https://127.0.0.1:8443"
+  when: inventory_hostname not in groups['kube-master']
+
+- name: Modify the kubelet listening port
+  lineinfile:
+    path: "/var/lib/kubelet/config.yaml"
+    regexp: "address: "
+    line: "address: {{ CURRENT_HOST_IP }}"
+
+- name: Restart kubelet service
+  service:
+    name: kubelet
+    state: restarted
+    enabled: yes

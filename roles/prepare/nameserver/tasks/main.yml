@@ -8,8 +8,11 @@
   lineinfile:
     path: "/etc/hosts"
     regexp: "{{ item }}"
-    line: "{{ hostvars[item]['ansible_ssh_host'] }} {{ item }}"
+#    line: "{{ hostvars[item]['ansible_ssh_host'] }} {{ item }}"
+    line: "{% if hostvars[item]['ansible_ssh_host'] in ansible_all_ipv4_addresses %}{{ hostvars[item]['ansible_ssh_host'] }} {{ item }} localhost{% else %}{{ hostvars[item]['ansible_ssh_host'] }} {{ item }}{% endif %}"
   with_items:
   - "{{ groups['kube-master'] }}"
   - "{{ groups['kube-worker'] }}"
   - "{{ groups['kube-worker'] }}"
+
+

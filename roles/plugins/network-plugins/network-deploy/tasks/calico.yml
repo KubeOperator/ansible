@@ -26,7 +26,7 @@
       src: calico/calico-typha-v3.16.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
 
-  - name: Calico | Copy calico daemonset file
+  - name: Calico | Copy calicoctl daemonset file
     template:
       src: calico/calicoctl-daemonset-v3.16.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml

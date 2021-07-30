@@ -48,10 +48,17 @@
       dest: /usr/lib/systemd/system/haproxy.service
   when: ansible_distribution in [ 'CentOS','RedHat' ]
 
-- name: Configuration haproxy
+- name: Configuration haproxy | worker
   template:
-    src: haproxy/haproxy.cfg.j2
+    src: haproxy/haproxy-worker.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
+  when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
+
+- name: Configuration haproxy | master
+  template:
+    src: haproxy/haproxy-master.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  when: inventory_hostname in groups['kube-master']
 
 - name: Systemctl daemon-reload
   systemd:

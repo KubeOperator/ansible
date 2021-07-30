@@ -7,7 +7,7 @@ CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defi
 # apiserver ip
 KUBE_APISERVER_IP: >-
   {% if lb_kube_apiserver_ip is not defined %}
-    127.0.0.1
+    {{ hostvars[inventory_hostname]['ansible_ssh_host'] }}
   {% else %}
     {{ lb_kube_apiserver_ip }}
   {% endif %}

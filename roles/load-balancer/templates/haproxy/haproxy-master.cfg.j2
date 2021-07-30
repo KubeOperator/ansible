@@ -13,7 +13,7 @@ defaults
         timeout server  10m
 
 listen kube-master
-        bind :{{ lb_kube_apiserver_port }}
+        bind {{ CURRENT_HOST_IP }}:{{ lb_kube_apiserver_port }}
         mode tcp
         option tcplog
         option dontlognull
