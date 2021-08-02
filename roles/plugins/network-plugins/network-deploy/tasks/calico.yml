@@ -32,14 +32,38 @@
       dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   when: calico_version == "v3.16.5"
 
-- name: Calico | Deploy calico crds
-  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml"
+- block:
+  - name: Get calico-etcd-secrets info
+    shell: "{{ bin_dir }}/kubectl get secrets -n kube-system"
+    register: secrets_info
 
-- name: Calico | Deploy calico typha
-  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml"
+  - name: Create calico-etcd-secrets
+    shell: "cd /etc/kubernetes/pki/etcd && \
+        {{ bin_dir }}/kubectl create secret generic -n kube-system calico-etcd-secrets \
+        --from-file=etcd-ca=ca.crt \
+        --from-file=etcd-key=server.key \
+        --from-file=etcd-cert=server.crt"
+    when: '"calico-etcd-secrets" not in secrets_info.stdout'
 
-- name: Calico | Deploy calico daemonset
-  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml"
+  - name: Calico | Copy calico crds file
+    template:
+      src: calico/calico-etcd.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calico-etcd.yaml
+
+  - name: Calico | Deploy calico etcd
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-etcd.yaml"
+  when: calico_version == "v3.19.1"
+
+- block:
+  - name: Calico | Deploy calico crds
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml"
+
+  - name: Calico | Deploy calico typha
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml"
+
+  - name: Calico | Deploy calico daemonset
+    shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml"
+  when: calico_version != "v3.19.1"
 
 - block:
   - name: Read calico file
