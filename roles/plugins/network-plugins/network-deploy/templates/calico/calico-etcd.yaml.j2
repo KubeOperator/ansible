@@ -260,7 +260,7 @@ spec:
         # container programs network policy and routes on each
         # host.
         - name: calico-node
-          image: registry.kubeoperator.io:8082/calico/node:v3.16.5
+          image: {{ calico_node_image }}
           envFrom:
           - configMapRef:
               # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
