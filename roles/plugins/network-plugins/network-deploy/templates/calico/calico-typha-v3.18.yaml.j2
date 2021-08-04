@@ -8,11 +8,10 @@ data:
   typha_service_name: "calico-typha"
   # Configure the backend to use.
   calico_backend: "bird"
+
   # Configure the MTU to use for workload interfaces and tunnels.
-  # - If Wireguard is enabled, set to your network MTU - 60
-  # - Otherwise, if VXLAN or BPF mode is enabled, set to your network MTU - 50
-  # - Otherwise, if IPIP is enabled, set to your network MTU - 20
-  # - Otherwise, if not using any encapsulation, set to your network MTU.
+  # By default, MTU is auto-detected, and explicitly setting this field should not be required.
+  # You can override auto-detection by providing a non-zero value.
   veth_mtu: "{{ calico_veth_mtu }}"
 
   # The CNI network configuration to install on each node. The special
@@ -58,17 +57,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: calico-kube-controllers
 rules:
-{% if "PodSecurityPolicy" in kube_apiserver_enable_admission_plugins %}
-  # Cluster role which grants access to the privileged pod security policy
-  - apiGroups:
-    - extensions
-    resourceNames:
-    - privileged
-    resources:
-    - podsecuritypolicies
-    verbs:
-    - use
-{% endif %}
   # Nodes are watched to monitor for deletions.
   - apiGroups: [""]
     resources:
@@ -100,6 +88,7 @@ rules:
       - create
       - update
       - delete
+      - watch
   # kube-controllers manages hostendpoints.
   - apiGroups: ["crd.projectcalico.org"]
     resources:
@@ -131,7 +120,9 @@ rules:
       - update
       # watch for changes
       - watch
+
 ---
+
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -152,17 +143,6 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: calico-node
 rules:
-{% if "PodSecurityPolicy" in kube_apiserver_enable_admission_plugins %}
-  # Cluster role which grants access to the privileged pod security policy
-  - apiGroups:
-    - extensions
-    resourceNames:
-    - privileged
-    resources:
-    - podsecuritypolicies
-    verbs:
-    - use
-{% endif %}
   # The CNI plugin needs to get pods, nodes, and namespaces.
   - apiGroups: [""]
     resources:
@@ -344,8 +324,7 @@ spec:
   # We recommend using Typha if you have more than 50 nodes. Above 100 nodes it is essential
   # (when using the Kubernetes datastore). Use one replica for every 100-200 nodes. In
   # production, we recommend running at least 3 replicas to reduce the impact of rolling upgrade.
-  replicas: {% if (groups['kube-master'] + groups['kube-worker'] + groups['new-worker']) | unique | length > 1 %}2{% else %}1{% endif %}
-
+  replicas: 1
   revisionHistoryLimit: 2
   selector:
     matchLabels:
@@ -437,6 +416,7 @@ spec:
   selector:
     matchLabels:
       k8s-app: calico-typha
+
 ---
 
 kind: DaemonSet
@@ -699,6 +679,9 @@ spec:
               # Bidirectional means that, if we mount the BPF filesystem at /sys/fs/bpf it will propagate to the host.
               # If the host is known to mount that filesystem already then Bidirectional can be omitted.
               mountPropagation: Bidirectional
+            - name: cni-log-dir
+              mountPath: /var/log/calico/cni
+              readOnly: true
       volumes:
         # Used by calico-node.
         - name: lib-modules
@@ -725,6 +708,10 @@ spec:
         - name: cni-net-dir
           hostPath:
             path: /etc/cni/net.d
+        # Used to access CNI logs.
+        - name: cni-log-dir
+          hostPath:
+            path: /var/log/calico/cni
         # Mount in the directory for host-local IPAM allocations. This is
         # used when upgrading from host-local to calico-ipam, and can be removed
         # if not using the upgrade-ipam init container.
@@ -741,6 +728,7 @@ spec:
           hostPath:
             type: DirectoryOrCreate
             path: /usr/libexec/kubernetes/kubelet-plugins/volume/exec/nodeagent~uds
+
 ---
 
 apiVersion: v1
@@ -805,3 +793,18 @@ kind: ServiceAccount
 metadata:
   name: calico-kube-controllers
   namespace: kube-system
+
+---
+
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: calico-kube-controllers
+  namespace: kube-system
+  labels:
+    k8s-app: calico-kube-controllers
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      k8s-app: calico-kube-controllers
