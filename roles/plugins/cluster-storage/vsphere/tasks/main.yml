@@ -85,5 +85,4 @@
     - "{{ vsphere_csi_manifests.results }}"
     loop_control:
       label: "{{ item.item }}"
-  when:
-  - architectures == 'amd64'
+  when: architectures == 'amd64'

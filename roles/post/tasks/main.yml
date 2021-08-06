@@ -1,15 +1,15 @@
-- name: Ensure that apiserver accesses the etcd cluster properly
-  shell: "{{ bin_dir }}/kubectl get ns"
-  register: etcd_status
-  until: '"kube-system" in etcd_status.stdout'
-  run_once: true
-  retries: 10
-  delay: 6
+- block:
+  - name: Ensure that apiserver accesses the etcd cluster properly
+    shell: "{{ bin_dir }}/kubectl get ns"
+    register: etcd_status
+    until: '"kube-system" in etcd_status.stdout'
+    retries: 10
+    delay: 6
 
-- name: Get cluster node info
-  shell: "{{ bin_dir }}/kubectl get node -o name"
+  - name: Get cluster node info
+    shell: "{{ bin_dir }}/kubectl get node -o name"
+    register: kubectl_get_node_output
   run_once: true
-  register: kubectl_get_node_output
 
 - block:
   - name: Cancel node role label
@@ -42,12 +42,23 @@
       src: ko-admin.yaml.j2
       dest: /etc/kubernetes/ko-admin.yaml
 
+  - name: Ensure that apiserver accesses the etcd cluster properly
+    shell: "{{ bin_dir }}/kubectl get ns"
+    register: etcd_status_1
+    until: '"kube-system" in etcd_status_1.stdout'
+    retries: 10
+    delay: 6
+
   - name: Deploy serviceAccount
     shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/ko-admin.yaml"
-  run_once: true
-  delegate_to: "{{ groups['kube-master'][0] }}"
 
-- block:
+  - name: Ensure that apiserver accesses the etcd cluster properly
+    shell: "{{ bin_dir }}/kubectl get ns"
+    register: etcd_status_2
+    until: '"kube-system" in etcd_status_2.stdout'
+    retries: 10
+    delay: 6
+
   - name: Ensure kube-operator namespace
     shell: " {{ bin_dir }}/kubectl get namespaces | grep kube-operator || {{ bin_dir }}/kubectl create namespace kube-operator"
   run_once: true

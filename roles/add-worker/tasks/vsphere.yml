@@ -47,16 +47,14 @@
     dest: /etc/sysconfig/kubelet
     regexp: '^KUBELET_EXTRA_ARGS'
     line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs --cloud-provider=vsphere'
-  when:
-  - ansible_distribution in ["CentOS","RedHat","EulerOS"]
+  when: ansible_distribution in ["CentOS","RedHat","EulerOS"]
 
 - name: Modify kubelet cloud provider params on worker
   lineinfile:
     dest: /etc/default/kubelet
     regexp: '^KUBELET_EXTRA_ARGS'
     line: 'KUBELET_EXTRA_ARGS=--cgroup-driver=cgroupfs --cloud-provider=vsphere'
-  when:
-  - ansible_distribution in [ 'Ubuntu','Debian' ]
+  when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - name: Systemctl daemon-reload
   systemd:

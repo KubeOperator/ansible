@@ -34,15 +34,13 @@
     lineinfile:
       dest: "/etc/bashrc"
       line: 'export ETCD_UNSUPPORTED_ARCH=arm64'
-    when:
-      - ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
   - name: Arm64 | Setup system ETCD_UNSUPPORTED_ARCH variable
     lineinfile:
       dest: "/etc/bash.bashrc"
       line: 'export ETCD_UNSUPPORTED_ARCH=arm64'
-    when:
-      - ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian' ]
   when: architectures == "arm64"
 
 - name: Create etcd systemd unit file
@@ -55,7 +53,6 @@
 
 - name: Start etcd service
   shell: systemctl daemon-reload && systemctl restart etcd
-  ignore_errors: true
   tags: upgrade
 
 - name: Wait etcd service to start

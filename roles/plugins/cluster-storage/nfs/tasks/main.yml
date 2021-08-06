@@ -3,8 +3,7 @@
     name:
       - nfs-utils
     state: present
-  when:
-    - ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
 
 - name: NFS | Install nfs-utils
@@ -12,8 +11,7 @@
     name:
       - nfs-common
     state: present
-  when:
-    - ansible_distribution in [ 'Ubuntu','Debian' ]
+  when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - block:
     - name: NFS| Set defaultvers
@@ -33,8 +31,7 @@
         path: /etc/nfsmount.conf
         regexp: '# Lock=True'
         replace: "Lock=False"
-  when:
-    - storage_nfs_server_version is defined and storage_nfs_server_version == "3"
+  when: storage_nfs_server_version is defined and storage_nfs_server_version == "3"
   ignore_errors: true
 
 - block:
@@ -51,5 +48,4 @@
       ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
   run_once: true
-  when:
-    - 'storage_local_volume_enabled is not defined'
+  when: 'storage_local_volume_enabled is not defined'
