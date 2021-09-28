@@ -1,11 +1,13 @@
 - name: Run "apt-get update"
-  shell: "rm -rf /var/lib/apt/lists/* && /usr/bin/apt-get update -y"
+  shell: "sudo rm -rf /var/lib/apt/lists/* && sudo /usr/bin/apt-get update -y"
+  ignore_errors: true
 
 - name: Install Python-apt （'Ubuntu Magjor Version' = 18）
-  shell: "/usr/bin/apt-get install python-apt -y"
+  shell: "sudo /usr/bin/apt-get install python-apt -y"
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_major_version == "18"
+  - ansible_distribution == "Ubuntu"
+  - ansible_distribution_release == "bionic"
+  ignore_errors: true
 
 - name: Status firewalld
   shell: >
@@ -58,3 +60,9 @@
     name: rsyslog
     state: restarted
   ignore_errors: true
+
+- name: Restarting Cron avoids job confusion caused by changing the time zone
+  service:
+    name: cron
+    state: restarted
+    enabled: yes

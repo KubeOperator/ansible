@@ -6,7 +6,7 @@
         state: directory
 
     - name: Backup the old repository
-      shell: "mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1  || ls /etc/yum.repos.d/ >/dev/null 2>&1"
+      shell: "sudo mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1 || sudo ls /etc/yum.repos.d/ >/dev/null 2>&1"
 
     - name: Remove other repository
       file:
@@ -23,7 +23,7 @@
         state: directory
 
     - name: Backup the old repository
-      shell: "mv -f /etc/apt/*.list /etc/apt/bak >/dev/null 2>&1  || ls /etc/apt/ >/dev/null 2>&1"
+      shell: "sudo mv -f /etc/apt/*.list /etc/apt/bak >/dev/null 2>&1 || sudo ls /etc/apt/ >/dev/null 2>&1"
 
     - name: Remove other repository
       file:
