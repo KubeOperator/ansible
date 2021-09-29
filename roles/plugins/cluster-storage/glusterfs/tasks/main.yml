@@ -1,7 +1,15 @@
-- name: "Install glusterfs mount utils"
+- name: "Install glusterfs mount utils | CentOS"
   become: true
   package:
     name:
     - glusterfs
     - glusterfs-fuse
     state: "present"
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+
+- name: "Install glusterfs mount utils | Debian"
+  become: true
+  package:
+    name: glusterfs-client
+    state: "present"
+  when: ansible_distribution in [ 'Ubuntu','Debian' ]

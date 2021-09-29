@@ -1,51 +1,48 @@
 - name: NFS | Install nfs-utils
   package:
-    name:
-      - nfs-utils
+    name: nfs-utils
     state: present
   when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
-
 - name: NFS | Install nfs-utils
   package:
-    name:
-      - nfs-common
+    name: nfs-common
     state: present
   when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - block:
-    - name: NFS| Set defaultvers
-      replace:
-        path: /etc/nfsmount.conf
-        regexp: '# Defaultvers=4'
-        replace: "Defaultvers=3"
+  - name: NFS| Set defaultvers
+    replace:
+      path: /etc/nfsmount.conf
+      regexp: '# Defaultvers=4'
+      replace: "Defaultvers=3"
 
-    - name: Set nfsvers
-      replace:
-        path: /etc/nfsmount.conf
-        regexp: '# Nfsvers=4'
-        replace: "Nfsvers=3"
+  - name: Set nfsvers
+    replace:
+      path: /etc/nfsmount.conf
+      regexp: '# Nfsvers=4'
+      replace: "Nfsvers=3"
 
-    - name: NFS| Set nfslock
-      replace:
-        path: /etc/nfsmount.conf
-        regexp: '# Lock=True'
-        replace: "Lock=False"
+  - name: NFS| Set nfslock
+    replace:
+      path: /etc/nfsmount.conf
+      regexp: '# Lock=True'
+      replace: "Lock=False"
   when: storage_nfs_server_version is defined and storage_nfs_server_version == "3"
   ignore_errors: true
 
 - block:
-    - name: NFS| Prepare nfs-client directory
-      file: name={{ kube_config_dir }}/plugins/storage-plugin/nfs state=directory
+  - name: NFS| Prepare nfs-client directory
+    file: name={{ kube_config_dir }}/plugins/storage-plugin/nfs state=directory
 
-    - name: NFS| Prepare nfs-client file
-      template:
-        src: nfs-client-provisioner.yaml.j2
-        dest: "{{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
+  - name: NFS| Prepare nfs-client file
+    template:
+      src: nfs-client-provisioner.yaml.j2
+      dest: "{{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
 
-    - name: NFS| Deploy nfs-client
-      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
-      ignore_errors: true
+  - name: NFS| Deploy nfs-client
+    shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/nfs/{{ storage_nfs_provisioner_name }}.yaml"
+    ignore_errors: true
   delegate_to: "{{ groups['kube-master'][0] }}"
-  run_once: true
   when: 'storage_local_volume_enabled is not defined'
+  run_once: true
