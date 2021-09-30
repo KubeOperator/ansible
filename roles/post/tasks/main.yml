@@ -12,7 +12,7 @@
   run_once: true
 
 - block:
-  - name: Cancel node role label
+  - name: Cancel the node label
     shell: >
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/control-plane- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/master- &&
@@ -20,17 +20,23 @@
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd-
     ignore_errors: true
 
-  - name: Setup master node role
+  - name: Set the master label
     shell: >
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/control-plane='' --overwrite &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/master='' --overwrite
     when: inventory_hostname in groups['kube-master']
 
-  - name: Setup worker node role
+  - name: Set master to unschedulable
+    shell: "{{ bin_dir }}/kubectl cordon {{ inventory_hostname }}"
+    when:
+    - master_schedule_type == "enable"
+    - inventory_hostname in groups['kube-master']
+
+  - name: Set the worker label
     shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker='' --overwrite"
     when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
 
-  - name: Setup etcd node role
+  - name: Set the etcd label
     shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd='' --overwrite"
     when: inventory_hostname in groups['etcd']
   delegate_to: "{{ groups['kube-master'][0] }}"

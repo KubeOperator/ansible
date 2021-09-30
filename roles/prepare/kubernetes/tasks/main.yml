@@ -47,12 +47,9 @@
   shell: systemctl enable kubelet
   ignore_errors: true
 
-- name: Configuration kubectl command completion
-  lineinfile:
-    dest: ~/.bashrc
-    state: present
-    regexp: 'kubectl completion'
-    line: 'source <(kubectl completion bash)'
+- name: Configure kubectl command line auto-completion
+  shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl
+  ignore_errors: true
 
 - block:
   - name: Download kube-master image

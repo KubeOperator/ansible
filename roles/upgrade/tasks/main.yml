@@ -17,5 +17,6 @@
     state: restarted
     enabled: yes
 
-- name: Upgrade kubectl command completions
-  shell: "{{ bin_dir }}/kubectl completion bash > /usr/share/bash-completion/completions/kubectl"
+- name: Update kubectl command line auto-completion
+  shell: "kubectl completion bash > /usr/share/bash-completion/completions/kubectl"
+  ignore_errors: true
