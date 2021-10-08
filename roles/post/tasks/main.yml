@@ -29,7 +29,7 @@
   - name: Set master to unschedulable
     shell: "{{ bin_dir }}/kubectl cordon {{ inventory_hostname }}"
     when:
-    - master_schedule_type == "enable"
+    - master_schedule_type == "disable"
     - inventory_hostname in groups['kube-master']
 
   - name: Set the worker label
