@@ -1,0 +1,12 @@
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
+  gather_facts: false
+  roles:
+  - plugins/network-plugins/network-prepare
+
+- hosts: kube-master[0]
+  gather_facts: false
+  roles:
+  - plugins/network-plugins/network-deploy

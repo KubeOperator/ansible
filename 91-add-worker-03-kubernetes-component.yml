@@ -1,0 +1,4 @@
+- hosts: new-worker
+  gather_facts: false
+  roles:
+  - prepare/kubernetes
