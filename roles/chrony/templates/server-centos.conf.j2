@@ -1,6 +1,8 @@
 # Use public servers from the pool.ntp.org project.
-{% if ntp_server is defined %}
-{% if ntp_server %}server {{ntp_server}} iburst{% endif %}
+{% if ntp_server is defined and ntp_server %}
+{% for server in ntp_server.split(',') %}
+server {{ server }} iburst
+{% endfor %}
 {% endif %}
 
 # Ignor source level

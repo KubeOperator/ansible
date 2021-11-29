@@ -6,7 +6,7 @@
         state: directory
 
     - name: Backup the old repository
-      shell: "mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1  || ls /etc/yum.repos.d/ >/dev/null 2>&1"
+      shell: "sudo mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1 || sudo ls /etc/yum.repos.d/ >/dev/null 2>&1"
 
     - name: Remove other repository
       file:
@@ -17,26 +17,25 @@
     - ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
   - block:
-      - name: Create repository backup directory
-        file:
-          path: /etc/apt/bak
-          state: directory
+    - name: Create repository backup directory
+      file:
+        path: /etc/apt/bak
+        state: directory
 
-      - name: Backup the old repository
-        shell: "mv -f /etc/apt/*.list /etc/apt/bak >/dev/null 2>&1  || ls /etc/apt/ >/dev/null 2>&1"
+    - name: Backup the old repository
+      shell: "sudo mv -f /etc/apt/*.list /etc/apt/bak >/dev/null 2>&1 || sudo ls /etc/apt/ >/dev/null 2>&1"
 
-      - name: Remove other repository
-        file:
-          path: /etc/apt/*
-          state: absent
+    - name: Remove other repository
+      file:
+        path: /etc/apt/*
+        state: absent
     when:
-      - yum_operate == 'replace'
-      - ansible_distribution in [ 'Ubuntu','Debian' ]
+    - yum_operate == 'replace'
+    - ansible_distribution in [ 'Ubuntu','Debian' ]
 
   - name: Install yum-plugin-protectbase rpm package
     package:
-      name:
-      - yum-plugin-protectbase
+      name: yum-plugin-protectbase
       state: latest
     when:
     - yum_operate == 'coexist'
@@ -47,8 +46,7 @@
       path: "/etc/yum.conf"
       block: "sslverify=0"
       state: present
-    when:
-    - ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
 
   - block:
     - name: RedHat | Add amd64 offline repository
@@ -62,8 +60,7 @@
         src: kubeops.repo.arm64.j2
         dest: /etc/yum.repos.d/kubeops.repo
       when: architectures == 'arm64'
-    when:
-    - ansible_distribution in [ 'CentOS','RedHat' ]
+    when: ansible_distribution in [ 'CentOS','RedHat' ]
 
   - block:
     - name: EulerOS | Add amd64 offline repository
@@ -77,8 +74,7 @@
         src: kubeops.repo.arm64-euler.j2
         dest: /etc/yum.repos.d/kubeops.repo
       when: architectures == 'arm64'
-    when:
-    - ansible_distribution in [ 'EulerOS' ]
+    when: ansible_distribution in [ 'EulerOS' ]
 
   - block:
     - name: Debian (amd64)| Add apt repository
@@ -92,7 +88,6 @@
         src: ubuntu_sources_arm64.j2
         dest: /etc/apt/sources.list
       when: architectures == "arm64"
-    when:
-      - ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian' ]
   when:
   - yum_operate != 'no'

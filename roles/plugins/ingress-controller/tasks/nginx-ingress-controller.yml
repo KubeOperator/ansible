@@ -3,8 +3,13 @@
     template:
       src: nginx-ingress-controller.yaml.j2
       dest: /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml
-    register: ingress_nginx_manifest
+
+  - name: Ensure that apiserver accesses the etcd cluster properly
+    shell: "{{ bin_dir }}/kubectl get ns"
+    register: etcd_status
+    until: '"kube-system" in etcd_status.stdout'
+    retries: 10
+    delay: 6
 
   - name: Deploy nginx-ingress-controller
     shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml"
-    when: ingress_nginx_manifest.changed

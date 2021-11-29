@@ -1,8 +1,7 @@
 - block:
   - name: Ceph | Install ceph-common
     package:
-      name:
-        - ceph-common
+      name: ceph-common
       state: present
     delegate_to: "{{ item }}"
     with_items: "{{ groups['all'] }}"
@@ -14,8 +13,7 @@
       owner: root
       group: root
       mode: 0755
-    when:
-      - inventory_hostname == groups['kube-master'][0]
+    when: inventory_hostname == groups['kube-master'][0]
 
   - name: RBD Provisioner | Templates list
     set_fact:
@@ -29,10 +27,8 @@
     with_items: "{{ rbd_provisioner_templates }}"
     when: inventory_hostname == groups['kube-master'][0]
 
-
   - name: RBD Provisioner | Deploy manifests
     shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rbd-provisioner/{{ item.file }}"
     with_items: "{{ rbd_provisioner_templates }}"
     when: inventory_hostname == groups['kube-master'][0]
-  when:
-  - architectures == 'amd64'
+  when: architectures == 'amd64'

@@ -25,9 +25,9 @@
 - name: Prepare some dirs
   file: name={{ item }} state=directory
   with_items:
-    - /etc/kubernetes/images
-    - /etc/kubernetes/manifests
-    - /usr/lib/systemd/system/kubelet.service.d
+  - /etc/kubernetes/images
+  - /etc/kubernetes/manifests
+  - /usr/lib/systemd/system/kubelet.service.d
 
 - name: Create kubelet systemd unit file
   template: src=kubelet.service.j2 dest=/usr/lib/systemd/system/kubelet.service
@@ -37,24 +37,19 @@
 
 - name: Create kubelet params file
   template: src=kubelet.config.j2 dest=/etc/sysconfig/kubelet
-  when:
-    - ansible_distribution in ["CentOS","RedHat","EulerOS"]
+  when: ansible_distribution in ["CentOS","RedHat","EulerOS"]
 
 - name: Create kubelet params file
   template: src=kubelet.config.j2 dest=/etc/default/kubelet
-  when:
-    - ansible_distribution in [ 'Ubuntu','Debian' ]
+  when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - name: Enable kubelet serivce
   shell: systemctl enable kubelet
   ignore_errors: true
 
-- name: Configuration kubectl command completion
-  lineinfile:
-    dest: ~/.bashrc
-    state: present
-    regexp: 'kubectl completion'
-    line: 'source <(kubectl completion bash)'
+- name: Configure kubectl command line auto-completion
+  shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl
+  ignore_errors: true
 
 - block:
   - name: Download kube-master image
@@ -64,24 +59,24 @@
       dest: "{{ base_dir }}/k8s"
       timeout: "{{ download_timeout_online }}"
     with_items:
-      - "{{ kube_controller_manager_download_url }}"
-      - "{{ kube_apiserver_download_url }}"
-      - "{{ kube_scheduler_download_url }}"
+    - "{{ kube_controller_manager_download_url }}"
+    - "{{ kube_apiserver_download_url }}"
+    - "{{ kube_scheduler_download_url }}"
 
   - name: Docker | Load kube-master image
     shell: "{{ bin_dir }}/docker load -i {{ base_dir }}/k8s/{{ item }}"
     with_items:
-      - kube-controller-manager.tar
-      - kube-apiserver.tar
-      - kube-scheduler.tar
+    - kube-controller-manager.tar
+    - kube-apiserver.tar
+    - kube-scheduler.tar
     when: container_runtime == 'docker'
 
   - name: Containerd | Load kube-master image
     shell: "{{ bin_dir }}/ctr -n=k8s.io images import {{ base_dir }}/k8s/{{ item }}"
     with_items:
-      - kube-controller-manager.tar
-      - kube-apiserver.tar
-      - kube-scheduler.tar
+    - kube-controller-manager.tar
+    - kube-apiserver.tar
+    - kube-scheduler.tar
     when: container_runtime == 'containerd'
   when: inventory_hostname in groups['kube-master']
 

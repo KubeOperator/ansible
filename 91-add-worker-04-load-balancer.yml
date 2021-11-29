@@ -1,0 +1,3 @@
+- hosts: new-worker
+  roles:
+  - load-balancer

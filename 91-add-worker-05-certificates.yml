@@ -3,4 +3,4 @@
   - kube-worker
   - new-worker
   roles:
-  - load-balancer
+  - prepare/kube-certificates

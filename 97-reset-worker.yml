@@ -1,0 +1,3 @@
+- hosts: del-worker
+  roles:
+  - reset

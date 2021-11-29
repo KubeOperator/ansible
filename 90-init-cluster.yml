@@ -1,48 +1,62 @@
-- hosts: all
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
   roles:
   - prepare/repository
   - prepare/base
   - prepare/nameserver
   - chrony
 
-- hosts: all
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
   roles:
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
 
-- hosts: all
-  gather_facts: false
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
   roles:
   - prepare/kubernetes
-  - prepare/etcd-certificates
-  - prepare/kube-certificates
 
-- hosts: all
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
   roles:
   - load-balancer
 
 - hosts:
-  - etcd
   - kube-master
+  - kube-worker
+  - new-worker
+  roles:
+  - prepare/etcd-certificates
+  - prepare/kube-certificates
+
+- hosts: kube-master
   gather_facts: false
   roles:
   - etcd
 
-- hosts:
-  - kube-master
-  gather_facts: false
+- hosts: kube-master
   roles:
   - kube-master
 
 - hosts:
   - kube-worker
   - new-worker
-  gather_facts: false
   roles:
   - kube-worker
 
-- hosts: all
-  gather_facts: false
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
   roles:
   - plugins/network-plugins/network-prepare
 
@@ -82,4 +96,4 @@
 - hosts: kube-master[0]
   gather_facts: false
   roles:
-    - { role: plugins/gpu/gpu-operator, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
+  - { role: plugins/gpu/gpu-operator, when: "container_runtime == 'docker' and support_gpu == 'enable'" }

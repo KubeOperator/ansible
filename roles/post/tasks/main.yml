@@ -1,41 +1,42 @@
-- name: Ensure that apiserver accesses the etcd cluster properly
-  shell: "{{ bin_dir }}/kubectl get ns"
-  register: etcd_status
-  until: '"kube-system" in etcd_status.stdout'
-  run_once: true
-  retries: 10
-  delay: 6
+- block:
+  - name: Ensure that apiserver accesses the etcd cluster properly
+    shell: "{{ bin_dir }}/kubectl get ns"
+    register: etcd_status
+    until: '"kube-system" in etcd_status.stdout'
+    retries: 10
+    delay: 6
 
-- name: Get cluster node info
-  shell: "{{ bin_dir }}/kubectl get node -o name"
+  - name: Get cluster node info
+    shell: "{{ bin_dir }}/kubectl get node -o name"
+    register: kubectl_get_node_output
   run_once: true
-  register: kubectl_get_node_output
 
 - block:
-  - name: Cancel node role label
+  - name: Cancel the node label
     shell: >
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/control-plane- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/master- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker- &&
-      {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb- &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd-
     ignore_errors: true
 
-  - name: Setup master node role
+  - name: Set the master label
     shell: >
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/control-plane='' --overwrite &&
       {{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/master='' --overwrite
     when: inventory_hostname in groups['kube-master']
 
-  - name: Setup worker node role
+  - name: Set master to unschedulable
+    shell: "{{ bin_dir }}/kubectl cordon {{ inventory_hostname }}"
+    when:
+    - master_schedule_type == "disable"
+    - inventory_hostname in groups['kube-master']
+
+  - name: Set the worker label
     shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/worker='' --overwrite"
     when: inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
 
-  - name: Setup load balancer node role
-    shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/lb='' --overwrite"
-    when: inventory_hostname in groups['lb']
-
-  - name: Setup etcd node role
+  - name: Set the etcd label
     shell: "{{ bin_dir }}/kubectl label node {{ inventory_hostname }} node-role.kubernetes.io/etcd='' --overwrite"
     when: inventory_hostname in groups['etcd']
   delegate_to: "{{ groups['kube-master'][0] }}"
@@ -47,12 +48,23 @@
       src: ko-admin.yaml.j2
       dest: /etc/kubernetes/ko-admin.yaml
 
+  - name: Ensure that apiserver accesses the etcd cluster properly
+    shell: "{{ bin_dir }}/kubectl get ns"
+    register: etcd_status_1
+    until: '"kube-system" in etcd_status_1.stdout'
+    retries: 10
+    delay: 6
+
   - name: Deploy serviceAccount
     shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/ko-admin.yaml"
-  run_once: true
-  delegate_to: "{{ groups['kube-master'][0] }}"
 
-- block:
+  - name: Ensure that apiserver accesses the etcd cluster properly
+    shell: "{{ bin_dir }}/kubectl get ns"
+    register: etcd_status_2
+    until: '"kube-system" in etcd_status_2.stdout'
+    retries: 10
+    delay: 6
+
   - name: Ensure kube-operator namespace
     shell: " {{ bin_dir }}/kubectl get namespaces | grep kube-operator || {{ bin_dir }}/kubectl create namespace kube-operator"
   run_once: true

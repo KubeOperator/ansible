@@ -3,6 +3,13 @@
     src: cilium/cilium.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/cilium.yaml
 
+- name: Ensure that apiserver accesses the etcd cluster properly
+  shell: "{{ bin_dir }}/kubectl get ns"
+  register: etcd_status
+  until: '"kube-system" in etcd_status.stdout'
+  retries: 10
+  delay: 6
+
 - name: Cilium | Deploy cilium | amd64 host
   shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/cilium.yaml"
 

@@ -1,6 +1,5 @@
 - hosts:
   - kube-worker
   - new-worker
-  gather_facts: false
   roles:
   - kube-worker

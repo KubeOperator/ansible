@@ -1,7 +1,4 @@
-- hosts:
-  - kube-master
-  - kube-worker
-  - new-worker
+- hosts: new-worker
   roles:
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }

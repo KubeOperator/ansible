@@ -1,4 +1,7 @@
-- hosts: all
+- hosts:
+  - kube-master
+  - kube-worker
+  - new-worker
   gather_facts: false
   roles:
   - plugins/cluster-storage/external-ceph

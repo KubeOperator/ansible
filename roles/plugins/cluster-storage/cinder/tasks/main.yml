@@ -38,5 +38,4 @@
     - not item is skipped
     loop_control:
       label: "{{ item.item.file }}"
-  when:
-  - architectures == 'amd64'
+  when: architectures == 'amd64'

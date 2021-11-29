@@ -1,6 +1,12 @@
 - include_tasks: centos.yml
   when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Ubuntu','Debian' ]
 
+- name: Config kublet
+  lineinfile:
+    path: /var/lib/kubelet/config.yaml
+    regexp: 'resolvConf:'
+    line: "resolvConf: {% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 16 %} /run/systemd/resolve/resolv.conf {% else %}  /etc/resolv.conf {% endif %}"
+
 - name: Systemctl daemon-reload
   systemd:
     daemon_reload: yes
@@ -11,5 +17,6 @@
     state: restarted
     enabled: yes
 
-- name: Upgrade kubectl command completions
-  shell: "{{ bin_dir }}/kubectl completion bash > /usr/share/bash-completion/completions/kubectl"
+- name: Update kubectl command line auto-completion
+  shell: "kubectl completion bash > /usr/share/bash-completion/completions/kubectl"
+  ignore_errors: true

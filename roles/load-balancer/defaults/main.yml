@@ -1,24 +1,6 @@
 # 提权操作
 ansible_become: true
-#----------------------------------------------- 基础参数 -------------------------------------------------#
-# 启用 ingress NodePort服务的负载均衡 (true/false)
-enabel_ingress_nodeport_lb: false
-# 启用 ingress tls NodePort服务的负载均衡 (true/false)
-enabel_ingress_tls_nodeport_lb: false
-# NodePort svc 监听http协议端口(注意需在NodePort端口范围)
-ingress_controller_http_nodeport: 30080
-# NodePort svc 监听https协议端口(注意需在NodePort端口范围)
-ingress_controller_https_nodeport: 30443
-# 负载均衡器健康检查端口
-lb_kube_apiserver_healthcheck_port: 8081
-# 当前节点ip
-CURRENT_HOST_IP: "{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defined %}{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}{% else %}{{ inventory_hostname }}{% endif %}"
 
-#---------------------------------------------- Nginx 相关参数 --------------------------------------------#
-# 使用nginx进行apiserver负载时使用的nginx镜像
-lb_nginx_image: registry.cn-shanghai.aliyuncs.com/kubeadm-ha/nginx:1.17.9-alpine
-
-#--------------------------------------------- Haproxy 相关参数 --------------------------------------------#
 # haproxy监控绑定端口
 lb_haproxy_stats_bind_address: 9090
 # haproxy监控访问路径
@@ -36,24 +18,6 @@ lb_haproxy_stats_password: "admin"
 # "uri": 基于请求的URI
 lb_haproxy_balance_alg: "roundrobin"
 
-#---------------------------------------------- Keepalived 相关参数 ---------------------------------------#
-# Keepalived 提供的 VIPs
-KUBE_APISERVER_IP: >-
-  {% if lb_kube_apiserver_ip is not defined %}
-    127.0.0.1
-  {% else %}
-    {{ lb_kube_apiserver_ip }}
-  {% endif %}
-
-# 使用 vip 负载时使用的 keepalived 镜像
-lb_keepalived_image: registry.cn-shanghai.aliyuncs.com/kubeadm-ha/osixia_keepalived:2.0.20
-# keepalived auth_type 的 password
-lb_keepalived_password: "d0cker"
-# 区分多个 instance 的 VRRP 组播，同网段不能重复，取值在0-255之间
-lb_keepalived_router_id: 51
-# 默认所有节点权重 120
-LB_KEEPALIVED_PRIORITY: "120"
-# 节点初始主备状态
-LB_KEEPALIVED_STATE: "{% if inventory_hostname == groups['lb'][0] %}MASTER{% else %}BACKUP{% endif %}"
-# 其他 Keepalived 节点的单点传播 IP
-LB_KEEPALIVED_UNICAST_PEERS: "{% for host in groups['lb'] %}{% if hostvars[host]['ansible_ssh_host'] is defined %}'{{ hostvars[host]['ansible_ssh_host'] }}'{% else %}'{{ host }}'{% endif %}{% if not loop.last %},{% endif %}{% endfor %}"
+# 区分多个instance的VRRP组播，同网段不能重复，取值在0-255之间
+# 因项目已设置vrrp报文单播模式，所以这个 ROUTER_ID 即便同网段里面有重复也没关系
+lb_keepalived_router_id: 222

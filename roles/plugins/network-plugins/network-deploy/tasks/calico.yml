@@ -49,11 +49,32 @@
       dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   when: calico_version == "v3.18.4"
 
+- name: Ensure that apiserver accesses the etcd cluster properly
+  shell: "{{ bin_dir }}/kubectl get ns"
+  register: etcd_status
+  until: '"kube-system" in etcd_status.stdout'
+  retries: 10
+  delay: 6
+
 - name: Calico | Deploy calico crds
   shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/crds.yaml"
 
+- name: Ensure that apiserver accesses the etcd cluster properly
+  shell: "{{ bin_dir }}/kubectl get ns"
+  register: etcd_status
+  until: '"kube-system" in etcd_status.stdout'
+  retries: 10
+  delay: 6
+
 - name: Calico | Deploy calico typha
   shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml"
+
+- name: Ensure that apiserver accesses the etcd cluster properly
+  shell: "{{ bin_dir }}/kubectl get ns"
+  register: etcd_status
+  until: '"kube-system" in etcd_status.stdout'
+  retries: 10
+  delay: 6
 
 - name: Calico | Deploy calico daemonset
   shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml"
