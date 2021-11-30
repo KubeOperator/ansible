@@ -6,6 +6,7 @@
     - glusterfs-fuse
     state: "present"
   when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+  tags: add_worker
 
 - name: "Install glusterfs mount utils | Debian"
   become: true
@@ -13,3 +14,4 @@
     name: glusterfs-client
     state: "present"
   when: ansible_distribution in [ 'Ubuntu','Debian' ]
+  tags: add_worker

@@ -3,12 +3,14 @@
     name: nfs-utils
     state: present
   when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+  tags: add_worker
 
 - name: NFS | Install nfs-utils
   package:
     name: nfs-common
     state: present
   when: ansible_distribution in [ 'Ubuntu','Debian' ]
+  tags: add_worker
 
 - block:
   - name: NFS| Set defaultvers
@@ -30,6 +32,7 @@
       replace: "Lock=False"
   when: storage_nfs_server_version is defined and storage_nfs_server_version == "3"
   ignore_errors: true
+  tags: add_worker
 
 - block:
   - name: NFS| Prepare nfs-client directory
