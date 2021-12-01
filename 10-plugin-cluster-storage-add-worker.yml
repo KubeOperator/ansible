@@ -1,0 +1,6 @@
+# tag: -t add_worker
+- hosts: new-worker
+  roles:
+  - { role: plugins/cluster-storage/nfs, when: "enable_nfs_provisioner == 'enable'" }
+  - { role: plugins/cluster-storage/glusterfs, when: "enable_gfs_provisioner == 'enable'" }
+  - { role: plugins/cluster-storage/external-ceph, when: "enable_external_ceph_provisioner == 'enable'" }
