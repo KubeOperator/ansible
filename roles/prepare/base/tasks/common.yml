@@ -68,3 +68,4 @@
 
 - name: Setup hostname
   shell: "hostnamectl set-hostname {{ inventory_hostname }}"
+  when: cluster_name_style == "hostname"

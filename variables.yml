@@ -146,3 +146,6 @@ helm3_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ 
 
 # ----------------------- chrony 下载地址 --------------------
 chrony_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/chrony/{{ architectures }}/chrony_xenial.tar.gz"
+
+# ----------------------- 集群名称样式(ip,hostname) --------------------
+cluster_name_style: "{% if hostvars[inventory_hostname]['ansible_ssh_host'] is defined %}hostname{% else %}ip{% endif %}"

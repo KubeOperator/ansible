@@ -1,6 +1,6 @@
 # Use public servers from the pool.ntp.org project.
 {% for host in groups['chrony'] %}
-server {{ hostvars[host]['ansible_ssh_host'] }} iburst
+server {% if hostvars[host]['ansible_ssh_host'] is defined %}{{ hostvars[host]['ansible_ssh_host'] }}{% else %}{{ host }}{% endif %} iburst
 {% endfor %}
 
 # Ignor source level

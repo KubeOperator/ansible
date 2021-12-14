@@ -13,3 +13,4 @@
   - "{{ groups['kube-master'] }}"
   - "{{ groups['kube-worker'] }}"
   - "{{ groups['new-worker'] }}"
+  when: cluster_name_style == "hostname"
