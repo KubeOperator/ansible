@@ -1,5 +1,0 @@
-- name: Ceph | install ceph-common
-  package:
-    name:
-      - ceph-common
-    state: present

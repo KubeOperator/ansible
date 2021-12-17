@@ -3,12 +3,7 @@ Description=HAProxy Load Balancer
 After=syslog.target network.target
 
 [Service]
-{% if ansible_distribution in ["CentOS","RedHat","EulerOS"] %}
 EnvironmentFile=/etc/sysconfig/haproxy
-{% endif %}
-{% if ansible_distribution in ['Ubuntu','Debian'] %}
-EnvironmentFile=/etc/default/haproxy
-{% endif %}
 ExecStartPre=/usr/bin/mkdir -p /run/haproxy
 ExecStart=/usr/sbin/haproxy-systemd-wrapper -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid $OPTIONS
 ExecReload=/bin/kill -USR2 $MAINPID

@@ -11,7 +11,7 @@
   when: '"active" in firewalld_already_installed.stdout'
 
 - name: Install base rpm package
-  package:
+  yum:
     name:
     - conntrack-tools
     - bash-completion
@@ -23,7 +23,7 @@
     state: latest
 
 - name: Install ipvs rpm package
-  package:
+  yum:
     name:
     - ipset
     - ipvsadm

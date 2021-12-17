@@ -69,3 +69,8 @@
 - name: Setup hostname
   shell: "hostnamectl set-hostname {{ inventory_hostname }}"
   when: cluster_name_style == "hostname"
+
+- name: Change the default Python version
+  shell: "rm -rf /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python"
+  when: ansible_distribution in [ 'Kylin Linux Advanced Server' ]
+  ignore_errors: true

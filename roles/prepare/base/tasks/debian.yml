@@ -22,7 +22,7 @@
   when: '"active" in ufw_already_installed.stdout'
 
 - name: Debian | Install base package
-  package:
+  apt:
     name:
     - conntrack
     - bash-completion
@@ -34,7 +34,7 @@
     state: latest
 
 - name: Debian | Install ipvs  package
-  package:
+  apt:
     name:
     - ipset
     - ipvsadm

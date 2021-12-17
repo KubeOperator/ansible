@@ -21,10 +21,15 @@
       name: "{{ base_dir }}/govc_linux_{{ architectures }}"
       state: absent
 
-  - name: vSphere | Install jq
-    package:
-      name:
-      - jq
+  - name: CentOS | Install jq
+    yum:
+      name: jq
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+
+  - name: Debian | Install jq
+    apt:
+      name: jq
+    when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
   - name: vSphere | Create cloud-config directory
     file:

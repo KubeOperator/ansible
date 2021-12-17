@@ -1,15 +1,13 @@
 - block:
   - name: OceanStor | Install iscsi-initiator-utils
-    package:
-      name:
-      - iscsi-initiator-utils
+    yum:
+      name: iscsi-initiator-utils
       state: present
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
   - name: OceanStor | Install iscsi-initiator-utils
-    package:
-      name:
-        - open-iscsi
+    apt:
+      name: open-iscsi
       state: present
     when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
@@ -21,31 +19,29 @@
 
 - block:
   - name: OceanStor | Install nfs-utils
-    package:
-      name:
-        - nfs-utils
+    yum:
+      name: nfs-utils
       state: present
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
   - name: OceanStor | Install nfs-utils
-    package:
-      name:
-        - nfs-common
+    apt:
+      name: nfs-common
       state: present
     when: ansible_distribution in [ 'Ubuntu','Debian' ]
   when: oceanstor_type == "nfs"
 
 - block:
   - name: OceanStor | CentOS | Install multipath
-    package:
+    yum:
       name:
       - device-mapper
       - device-mapper-multipath
       state: present
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
   - name: OceanStor | Debian | Install multipath
-    package:
+    apt:
       name:
         - multipath-tools
         - multipath-tools-boot

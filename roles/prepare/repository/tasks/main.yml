@@ -1,40 +1,38 @@
 - block:
   - block:
-    - name: Create repository backup directory
-      file:
-        path: /etc/yum.repos.d/bak
-        state: directory
+    - block:
+      - name: Create repository backup directory
+        file:
+          path: /etc/yum.repos.d/bak
+          state: directory
 
-    - name: Backup the old repository
-      shell: "sudo mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1 || sudo ls /etc/yum.repos.d/ >/dev/null 2>&1"
+      - name: Backup the old repository
+        shell: "sudo mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1 || sudo ls /etc/yum.repos.d/ >/dev/null 2>&1"
 
-    - name: Remove other repository
-      file:
-        path: /etc/yum.repos.d/*
-        state: absent
-    when:
-    - yum_operate == 'replace'
-    - ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+      - name: Remove other repository
+        file:
+          path: /etc/yum.repos.d/*
+          state: absent
+      when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
-  - block:
-    - name: Create repository backup directory
-      file:
-        path: /etc/apt/bak
-        state: directory
+    - block:
+      - name: Create repository backup directory
+        file:
+          path: /etc/apt/bak
+          state: directory
 
-    - name: Backup the old repository
-      shell: "sudo mv -f /etc/apt/*.list /etc/apt/bak >/dev/null 2>&1 || sudo ls /etc/apt/ >/dev/null 2>&1"
+      - name: Backup the old repository
+        shell: "sudo mv -f /etc/apt/*.list /etc/apt/bak >/dev/null 2>&1 || sudo ls /etc/apt/ >/dev/null 2>&1"
 
-    - name: Remove other repository
-      file:
-        path: /etc/apt/*
-        state: absent
-    when:
-    - yum_operate == 'replace'
-    - ansible_distribution in [ 'Ubuntu','Debian' ]
+      - name: Remove other repository
+        file:
+          path: /etc/apt/*
+          state: absent
+      when: ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: yum_operate == 'replace'
 
   - name: Install yum-plugin-protectbase rpm package
-    package:
+    yum:
       name: yum-plugin-protectbase
       state: latest
     when:
@@ -46,7 +44,7 @@
       path: "/etc/yum.conf"
       block: "sslverify=0"
       state: present
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
   - block:
     - name: RedHat | Add amd64 offline repository
@@ -89,5 +87,12 @@
         dest: /etc/apt/sources.list
       when: architectures == "arm64"
     when: ansible_distribution in [ 'Ubuntu','Debian' ]
-  when:
-  - yum_operate != 'no'
+
+  - block:
+    - name: Kylin Linux Advanced Server | Add arm64 offline repository
+      template:
+        src: kylin_v10_rpm_arm64.j2
+        dest: /etc/yum.repos.d/kubeops.repo
+      when: architectures == 'arm64'
+    when: ansible_distribution in [ 'Kylin Linux Advanced Server' ]
+  when: yum_operate != 'no'

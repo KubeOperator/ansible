@@ -21,7 +21,7 @@
         dest: /etc/selinux/config
         regexp: "^SELINUX="
         line: "SELINUX=disabled"
-    when: ansible_distribution in [ 'CentOS','RedHat' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
   - block:
     - name: Debian | Status ufw
@@ -69,18 +69,28 @@
       dest: /etc/keepalived/keepalived.conf
     when: lb_role == "backup"
 
-  - name: Install haproxy + keepalived
-    package:
+  - name: CentOS | Install haproxy + keepalived
+    yum:
       name: "{{ item }}"
       state: present
     with_items:
     - haproxy
     - keepalived
+    when: ansible_distribution in [ 'CentOS','RedHat','Kylin Linux Advanced Server' ]
+
+  - name: Debian | Install haproxy + keepalived
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+    - haproxy
+    - keepalived
+    when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
   - block:
     - name: Arm64 | Modify EulerOS haproxy.service
       template:
-        src: haproxy/haproxy.euler.service.j2
+        src: haproxy/haproxy-euler.service.j2
         dest: /usr/lib/systemd/system/haproxy.service
       when: architectures == 'arm64'
 
@@ -92,14 +102,14 @@
     when: ansible_distribution in [ 'EulerOS' ]
 
   - block:
-    - name: Modify haproxy.service
+    - name: CentOS | Modify haproxy.service
       template:
         src: haproxy/haproxy-centos.service.j2
         dest: /usr/lib/systemd/system/haproxy.service
-    when: ansible_distribution in [ 'CentOS','RedHat' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','Kylin Linux Advanced Server' ]
 
   - block:
-    - name: Modify haproxy.service
+    - name: Debian | Modify haproxy.service
       template:
         src: haproxy/haproxy-ubuntu.service.j2
         dest: /usr/lib/systemd/system/haproxy.service
@@ -119,5 +129,12 @@
 
   - name: Restart the Keepalived service
     shell: systemctl restart keepalived
-  when:
-  - inventory_hostname in groups['ex_lb']
+
+  - name: Waiting for haproxy to running
+    shell: "systemctl status haproxy.service|grep Active"
+    register: haproxy_status
+    until: '"running" in haproxy_status.stdout'
+    retries: 8
+    delay: 2
+
+  when: inventory_hostname in groups['ex_lb']

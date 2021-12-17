@@ -1,40 +1,28 @@
-- name: Remove ntp
-  package:
-    name:
-      - ntp
+- name: CentOS | Remove ntp server
+  yum:
+    name: ntp
     state: absent
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
   ignore_errors: true
 
-- name: Install chrony
-  package:
-    name:
-      - chrony
+- name: Debian | Remove ntp server
+  apt:
+    name: ntp
+    state: absent
+  when: ansible_distribution in [ 'Ubuntu','Debian' ]
+  ignore_errors: true
+
+- name: CentOS | Install chrony
+  yum:
+    name: chrony
     state: present
-  when: ansible_distribution != "Ubuntu" or ansible_distribution_major_version|int > 16
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
-
-- block:
-  - name: Create chrony download directory ('Ubuntu major version' < 18)
-    file:
-      name: "{{ base_dir }}/chrony"
-      state: directory
-
-  - name: Download chrony package ('Ubuntu major version' < 18)
-    get_url:
-      validate_certs: no
-      url: "{{ chrony_download_url }}"
-      dest: "{{ base_dir }}/chrony"
-      timeout: "{{ download_timeout_online }}"
-
-  - name: Unarchive chrony package ('Ubuntu major version' < 18)
-    unarchive:
-      src: "{{ base_dir }}/chrony/chrony_xenial.tar.gz"
-      dest: "{{ base_dir }}/chrony"
-      remote_src: yes
-
-  - name: Install chrony ('Ubuntu major version' < 18)
-    shell: "dpkg -i {{ base_dir }}/chrony/*.deb"
-  when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int < 18
+- name: Debian | Install chrony
+  apt:
+    name: chrony
+    state: present
+  when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - block:
   - name: Setup chrony server
@@ -47,7 +35,7 @@
       name: chronyd
       state: restarted
       enabled: yes
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
   - name:  Debian | start chrony server
     service:
@@ -68,7 +56,7 @@
       name: chronyd
       state: restarted
       enabled: yes
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
   - name: Start chrony client
     service:
@@ -82,8 +70,5 @@
 
   - name: Active sync time
     shell: "chronyc -a makestep"
-    when:
-    - ansible_user == "root"
-    - ansible_distribution != "Ubuntu" or ansible_distribution_major_version|int > 16
+    when: ansible_user == "root"
   when: 'inventory_hostname != groups.chrony[0]'
-

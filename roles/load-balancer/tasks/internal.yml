@@ -1,8 +1,14 @@
-- name: Install haproxy
-  package:
-    name:
-      - haproxy
+- name: CentOS | Install haproxy
+  yum:
+    name: haproxy
     state: present
+  when: ansible_distribution in [ 'CentOS','RedHat','Kylin Linux Advanced Server' ]
+
+- name: Debian | Install haproxy
+  apt:
+    name: haproxy
+    state: present
+  when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - name: Create haproxy directory
   file: name=/etc/haproxy state=directory
@@ -10,7 +16,7 @@
 - block:
   - name: Arm64 | Modify EulerOS haproxy.service
     template:
-      src: haproxy/haproxy.euler.service.j2
+      src: haproxy/haproxy-euler.service.j2
       dest: /usr/lib/systemd/system/haproxy.service
     when: architectures == 'arm64'
 
@@ -21,18 +27,22 @@
     when: architectures == 'amd64'
   when: ansible_distribution in [ 'EulerOS' ]
 
-- block:
-  - name: Modify haproxy.service
-    template:
-      src: haproxy/haproxy-centos.service.j2
-      dest: /usr/lib/systemd/system/haproxy.service
+- name: Modify CentOS haproxy.service
+  template:
+    src: haproxy/haproxy-centos.service.j2
+    dest: /usr/lib/systemd/system/haproxy.service
   when: ansible_distribution in [ 'CentOS','RedHat' ]
 
-- block:
-    - name: Modify haproxy.service
-      template:
-        src: haproxy/haproxy-ubuntu.service.j2
-        dest: /usr/lib/systemd/system/haproxy.service
+- name: Modify Kylin haproxy.service
+  template:
+    src: haproxy/haproxy-kylin.service.j2
+    dest: /usr/lib/systemd/system/haproxy.service
+  when: ansible_distribution in [ 'Kylin Linux Advanced Server' ]
+
+- name: Modify Debian haproxy.service
+  template:
+    src: haproxy/haproxy-ubuntu.service.j2
+    dest: /usr/lib/systemd/system/haproxy.service
   when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
 - name: Configuration haproxy
@@ -49,8 +59,10 @@
     name: haproxy
     state: restarted
     enabled: yes
-#
-#- name: Start haproxy service
-#  service:
-#    name: haproxy
-#    state: started
+
+- name: Waiting for haproxy to running
+  shell: "systemctl status haproxy.service|grep Active"
+  register: haproxy_status
+  until: '"running" in haproxy_status.stdout'
+  retries: 8
+  delay: 2

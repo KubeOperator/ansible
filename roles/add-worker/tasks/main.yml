@@ -1,8 +1,0 @@
-- name: Get all storageclass info
-  command: "{{ bin_dir }}/kubectl get storageclass"
-  register: sc_info
-  run_once: true
-  delegate_to: "{{ groups['kube-master'][0] }}"
-
-- import_tasks: vsphere.yml
-  when: '"vsphere" in sc_info.stdout'

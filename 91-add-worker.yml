@@ -17,7 +17,6 @@
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
 
 - hosts: new-worker
-  gather_facts: false
   roles:
   - prepare/kubernetes
 
