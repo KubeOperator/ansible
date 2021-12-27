@@ -11,5 +11,5 @@
   apt:
     name: glusterfs-client
     state: "present"
-  when: ansible_distribution in [ 'Ubuntu','Debian' ]
+  when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
   tags: add_worker

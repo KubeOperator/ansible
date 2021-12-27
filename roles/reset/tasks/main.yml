@@ -124,7 +124,7 @@
     state: stopped
     enabled: no
   ignore_errors: true
-  when: ansible_distribution in [ 'Ubuntu','Debian' ]
+  when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
 - name: Remove kubelet directory
   mount: 

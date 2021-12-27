@@ -72,5 +72,5 @@
 
 - name: Change the default Python version
   shell: "rm -rf /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python"
-  when: ansible_distribution in [ 'Kylin Linux Advanced Server' ]
+  when: ansible_distribution in [ 'Kylin Linux Advanced Server','Kylin' ]
   ignore_errors: true

@@ -9,7 +9,7 @@
   apt:
     name: ntp
     state: absent
-  when: ansible_distribution in [ 'Ubuntu','Debian' ]
+  when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
   ignore_errors: true
 
 - name: CentOS | Install chrony
@@ -22,7 +22,7 @@
   apt:
     name: chrony
     state: present
-  when: ansible_distribution in [ 'Ubuntu','Debian' ]
+  when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
 - block:
   - name: Setup chrony server
@@ -42,7 +42,7 @@
       name: chrony
       state: restarted
       enabled: yes
-    when: ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
   when: inventory_hostname == groups['chrony'][0]
 
 - block:
@@ -63,7 +63,7 @@
       name: chrony
       state: restarted
       enabled: yes
-    when: ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
   - name: Calibration time server
     shell: "chronyc tracking"

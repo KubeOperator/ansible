@@ -6,7 +6,7 @@ EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
 {% if ansible_distribution in [ "CentOS","RedHat","EulerOS",'Kylin Linux Advanced Server' ] %}
 EnvironmentFile=-/etc/sysconfig/kubelet
 {% endif %}
-{% if ansible_distribution in [ 'Ubuntu','Debian' ] %}
+{% if ansible_distribution in [ 'Ubuntu','Debian','Kylin' ] %}
 EnvironmentFile=/etc/default/kubelet
 {% endif %}
 ExecStart=

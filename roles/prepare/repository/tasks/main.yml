@@ -28,7 +28,7 @@
         file:
           path: /etc/apt/*
           state: absent
-      when: ansible_distribution in [ 'Ubuntu','Debian' ]
+      when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
     when: yum_operate == 'replace'
 
   - name: Install yum-plugin-protectbase rpm package
@@ -86,13 +86,21 @@
         src: ubuntu_sources_arm64.j2
         dest: /etc/apt/sources.list
       when: architectures == "arm64"
-    when: ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
-  - block:
-    - name: Kylin Linux Advanced Server | Add arm64 offline repository
-      template:
-        src: kylin_v10_rpm_arm64.j2
-        dest: /etc/yum.repos.d/kubeops.repo
-      when: architectures == 'arm64'
-    when: ansible_distribution in [ 'Kylin Linux Advanced Server' ]
+  - name: Kylin Linux Advanced Server | Add arm64 offline repository
+    template:
+      src: kylin_v10_rpm_arm64.j2
+      dest: /etc/yum.repos.d/kubeops.repo
+    when:
+    - architectures == 'arm64'
+    - ansible_distribution in [ 'Kylin Linux Advanced Server' ]
+
+  - name: Kylin | Add arm64 offline repository
+    template:
+      src: kylin_v10_deb_arm64.j2
+      dest: /etc/apt/sources.list
+    when:
+    - architectures == 'arm64'
+    - ansible_distribution in [ 'Kylin' ]
   when: yum_operate != 'no'

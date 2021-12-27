@@ -40,7 +40,7 @@
     lineinfile:
       dest: "/etc/bash.bashrc"
       line: 'export ETCD_UNSUPPORTED_ARCH=arm64'
-    when: ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
   when: architectures == "arm64"
 
 - name: Create etcd systemd unit file

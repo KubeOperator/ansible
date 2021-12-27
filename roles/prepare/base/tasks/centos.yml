@@ -1,7 +1,7 @@
 - name: Status firewalld
   shell: >
     systemctl status firewalld | grep active || echo "not be found"
-  register: firewalld_already_installed
+  regisip_tablester: firewalld_already_installed
 
 - name: Disable firewalld
   service:
@@ -9,6 +9,7 @@
     state: stopped
     enabled: no
   when: '"active" in firewalld_already_installed.stdout'
+  ignore_errors: true
 
 - name: Install base rpm package
   yum:

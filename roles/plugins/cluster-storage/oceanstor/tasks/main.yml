@@ -9,7 +9,7 @@
     apt:
       name: open-iscsi
       state: present
-    when: ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
   - name: OceanStor | Enable iscsi service
     service:
@@ -28,7 +28,7 @@
     apt:
       name: nfs-common
       state: present
-    when: ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
   when: oceanstor_type == "nfs"
 
 - block:
@@ -46,7 +46,7 @@
         - multipath-tools
         - multipath-tools-boot
       state: present
-    when: ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
   when:
   - oceanstor_is_multipath == "yes"
   - oceanstor_type != "nfs"

@@ -14,12 +14,13 @@
     systemctl status ufw | grep active || echo "not be found"
   register: ufw_already_installed
 
-- name: Debian |Disable UFW
+- name: Debian | Disable UFW
   service:
     name: ufw
     state: stopped
     enabled: no
   when: '"active" in ufw_already_installed.stdout'
+  ignore_errors: true
 
 - name: Debian | Install base package
   apt:

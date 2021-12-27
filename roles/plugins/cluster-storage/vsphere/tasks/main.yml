@@ -29,7 +29,7 @@
   - name: Debian | Install jq
     apt:
       name: jq
-    when: ansible_distribution in [ 'Ubuntu','Debian' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
   - name: vSphere | Create cloud-config directory
     file:
