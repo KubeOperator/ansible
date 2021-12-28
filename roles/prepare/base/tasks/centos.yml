@@ -1,7 +1,7 @@
 - name: Status firewalld
   shell: >
     systemctl status firewalld | grep active || echo "not be found"
-  regisip_tablester: firewalld_already_installed
+  register: firewalld_already_installed
 
 - name: Disable firewalld
   service:
