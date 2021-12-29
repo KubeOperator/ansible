@@ -56,10 +56,22 @@
   shell: "sysctl -p /etc/sysctl.d/95-k8s-sysctl.conf"
   ignore_errors: true
 
+- name: Check whether the sysctl.conf exists
+  stat:
+    path: /etc/sysctl.conf
+  register: sysctl_conf_stat
+
+- name: Delete the default ip_forward parameter
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: "^net.ipv4.ip_forward"
+    state: absent
+  when: sysctl_conf_stat.stat.isreg is defined
+
 - name: Create systemd directory
   file: 
     name: /etc/systemd/system.conf.d 
-    state: directory 
+    state: directory
 
 - name: Setup system ulimits
   template: 

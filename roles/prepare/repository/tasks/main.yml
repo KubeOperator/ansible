@@ -86,7 +86,7 @@
         src: ubuntu_sources_arm64.j2
         dest: /etc/apt/sources.list
       when: architectures == "arm64"
-    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
+    when: ansible_distribution in [ 'Ubuntu','Debian' ]
 
   - name: Kylin Linux Advanced Server | Add arm64 offline repository
     template:
