@@ -102,9 +102,17 @@
       when: architectures == 'arm64'
     when: ansible_distribution in [ 'Kylin Linux Advanced Server' ]
 
-  - name: Kylin | Add offline repository
-    template:
-      src: kylin_v10_deb.j2
-      dest: /etc/apt/sources.list
+  - block:
+    - name: Kylin | Add amd64 offline repository
+      template:
+        src: kylin_v10_deb_amd64.j2
+        dest: /etc/apt/sources.list
+      when: architectures == 'amd64'
+
+    - name: Kylin | Add arm64 offline repository
+      template:
+        src: kylin_v10_deb_arm64.j2
+        dest: /etc/apt/sources.list
+      when: architectures == 'arm64'
     when: ansible_distribution in [ 'Kylin' ]
   when: yum_operate != 'no'
