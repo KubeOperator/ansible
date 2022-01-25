@@ -78,6 +78,9 @@ net.ipv4.tcp_keepalive_probes = 10
 vm.overcommit_memory = 1
 kernel.panic = 10
 kernel.panic_on_oops = 1
+{% if ansible_distribution == "EulerOS" %}
+vm.panic_on_oom = 0
+{% endif %}
 
 # refer to https://github.com/Azure/AKS/issues/772
 fs.inotify.max_user_watches = 1048576

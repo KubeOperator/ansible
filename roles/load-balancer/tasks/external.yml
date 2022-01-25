@@ -76,7 +76,7 @@
     with_items:
     - haproxy
     - keepalived
-    when: ansible_distribution in [ 'CentOS','RedHat','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
 
   - name: Debian | Install haproxy + keepalived
     apt:
