@@ -27,8 +27,6 @@ lb_haproxy_stats_uri: "/stats"
 lb_haproxy_stats_refresh: 10
 # haproxy监控用户名
 lb_haproxy_stats_user: "admin"
-# haproxy监控用户密码
-lb_haproxy_stats_password: "admin"
 # haproxy负载均衡算法，常见如下：
 # "roundrobin": 基于服务器权重的轮询
 # "leastconn": 基于服务器最小连接数
@@ -47,8 +45,6 @@ KUBE_APISERVER_IP: >-
 
 # 使用 vip 负载时使用的 keepalived 镜像
 lb_keepalived_image: registry.cn-shanghai.aliyuncs.com/kubeadm-ha/osixia_keepalived:2.0.20
-# keepalived auth_type 的 password
-lb_keepalived_password: "d0cker"
 # 区分多个 instance 的 VRRP 组播，同网段不能重复，取值在0-255之间
 lb_keepalived_router_id: 51
 # 默认所有节点权重 120
