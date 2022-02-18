@@ -1,6 +1,6 @@
 # ----------------------- 版本设置 -----------------------
-crictl_version: "v1.18.0"
-runc_version: "v1.0.0-rc91"
+crictl_version: "v1.23.0"
+runc_version: "v1.1"
 pause_version: "3.2"
 busybox_version: "1.28"
 cni_version: "v0.8.6"
@@ -34,6 +34,8 @@ cilium_operator_image: "{{ dns_repository_hostname }}:{{ registry_port }}/cilium
 # ingress-controller 镜像地址
 nginx_ingress_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubernetes-ingress-controller/nginx-ingress-controller:{{ nginx_ingress_version }}"
 traefik_ingress_image: "{{ dns_repository_hostname }}:{{ registry_port }}/traefik:{{ traefik_ingress_version }}"
+kubernetes_ingress_nginx_controller_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/ingress-nginx-controller:{{ nginx_ingress_version }}"
+kubernetes_ingress_nginx_webhook_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/kube-webhook-certgen:{{ kubernetes_ingress_nginx_webhook_version }}"
 # ceph-rbd provisioner
 rbd_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
 # nfs provisioner
