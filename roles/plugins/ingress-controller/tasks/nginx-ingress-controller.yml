@@ -2,13 +2,13 @@
   template:
     src: nginx-ingress-controller.yaml.j2
     dest: /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml
-  when: nginx_ingress_version is version('v1.0','<')
+  when: "nginx_ingress_version == '0.33.0'"
 
 - name: Copy nginx-ingress-controller file
   template:
     src: nginx-ingress-controller-v1.1.1.yaml.j2
     dest: /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml
-  when: nginx_ingress_version is version('v1.0','>')
+  when: "nginx_ingress_version == 'v1.1.1'"
 
 - name: Ensure that apiserver accesses the etcd cluster properly
   shell: "{{ bin_dir }}/kubectl get ns"
