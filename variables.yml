@@ -1,7 +1,7 @@
 # ----------------------- 版本设置 -----------------------
 crictl_version: "v1.23.0"
 runc_version: "v1.1"
-pause_version: "3.5"
+pause_version: "{% if kube_version is version('v1.22.0', '<=') %}3.2{% else %}3.5{% endif %}"
 busybox_version: "1.28"
 cni_version: "v0.8.6"
 cni_calico_version: "v3.12.3"
