@@ -4,11 +4,28 @@
     register: nvidia_gpu_operator_exist
 
   - block:
+    - name: GPU| Delete NVIDIA GPU Operator
+      command: "helm uninstall ko-gpu-operator -n kube-operator"
+
+    - name: GPU| Delete Namespace gpu-operator-resources
+      command: "{{ bin_dir }}/kubectl delete ns gpu-operator-resources"
+      when: '"namespace/gpu-operator-resources" in nvidia_gpu_operator_exist.stdout'
+    when: support_gpu == 'disable'
+
+  - block:
     - name: Copy GPU Operator chart
       copy: src=gpu-operator-v1.7.0.tgz dest={{ base_dir }}/ mode=0644
 
+    - name: Confirm Namespace gpu-operator-resources exist
+      command: "{{ bin_dir }}/kubectl create ns gpu-operator-resources"
+      when: '"namespace/gpu-operator-resources" not in nvidia_gpu_operator_exist.stdout'
+
+    - name: Confirm Namespace kube-operator exist
+      command: "{{ bin_dir }}/kubectl create ns kube-operator"
+      when: '"namespace/kube-operator" not in nvidia_gpu_operator_exist.stdout'
+
     - name: GPU| Create NVIDIA GPU Operator
-      shell: "helm install --wait --generate-name {{ base_dir }}/gpu-operator-v1.7.0.tgz \
+      shell: "helm upgrade -i ko-gpu-operator {{ base_dir }}/gpu-operator-v1.7.0.tgz -n kube-operator \
               --set toolkit.version=1.4.7-ubi8 \
               --set operator.defaultRuntime=docker \
               --set validator.repository=registry.kubeoperator.io:8082/kubeoperator \
@@ -21,7 +38,4 @@
               --set gfd.repository=registry.kubeoperator.io:8082/kubeoperator \
               --set migManager.repository=registry.kubeoperator.io:8082/kubeoperator \
               --set node-feature-discovery.image.repository=registry.kubeoperator.io:8082/kubeoperator/node-feature-discovery"
-    when: '"namespace/gpu-operator-resources" not in nvidia_gpu_operator_exist.stdout'
-  when:
-  - container_runtime == 'docker'
-  - support_gpu == 'enable'
+    when: support_gpu == 'enable'
