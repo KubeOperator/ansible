@@ -103,7 +103,7 @@ spec:
       priorityClassName: system-node-critical
       containers:
         - name: ingress-nginx-controller
-          image: {{ kubernetes_ingress_nginx_controller_image }}
+          image: {{ nginx_ingress_image }}
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
