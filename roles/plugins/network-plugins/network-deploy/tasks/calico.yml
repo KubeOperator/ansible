@@ -49,6 +49,23 @@
       dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   when: calico_version == "v3.18.4"
 
+- block:
+  - name: Calico | Copy calico crds file
+    template:
+      src: calico/crds-v3.21.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/crds.yaml
+
+  - name: Calico | Copy calico typha file
+    template:
+      src: calico/calico-typha-v3.21.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
+
+  - name: Calico | Copy calico daemonset file
+    template:
+      src: calico/calicoctl-daemonset-v3.21.yaml.j2
+      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
+  when: calico_version == "v3.21.4"
+
 - name: Ensure that apiserver accesses the etcd cluster properly
   shell: "{{ bin_dir }}/kubectl get ns"
   register: etcd_status
