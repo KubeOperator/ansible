@@ -100,8 +100,6 @@ registry_hosted_port: "8083"
 kubeadm_token: "abcdef.0123456789abcdef"
 # Kubelet 根目录
 kubelet_root_dir: "/var/lib/kubelet"
-# 应用dns域名
-app_domain: "kubeoperator.org"
 # kubernetes组件预留资源
 kube_cpu_reserved: "100m"
 kube_memory_reserved: "256M"
