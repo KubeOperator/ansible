@@ -74,8 +74,6 @@ cinder_csi_resizer_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8s
 cinder_csi_livenessprobe_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/livenessprobe:{{ cinder_csi_livenessprobe_version }}"
 cinder_csi_registrar_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ cinder_csi_node_driver_registrar_version }}"
 
-# nvidia gpu
-nvidia_k8s_device_plugin: "{{ dns_repository_hostname }}:{{ registry_port }}/nvidia/k8s-device-plugin:1.0.0-beta"
 # ----------------------- 集群参数设置 ---------------------------
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"

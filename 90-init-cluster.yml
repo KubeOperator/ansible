@@ -9,8 +9,6 @@
   roles:
   - { role: prepare/docker, when: "container_runtime == 'docker'" }
   - { role: prepare/containerd, when: "container_runtime == 'containerd'" }
-  - { role: plugins/gpu/gpu-driver, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
-  - { role: plugins/gpu/gpu-docker, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
 
 - hosts: all
   gather_facts: false
@@ -80,8 +78,3 @@
   gather_facts: false
   roles:
   - post
-
-- hosts: kube-master[0]
-  gather_facts: false
-  roles:
-  - { role: plugins/gpu/gpu-plugin, when: "container_runtime == 'docker' and support_gpu == 'enable'" }
