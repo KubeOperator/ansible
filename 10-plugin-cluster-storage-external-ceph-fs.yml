@@ -1,0 +1,5 @@
+- hosts:
+    - kube-master[0]
+  gather_facts: false
+  roles:
+    - plugins/cluster-storage/external-ceph-fs

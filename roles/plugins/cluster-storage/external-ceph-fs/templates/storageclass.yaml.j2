@@ -1,0 +1,10 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: {{ storageClassName }}
+provisioner: {{ storage_fs_provisioner_name }}
+parameters:
+    monitors: {{ ceph_monitor }}
+    adminId: {{ ceph_admin_id }}
+    adminSecretNamespace: {{ ceph_admin_secret_namespace }}
+    adminSecretName: {{ ceph_admin_secret_name}}

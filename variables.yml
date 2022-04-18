@@ -36,6 +36,8 @@ nginx_ingress_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoper
 traefik_ingress_image: "{{ dns_repository_hostname }}:{{ registry_port }}/traefik:{{ traefik_ingress_version }}"
 # ceph-rbd provisioner
 rbd_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}/external_storage/rbd-provisioner:{{ rbd_provisioner_version }}"
+# ceph-fs provisioner
+fs_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}/external_storage/cephfs-provisioner:{{ fs_provisioner_version }}"
 # nfs provisioner
 nfs_client_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/nfs-client-provisioner:{{ nfs_provisioner_version }}"
 # rook-ceph
