@@ -1,4 +1,3 @@
-# tag: -t add_worker
 - hosts: new-worker
   roles:
   - { role: plugins/cluster-storage/nfs, when: "enable_nfs_provisioner == 'enable'" }
