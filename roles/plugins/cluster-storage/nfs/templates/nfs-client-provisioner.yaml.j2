@@ -24,6 +24,9 @@ apiVersion: apps/v1
 metadata:
   name: {{ storage_nfs_provisioner_name }}
   namespace: kube-system
+  labels:
+    type: nfs
+    nfsVersion: {{ storage_nfs_server_version }}
 spec:
   replicas: 1
   strategy:
