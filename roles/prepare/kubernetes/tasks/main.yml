@@ -37,7 +37,7 @@
 
 - name: Create kubelet params file
   template: src=kubelet.config.j2 dest=/etc/sysconfig/kubelet
-  when: ansible_distribution in [ "CentOS","RedHat","EulerOS",'Kylin Linux Advanced Server' ]
+  when: ansible_distribution in [ "CentOS","RedHat","EulerOS","openEuler",'Kylin Linux Advanced Server' ]
 
 - name: Create kubelet params file
   template: src=kubelet.config.j2 dest=/etc/default/kubelet

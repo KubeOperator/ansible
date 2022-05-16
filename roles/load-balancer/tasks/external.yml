@@ -21,7 +21,7 @@
         dest: /etc/selinux/config
         regexp: "^SELINUX="
         line: "SELINUX=disabled"
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
   - block:
     - name: Debian | Status ufw
@@ -76,7 +76,7 @@
     with_items:
     - haproxy
     - keepalived
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
   - name: Debian | Install haproxy + keepalived
     apt:
@@ -86,44 +86,6 @@
     - haproxy
     - keepalived
     when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
-
-  - block:
-    - name: Arm64 | Modify EulerOS haproxy.service
-      template:
-        src: haproxy/haproxy-euler.service.j2
-        dest: /usr/lib/systemd/system/haproxy.service
-      when: architectures == 'arm64'
-
-    - name: Amd64 | Modify EulerOS haproxy.service
-      template:
-        src: haproxy/haproxy-centos.service.j2
-        dest: /usr/lib/systemd/system/haproxy.service
-      when: architectures == 'amd64'
-    when: ansible_distribution in [ 'EulerOS' ]
-
-  - name: Modify CentOS haproxy.service
-    template:
-      src: haproxy/haproxy-centos.service.j2
-      dest: /usr/lib/systemd/system/haproxy.service
-    when: ansible_distribution in [ 'CentOS','RedHat' ]
-
-  - name: Modify Kylin Linux Advanced Server haproxy.service
-    template:
-      src: haproxy/haproxy-kylin-rpm.service.j2
-      dest: /usr/lib/systemd/system/haproxy.service
-    when: ansible_distribution in [ 'Kylin Linux Advanced Server' ]
-
-  - name: Modify Debian haproxy.service
-    template:
-      src: haproxy/haproxy-ubuntu.service.j2
-      dest: /usr/lib/systemd/system/haproxy.service
-    when: ansible_distribution in [ 'Ubuntu','Debian' ]
-
-  - name: Modify Kylin haproxy.service
-    template:
-      src: haproxy/haproxy-kylin-deb.service.j2
-      dest: /lib/systemd/system/haproxy.service
-    when: ansible_distribution in [ 'Kylin' ]
 
   - name: daemon-reload for haproxy.service
     shell: systemctl daemon-reload

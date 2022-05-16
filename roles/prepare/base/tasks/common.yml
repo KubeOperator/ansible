@@ -49,7 +49,7 @@
 
 - name: Set system parameters
   template: 
-    src: 95-k8s-sysctl.conf.j2 
+    src: 99-sysctl-ko.conf.j2
     dest: /etc/sysctl.d/95-k8s-sysctl.conf
 
 - name: Effective system parameters

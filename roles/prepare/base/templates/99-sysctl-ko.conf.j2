@@ -22,7 +22,7 @@ net.ipv4.ip_forward = 1
 
 # 访问业务域名时而会出现无法访问或连接超时的情况
 # refer to https://www.ziji.work/kubernetes/kubernetes_cannot_accesspod_port.html
-{% if ansible_distribution in ["CentOS","RedHat","EulerOS",'Kylin Linux Advanced Server'] and ansible_kernel is version('4.12', '<') %}
+{% if ansible_distribution in ["CentOS","RedHat","EulerOS","openEuler",'Kylin Linux Advanced Server'] and ansible_kernel is version('4.12', '<') %}
 net.ipv4.tcp_tw_recycle = 0
 {% endif %}
 net.ipv4.tcp_tw_reuse = 0
@@ -78,7 +78,7 @@ net.ipv4.tcp_keepalive_probes = 10
 vm.overcommit_memory = 1
 kernel.panic = 10
 kernel.panic_on_oops = 1
-{% if ansible_distribution == "EulerOS" %}
+{% if ansible_distribution in ["EulerOS","openEuler"] %}
 vm.panic_on_oom = 0
 {% endif %}
 

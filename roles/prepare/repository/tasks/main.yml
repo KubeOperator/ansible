@@ -13,7 +13,7 @@
         file:
           path: /etc/yum.repos.d/*
           state: absent
-      when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+      when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
     - block:
       - name: Create repository backup directory
@@ -37,25 +37,25 @@
       state: latest
     when:
     - yum_operate == 'coexist'
-    - ansible_distribution in [ 'CentOS','RedHat','EulerOS' ]
+    - ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler' ]
 
   - name: Insert yum record
     blockinfile:
       path: "/etc/yum.conf"
       block: "sslverify=0"
       state: present
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
   - block:
     - name: RedHat | Add amd64 offline repository
       template:
-        src: kubeops.repo.amd64.j2
+        src: kubeops.repo-linux-amd64.j2
         dest: /etc/yum.repos.d/kubeops.repo
       when: architectures == 'amd64'
 
     - name: RedHat | Add arm64 offline repository
       template:
-        src: kubeops.repo.arm64.j2
+        src: kubeops.repo-linux-arm64.j2
         dest: /etc/yum.repos.d/kubeops.repo
       when: architectures == 'arm64'
     when: ansible_distribution in [ 'CentOS','RedHat' ]
@@ -63,27 +63,33 @@
   - block:
     - name: EulerOS | Add amd64 offline repository
       template:
-        src: kubeops.repo.amd64-euler.j2
+        src: kubeops.repo-euler-amd64.j2
         dest: /etc/yum.repos.d/kubeops.repo
       when: architectures == 'amd64'
 
     - name: EulerOS | Add arm64 offline repository
       template:
-        src: kubeops.repo.arm64-euler.j2
+        src: kubeops.repo-euler-arm64.j2
         dest: /etc/yum.repos.d/kubeops.repo
       when: architectures == 'arm64'
     when: ansible_distribution in [ 'EulerOS' ]
 
+  - name: openEuler | Add offline repository
+    template:
+      src: kubeops.repo-openeuler.j2
+      dest: /etc/yum.repos.d/kubeops.repo
+    when: ansible_distribution in [ 'openEuler' ]
+
   - block:
     - name: Debian (amd64)| Add apt repository
       template:
-        src: ubuntu_sources_amd64.j2
+        src: kubeops.repo-ubuntu-amd64.j2
         dest: /etc/apt/sources.list
       when: architectures == "amd64"
 
     - name: Debian (arm64) | Add apt repository
       template:
-        src: ubuntu_sources_arm64.j2
+        src: kubeops.repo-ubuntu-arm64.j2
         dest: /etc/apt/sources.list
       when: architectures == "arm64"
     when: ansible_distribution in [ 'Ubuntu','Debian' ]
@@ -91,13 +97,13 @@
   - block:
     - name: Kylin Linux Advanced Server | Add amd64 offline repository
       template:
-        src: kylin_v10_rpm_amd64.j2
+        src: kubeops.repo-kylin-amd64-rpm.j2
         dest: /etc/yum.repos.d/kubeops.repo
       when: architectures == 'amd64'
 
     - name: Kylin Linux Advanced Server | Add arm64 offline repository
       template:
-        src: kylin_v10_rpm_arm64.j2
+        src: kubeops.repo-kylin-arm64-rpm.j2
         dest: /etc/yum.repos.d/kubeops.repo
       when: architectures == 'arm64'
     when: ansible_distribution in [ 'Kylin Linux Advanced Server' ]
@@ -105,13 +111,13 @@
   - block:
     - name: Kylin | Add amd64 offline repository
       template:
-        src: kylin_v10_deb_amd64.j2
+        src: kubeops.repo-kylin-amd64-deb.j2
         dest: /etc/apt/sources.list
       when: architectures == 'amd64'
 
     - name: Kylin | Add arm64 offline repository
       template:
-        src: kylin_v10_deb_arm64.j2
+        src: kubeops.repo-kylin-arm64-deb.j2
         dest: /etc/apt/sources.list
       when: architectures == 'arm64'
     when: ansible_distribution in [ 'Kylin' ]

@@ -3,7 +3,7 @@
 
 # CentOS 系列|系统基础软件环境
 - include_tasks: centos.yml
-  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
 # Debian 系列|系统基础软件环境
 - include_tasks: debian.yml

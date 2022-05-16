@@ -2,7 +2,7 @@
   yum:
     name: ntp
     state: absent
-  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
   ignore_errors: true
 
 - name: Debian | Remove ntp server
@@ -16,7 +16,7 @@
   yum:
     name: chrony
     state: present
-  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
 - name: Debian | Install chrony
   apt:
@@ -35,7 +35,7 @@
       name: chronyd
       state: restarted
       enabled: yes
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
   - name:  Debian | start chrony server
     service:
@@ -56,7 +56,7 @@
       name: chronyd
       state: restarted
       enabled: yes
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
   - name: Start chrony client
     service:

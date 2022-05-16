@@ -4,7 +4,7 @@
     - glusterfs
     - glusterfs-fuse
     state: "present"
-  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
   tags: add_worker
 
 - name: Debian | Install glusterfs mount utils

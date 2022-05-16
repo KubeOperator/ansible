@@ -24,7 +24,7 @@
   - name: CentOS | Install jq
     yum:
       name: jq
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
   - name: Debian | Install jq
     apt:

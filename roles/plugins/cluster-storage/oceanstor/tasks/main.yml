@@ -3,7 +3,7 @@
     yum:
       name: iscsi-initiator-utils
       state: present
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
   - name: OceanStor | Install iscsi-initiator-utils
     apt:
@@ -22,7 +22,7 @@
     yum:
       name: nfs-utils
       state: present
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
   - name: OceanStor | Install nfs-utils
     apt:
@@ -38,7 +38,7 @@
       - device-mapper
       - device-mapper-multipath
       state: present
-    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
   - name: OceanStor | Debian | Install multipath
     apt:

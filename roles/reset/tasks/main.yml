@@ -116,7 +116,7 @@
     state: stopped
     enabled: no
   ignore_errors: true
-  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','Kylin Linux Advanced Server' ]
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
 - name: Stop and disable chronyd
   service:

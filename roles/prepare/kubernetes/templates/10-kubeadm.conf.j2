@@ -3,7 +3,7 @@ Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/boot
 Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
 EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
 
-{% if ansible_distribution in [ "CentOS","RedHat","EulerOS",'Kylin Linux Advanced Server' ] %}
+{% if ansible_distribution in [ "CentOS","RedHat","EulerOS","openEuler",'Kylin Linux Advanced Server' ] %}
 EnvironmentFile=-/etc/sysconfig/kubelet
 {% endif %}
 {% if ansible_distribution in [ 'Ubuntu','Debian','Kylin' ] %}
