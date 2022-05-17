@@ -1,14 +1,41 @@
-[EulerOS-Base]
-name=EulerOS-2.0SP5 base
-baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/euler-base/2.5/os/$basearch/
+[OS]
+name=OS
+baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/OS/$basearch/
 enabled=1
 gpgcheck=1
-gpgkey={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/euler-base/2.5/os/RPM-GPG-KEY-EulerOS
-protect=1
+gpgkey={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/OS/$basearch/RPM-GPG-KEY-openEuler
 
-[Centos-epel]
-name=CentOS epel
-baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/centos-epel/7/$basearch/
+[everything]
+name=everything
+baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/everything/$basearch/
 enabled=1
-gpgcheck=0
-protect=1
+gpgcheck=1
+gpgkey={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/everything/$basearch/RPM-GPG-KEY-openEuler
+
+[EPOL]
+name=EPOL
+baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/EPOL/main/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/OS/$basearch/RPM-GPG-KEY-openEuler
+
+[debuginfo]
+name=debuginfo
+baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/debuginfo/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/debuginfo/$basearch/RPM-GPG-KEY-openEuler
+
+[source]
+name=source
+baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/source/
+enabled=1
+gpgcheck=1
+gpgkey={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/source/RPM-GPG-KEY-openEuler
+
+[update]
+name=update
+baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/update/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/openEuleros-base/openEuler-22.03-LTS/OS/$basearch/RPM-GPG-KEY-openEuler
