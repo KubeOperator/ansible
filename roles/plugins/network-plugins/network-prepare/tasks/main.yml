@@ -23,11 +23,5 @@
     dest: "{{ cni_bin_dir }}"
     remote_src: yes
 
-- include_tasks: flannel.yml
-  when: network_plugin == 'flannel'
-
-- include_tasks: calico.yml
-  when: network_plugin == 'calico'
-
 - include_tasks: cilium.yml
   when: network_plugin == 'cilium'

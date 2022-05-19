@@ -7,8 +7,6 @@ kube_apiserver_enable_admission_plugins:
 # - AlwaysPullImages
 # - PodSecurityPolicy
 
-cni_bin_dir: "/opt/cni/bin"
-
 # calico mtu
 calico_veth_mtu: 1440
 # 设置 Felix 日志级别(debug, info, warning, error)

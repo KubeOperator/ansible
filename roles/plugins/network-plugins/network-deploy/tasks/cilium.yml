@@ -12,21 +12,3 @@
 
 - name: Cilium | Deploy cilium | amd64 host
   shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/cilium.yaml"
-
-- block:
-  - name: Read cilium-cni file
-    shell: "ls {{ cni_bin_dir}} | grep cilium-cni"
-    register: cilium_cni_status
-    until: '"cilium-cni" in cilium_cni_status.stdout'
-    retries: 10
-    delay: 5
-
-  - name: Copy cilium file
-    copy:
-      src: "{{ cni_bin_dir}}/cilium-cni"
-      dest: "{{ bin_dir }}/"
-      remote_src: yes
-      mode: "0755"
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
-  when: container_runtime == 'containerd'
