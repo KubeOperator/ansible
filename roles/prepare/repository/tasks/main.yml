@@ -121,4 +121,19 @@
         dest: /etc/apt/sources.list
       when: architectures == 'arm64'
     when: ansible_distribution in [ 'Kylin' ]
+
+  - block:
+    - name: Yum | Clean the repository cache
+      shell: "sudo yum clean all >/dev/null 2>&1 || sudo ls /etc/yum.repos.d/ >/dev/null 2>&1"
+      ignore_errors: true
+
+    - name: Yum | Clean the repository cache
+      shell: "sudo yum makecache >/dev/null 2>&1 || sudo ls /etc/yum.repos.d/ >/dev/null 2>&1"
+      ignore_errors: true
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
+
+  - name: Apt | Building the repository cache
+    shell: "sudo apt-get clean"
+    ignore_errors: true
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
   when: yum_operate != 'no'

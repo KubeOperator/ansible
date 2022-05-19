@@ -69,38 +69,51 @@
       dest: /etc/keepalived/keepalived.conf
     when: lb_role == "backup"
 
-  - name: CentOS | Install haproxy + keepalived
-    yum:
-      name: "{{ item }}"
-      state: present
-    with_items:
-    - haproxy
-    - keepalived
+  - block:
+    - name: CentOS | Uninstall haproxy + keepalived
+      yum:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+      - haproxy
+      - keepalived
+
+    - name: CentOS | Install haproxy + keepalived
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+      - haproxy
+      - keepalived
     when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
-  - name: Debian | Install haproxy + keepalived
-    apt:
-      name: "{{ item }}"
-      state: present
-    with_items:
-    - haproxy
-    - keepalived
+  - block:
+    - name: Debian | Uninstall haproxy + keepalived
+      apt:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+      - haproxy
+      - keepalived
+
+    - name: Debian | Install haproxy + keepalived
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+      - haproxy
+      - keepalived
     when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
-  - name: daemon-reload for haproxy.service
-    shell: systemctl daemon-reload
+  - name: Systemctl daemon-reload
+    systemd:
+      daemon_reload: yes
 
-  - name: Start the haproxy service
-    shell: systemctl enable haproxy
-
-  - name: Restart the haproxy service
-    shell: systemctl restart haproxy
-
-  - name: Enable keepalived service on startup
-    shell: systemctl enable keepalived
-
-  - name: Restart the Keepalived service
-    shell: systemctl restart keepalived
+  - name: Enable haproxy service
+    service:
+      name: haproxy
+      state: restarted
+      enabled: yes
 
   - name: Waiting for haproxy to running
     shell: "systemctl status haproxy.service|grep Active"

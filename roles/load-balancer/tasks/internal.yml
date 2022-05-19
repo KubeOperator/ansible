@@ -1,13 +1,25 @@
-- name: CentOS | Install haproxy
-  yum:
-    name: haproxy
-    state: present
+- block:
+  - name: CentOS | Uninstall haproxy
+    yum:
+      name: haproxy
+      state: absent
+
+  - name: CentOS | Install haproxy
+    yum:
+      name: haproxy
+      state: present
   when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
-- name: Debian | Install haproxy
-  apt:
-    name: haproxy
-    state: present
+- block:
+  - name: Debian | Uninstall haproxy
+    apt:
+      name: haproxy
+      state: absent
+
+  - name: Debian | Install haproxy
+    apt:
+      name: haproxy
+      state: present
   when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
 - name: Create haproxy directory

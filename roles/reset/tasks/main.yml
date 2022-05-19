@@ -88,19 +88,35 @@
   when: "inventory_hostname in groups['etcd']"
 
 - block:
-  - name: Remove service haproxy
+  - name: Stop haproxy + keepalived service
     service:
-      name: haproxy
+      name: "{{ item }}"
       state: stopped
       enabled: no
+    with_items:
+    - haproxy
+    - keepalived
     ignore_errors: true
 
-  - name: Remove service keepalived
-    service:
-      name: keepalived
-      state: stopped
-      enabled: no
+  - name: Centos | Uninstall haproxy + keepalived service
+    yum:
+      name: "{{ item }}"
+      state: absent
+    with_items:
+    - haproxy
+    - keepalived
     ignore_errors: true
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
+
+  - name: Debian | Uninstall haproxy + keepalived service
+    apt:
+      name: "{{ item }}"
+      state: absent
+    with_items:
+    - haproxy
+    - keepalived
+    ignore_errors: true
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
   - name: Remove files and dirs
     file: name={{ item }} state=absent
@@ -225,6 +241,17 @@
   - ip link del ovs-system
   ignore_errors: true
 
+- name: Get Legacy route rule
+  command: ip route show proto bird
+  changed_when: false
+  register: bird_routes
+
+- name: Delete Legacy route rule
+  command: "ip route del {{ bird_route }} proto bird"
+  with_items: "{{ bird_routes.stdout_lines }}"
+  loop_control:
+    loop_var: bird_route
+
 - name: Systemctl daemon-reload
   systemd:
     daemon_reload: yes
@@ -253,7 +280,11 @@
   systemd:
     name: >-
       {% if ansible_os_family == "RedHat" -%}
+      {%- if ansible_distribution_major_version|int == 8 -%}
+      NetworkManager
+      {%- else -%}
       network
+      {%- endif -%}
       {%- elif ansible_distribution == "Ubuntu" and ansible_distribution_release == "bionic" -%}
       systemd-networkd
       {%- elif ansible_os_family == "Debian" -%}
