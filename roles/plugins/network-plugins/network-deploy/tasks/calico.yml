@@ -8,11 +8,6 @@
     template:
       src: calico/calico-typha.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
-
-  - name: Calico | Copy calico daemonset file
-    template:
-      src: calico/calicoctl-daemonset.yaml.j2
-      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   when: calico_version == "v3.14.1"
 
 - block:
@@ -25,11 +20,6 @@
     template:
       src: calico/calico-typha-v3.16.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
-
-  - name: Calico | Copy calico daemonset file
-    template:
-      src: calico/calicoctl-daemonset-v3.16.yaml.j2
-      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   when: calico_version == "v3.16.5"
 
 - block:
@@ -42,11 +32,6 @@
     template:
       src: calico/calico-typha-v3.18.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
-
-  - name: Calico | Copy calico daemonset file
-    template:
-      src: calico/calicoctl-daemonset-v3.18.yaml.j2
-      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   when: calico_version == "v3.18.4"
 
 - block:
@@ -59,11 +44,6 @@
     template:
       src: calico/calico-typha-v3.21.yaml.j2
       dest: /etc/kubernetes/plugins/network-plugin/calico-typha.yaml
-
-  - name: Calico | Copy calico daemonset file
-    template:
-      src: calico/calicoctl-daemonset-v3.21.yaml.j2
-      dest: /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml
   when: calico_version == "v3.21.4"
 
 - name: Ensure that apiserver accesses the etcd cluster properly
@@ -86,12 +66,15 @@
 - name: Calico | Deploy calico typha
   shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calico-typha.yaml"
 
-- name: Ensure that apiserver accesses the etcd cluster properly
-  shell: "{{ bin_dir }}/kubectl get ns"
-  register: etcd_status
-  until: '"kube-system" in etcd_status.stdout'
-  retries: 10
-  delay: 6
+- name: Download the calicoctl binary
+  get_url:
+    url: "{{ calicoctl_download_url }}"
+    dest: "{{ cni_bin_dir }}"
+    timeout: "{{ download_timeout_online }}"
 
-- name: Calico | Deploy calico daemonset
-  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/network-plugin/calicoctl-daemonset.yaml"
+- name: Copy the calicoctl binary
+  copy:
+    src: "{{ cni_bin_dir}}/calicoctl-linux-{{ architectures }}"
+    dest: "{{ bin_dir }}/calicoctl"
+    remote_src: yes
+    mode: "0755"

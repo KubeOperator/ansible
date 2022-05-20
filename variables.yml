@@ -4,7 +4,6 @@ runc_version: "v1.1"
 pause_version: "{% if kube_version is version('v1.22.0', '<=') %}3.2{% else %}3.5{% endif %}"
 busybox_version: "1.28"
 cni_version: "v0.8.6"
-cni_calico_version: "v3.12.3"
 npd_versioon: "v0.8.1"
 
 # ----------------------- 容器镜像地址 ---------------------
@@ -24,8 +23,6 @@ calico_cni_image: "{{ dns_repository_hostname }}:{{ registry_port }}/calico/cni:
 calico_node_image: "{{ dns_repository_hostname }}:{{ registry_port }}/calico/node:{{ calico_version }}"
 calico_kube_controllers_image: "{{ dns_repository_hostname }}:{{ registry_port }}/calico/kube-controllers:{{ calico_version }}"
 calico_pod2daemon_flexvol_image: "{{ dns_repository_hostname }}:{{ registry_port }}/calico/pod2daemon-flexvol:{{ calico_version }}"
-# calicoctl image 地址
-calicoctl_image: "{{ dns_repository_hostname }}:{{ registry_port }}/calico/ctl:{{ calico_version }}"
 # flannel image 地址
 flannel_image: "{{ dns_repository_hostname }}:{{ registry_port }}/coreos/flannel:{{ flannel_version }}"
 # cilium image 地址
@@ -123,8 +120,7 @@ docker_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{
 containerd_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/containerd/{{ containerd_version }}/{{ architectures }}/containerd-{{ containerd_version }}-linux-{{ architectures }}.tar.gz"
 crictl_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/crictl/{{ crictl_version }}/{{ architectures }}/crictl-{{ crictl_version }}-linux-{{ architectures }}.tar.gz"
 runc_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/runc/{{ runc_version }}/{{ architectures }}/runc.{{ architectures }}"
-cni_calico_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/cni-plugin/{{ cni_calico_version }}/{{ architectures }}/calico-{{ architectures }}"
-cni_calico_ipam_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/cni-plugin/{{ cni_calico_version }}/{{ architectures }}/calico-ipam-{{ architectures }}"
+calicoctl_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/calicoctl/{{ calico_version }}/calicoctl-linux-{{ architectures }}"
 
 # ----------------------- 离线镜像文件下载地址 ----------------------
 kube_controller_manager_download_url: "{{ registry_protocol }}://{{ dns_repository_hostname }}:{{ repo_port }}/repository/oss-proxy/k8s/{{ kube_version }}/{{ architectures }}/kube-controller-manager.tar"
