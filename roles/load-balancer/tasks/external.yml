@@ -37,12 +37,19 @@
       when: '"active" in ufw_already_installed.stdout'
     when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
-  - name: Register the variable LB_IF_TMP
-    shell: "ip a|grep '{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}/'|awk '{print $NF}'"
-    register: LB_IF_TMP
+  - block:
+    - name: Register the variable LB_IF_TMP
+      shell: "ip a|grep '{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}/'|awk '{print $NF}'"
+      register: LB_IF_TMP
+      when: node_name_rule == "hostname"
 
-  - name: Set the variable LB_IF
-    set_fact: LB_IF={{ LB_IF_TMP.stdout }}
+    - name: Register the variable LB_IF_TMP
+      shell: "ip a|grep '{{ inventory_hostname }}/'|awk '{print $NF}'"
+      register: LB_IF_TMP
+      when: node_name_rule == "ip"
+
+    - name: Set the variable LB_IF
+      set_fact: LB_IF={{ LB_IF_TMP.stdout }}
 
   - name: Creating related directories
     file:
