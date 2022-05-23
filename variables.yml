@@ -41,11 +41,11 @@ nfs_client_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}
 ceph_image: "{{ dns_repository_hostname }}:{{ registry_port }}/ceph/ceph:{{ ceph_version }}"
 rook_ceph_image: "{{ dns_repository_hostname }}:{{ registry_port }}/rook/ceph:{{ rook_ceph_version }}"
 rook_csi_ceph_image: "{{ dns_repository_hostname }}:{{ registry_port }}/cephcsi/cephcsi:{{ rook_csi_ceph_version }}"
-rook_csi_registrar_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ rook_csi_node_driver_registrar_version }}"
-rook_csi_resizer_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-resizer:{{ rook_csi_resizer_version }}"
-rook_csi_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ rook_csi_provisioner_version }}"
-rook_csi_snapshotter_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-snapshotter:{{ rook_csi_snapshotter_version }}"
-rook_csi_attacher_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ rook_csi_attacher_version }}"
+rook_csi_registrar_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/csi-node-driver-registrar:{{ rook_csi_node_driver_registrar_version }}"
+rook_csi_resizer_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/csi-resizer:{{ rook_csi_resizer_version }}"
+rook_csi_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/csi-provisioner:{{ rook_csi_provisioner_version }}"
+rook_csi_snapshotter_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/csi-snapshotter:{{ rook_csi_snapshotter_version }}"
+rook_csi_attacher_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/csi-attacher:{{ rook_csi_attacher_version }}"
 # metrics-server image
 metrics_server_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/metrics-server:{{ metrics_server_version }}"
 # npd image 地址
