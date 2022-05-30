@@ -1,10 +1,5 @@
 # rook-ceph
-mon_count: >-
-  {% if groups['kube-master'] | length < 3 %}
-    1
-  {% else %}
-    3
-  {% endif %}
+mon_count: "{% if groups['all'] | length < 3 %}2{% else %}3{% endif %}"
 
 # set default StorageClass
 default_label: '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
