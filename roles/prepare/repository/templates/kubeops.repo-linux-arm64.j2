@@ -1,13 +1,13 @@
 [Centos-Base]
 name=CentOS Base
-baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/centos-altarch/7/extras/$basearch/
+baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/centos-altarch/7/os/$basearch/
 enabled=1
 gpgcheck=0
 protect=1
 
 [Centos-Extras]
 name=CentOS Extras
-baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/centos-altarch/7/os/$basearch/
+baseurl={{ registry_protocol }}://{{ registry_hostname }}:{{repo_port}}/repository/centos-altarch/7/extras/$basearch/
 enabled=1
 gpgcheck=0
 protect=1

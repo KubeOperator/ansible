@@ -1,7 +1,7 @@
 # rook-ceph
 mon_count: >-
-  {% if groups['all'] | length < 3 %}
-    2
+  {% if groups['kube-master'] | length < 3 %}
+    1
   {% else %}
     3
   {% endif %}

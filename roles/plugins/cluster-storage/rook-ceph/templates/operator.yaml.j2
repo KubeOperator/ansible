@@ -79,18 +79,13 @@ data:
   # The default version of CSI supported by Rook will be started. To change the version
   # of the CSI driver to something other than what is officially supported, change
   # these images to the desired release of the CSI driver.
-  # ROOK_CSI_CEPH_IMAGE: "quay.io/cephcsi/cephcsi:v3.6.0"
-  # ROOK_CSI_REGISTRAR_IMAGE: "k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0"
-  # ROOK_CSI_RESIZER_IMAGE: "k8s.gcr.io/sig-storage/csi-resizer:v1.4.0"
-  # ROOK_CSI_PROVISIONER_IMAGE: "k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0"
-  # ROOK_CSI_SNAPSHOTTER_IMAGE: "k8s.gcr.io/sig-storage/csi-snapshotter:v5.0.1"
-  # ROOK_CSI_ATTACHER_IMAGE: "k8s.gcr.io/sig-storage/csi-attacher:v3.4.0"
   ROOK_CSI_CEPH_IMAGE: {{ rook_csi_ceph_image }}
   ROOK_CSI_REGISTRAR_IMAGE: {{ rook_csi_registrar_image }}
   ROOK_CSI_RESIZER_IMAGE: {{ rook_csi_resizer_image }}
   ROOK_CSI_PROVISIONER_IMAGE: {{ rook_csi_provisioner_image }}
   ROOK_CSI_SNAPSHOTTER_IMAGE: {{ rook_csi_snapshotter_image }}
   ROOK_CSI_ATTACHER_IMAGE: {{ rook_csi_attacher_image }}
+
   # (Optional) set user created priorityclassName for csi plugin pods.
   # CSI_PLUGIN_PRIORITY_CLASSNAME: "system-node-critical"
 

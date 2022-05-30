@@ -13,7 +13,7 @@ spec:
   # The metadata pool spec. Must use replication.
   metadataPool:
     replicated:
-      size: 3
+      size: {{ mon_count }}
       requireSafeReplicaSize: true
     parameters:
       # Inline compression mode for the data pool
