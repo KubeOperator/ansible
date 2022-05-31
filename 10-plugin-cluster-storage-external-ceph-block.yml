@@ -3,4 +3,4 @@
   - kube-worker
   - new-worker
   roles:
-  - plugins/cluster-storage/external-ceph
+  - plugins/cluster-storage/external-ceph-block
