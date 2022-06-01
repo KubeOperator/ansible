@@ -95,7 +95,7 @@ spec:
         image: {{ fs_provisioner_image }}
         env:
         - name: PROVISIONER_NAME
-          value: ceph.com/cephfs
+          value: {{ storage_fs_provisioner_name }}
         - name: PROVISIONER_SECRET_NAMESPACE
           value: {{ fs_provisioner_namespace }}
         command:

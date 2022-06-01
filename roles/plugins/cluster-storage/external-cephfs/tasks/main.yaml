@@ -1,4 +1,12 @@
 - block:
+  - name: Ceph | Install ceph-common
+    package:
+      name: ceph-common
+      state: present
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+    tags: add_worker
+
   - name: FS Provisioner | Create storage-plugin directory
     file:
       path: "{{ kube_config_dir }}/plugins/storage-plugin/fs-provisioner"
