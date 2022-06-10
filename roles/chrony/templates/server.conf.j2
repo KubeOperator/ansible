@@ -4,6 +4,8 @@
 server {{ server }} iburst
 {% endfor %}
 {% endif %}
+pool pool.ntp.org iburst
+pool 2.debian.pool.ntp.org iburst
 
 # Ignor source level
 stratumweight 0

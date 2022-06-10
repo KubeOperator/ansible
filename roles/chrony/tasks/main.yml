@@ -1,74 +1,109 @@
-- name: CentOS | Remove ntp server
-  yum:
-    name: ntp
-    state: absent
+- name: prepare some dirs
+  file: name={{ item }} state=directory
+  with_items:
+  - "/etc/chrony"
+  - "/var/lib/chrony"
+  - "/var/log/chrony"
+
+- block:
+  - name: CentOS | Remove ntp server
+    yum:
+      name: ntp
+      state: absent
+    ignore_errors: true
+
+  - name: CentOS | Install chrony
+    yum:
+      name: chrony
+      state: present
   when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
-  ignore_errors: true
 
-- name: Debian | Remove ntp server
-  apt:
-    name: ntp
-    state: absent
-  when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
-  ignore_errors: true
+- block:
+  - name: Debian | Remove ntp server
+    apt:
+      name: ntp
+      state: absent
+    ignore_errors: true
 
-- name: CentOS | Install chrony
-  yum:
-    name: chrony
-    state: present
-  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
-
-- name: Debian | Install chrony
-  apt:
-    name: chrony
-    state: present
+  - name: Debian | Install chrony
+    apt:
+      name: chrony
+      state: present
   when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
 - block:
-  - name: Setup chrony server
-    template:
-      src: server-centos.conf.j2
-      dest: /etc/chrony.conf
+  - block:
+    - name: CentOS | Config chrony server
+      template:
+        src: server.conf.j2
+        dest: /etc/chrony.conf
 
-  - name:  CentOS | chrony server
-    service:
-      name: chronyd
-      state: restarted
-      enabled: yes
+    - name: CentOS | Start chrony server
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
     when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
-  - name:  Debian | start chrony server
-    service:
-      name: chrony
-      state: restarted
-      enabled: yes
+  - block:
+    - name: Debian | Config chrony server
+      template:
+        src: server.conf.j2
+        dest: /etc/chrony/chrony.conf
+
+    - name: Debian | Start chrony server
+      service:
+        name: chrony
+        state: restarted
+        enabled: yes
     when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
   when: inventory_hostname == groups['chrony'][0]
 
 - block:
-  - name: Config chrony client
-    template:
-      src: client-centos.conf.j2
-      dest: /etc/chrony.conf
+  - block:
+    - name: CentOS | Config chrony client
+      template:
+        src: client.conf.j2
+        dest: /etc/chrony.conf
 
-  - name: Start chrony client
-    service:
-      name: chronyd
-      state: restarted
-      enabled: yes
+    - name: CentOS | Start chrony client
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
     when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
 
-  - name: Start chrony client
-    service:
-      name: chrony
-      state: restarted
-      enabled: yes
+  - block:
+    - name: Debian | Config chrony client
+      template:
+        src: client.conf.j2
+        dest: /etc/chrony/chrony.conf
+
+    - name: Debian | Start chrony client
+      service:
+        name: chrony
+        state: restarted
+        enabled: yes
     when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
-
-  - name: Calibration time server
-    shell: "chronyc tracking"
-
-  - name: Active sync time
-    shell: "chronyc -a makestep"
-    when: ansible_user == "root"
   when: 'inventory_hostname != groups.chrony[0]'
+
+- name: Wait for Chronyd service to start
+  shell: "systemctl is-active chronyd.service"
+  register: svc_status
+  until: '"active" in svc_status.stdout'
+  retries: 3
+  delay: 3
+  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
+
+- name: Wait for Chrony service to start
+  shell: "systemctl is-active chrony.service"
+  register: svc_status
+  until: '"active" in svc_status.stdout'
+  retries: 3
+  delay: 3
+  when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
+
+- name: Manually synchronize clocks using Chrony
+  shell: "chronyc -a makestep"
+  when: 'inventory_hostname != groups.chrony[0]'
+  ignore_errors: true
