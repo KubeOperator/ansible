@@ -41,13 +41,13 @@
     regexp: "^SELINUX="
     line: "SELINUX=disabled"
 
-# 优化设置 journal 日志相关，避免日志重复搜集，浪费系统资源
 - name: Disable rsyslog Get journald log 1
   lineinfile:
     dest: /etc/rsyslog.conf
     state: present
     regexp: 'ModLoad imjournal'
     line: '#$ModLoad imjournal # provides access to the systemd journal'
+  ignore_errors: true
 
 - name: Disable rsyslog Get journald log 2
   lineinfile:
@@ -55,6 +55,7 @@
     state: present
     regexp: 'IMJournalStateFile'
     line: '#$IMJournalStateFile imjournal.state'
+  ignore_errors: true
 
 - name: Restart rsyslog service
   service:
