@@ -3,18 +3,11 @@
     path: /etc/kubernetes/plugins/npd
     state: directory
 
-- name: Copy npd config file
-  template:
-    src: npd-config.yaml.j2
-    dest: /etc/kubernetes/plugins/npd/npd-config.yaml
+- include_tasks: disable.yml
+  when:  enable_npd == 'disable'
 
-- name: Copy npd ds file
-  template:
-    src: npd-ds.yaml.j2
-    dest: /etc/kubernetes/plugins/npd/npd-ds.yaml
+- include_tasks: disable.yml
+  when:  enable_npd == 'enable'
 
-- name: Deploy npd config
-  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/npd/npd-config.yaml"
-
-- name: Deploy npd ds
-  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/npd/npd-ds.yaml"
+- include_tasks: enable.yml
+  when: enable_npd == 'enable'

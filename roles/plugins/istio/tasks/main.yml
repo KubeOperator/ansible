@@ -3,14 +3,14 @@
 
 - include_tasks: disable.yml
   when:
-  - support_gpu == 'disable'
+  - enable_istio == 'disable'
 
 - include_tasks: disable.yml
   when:
   - component_option == 'default-create'
-  - support_gpu == 'enable'
+  - enable_istio == 'enable'
 
 - include_tasks: enable.yml
   when:
   - component_option == 'default-create'
-  - support_gpu == 'enable'
+  - enable_istio == 'enable'

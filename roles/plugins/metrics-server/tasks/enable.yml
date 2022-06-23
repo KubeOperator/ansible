@@ -1,0 +1,14 @@
+- name: Copy metrics-server file
+  template:
+    src: metrics-server.yaml.j2
+    dest: /etc/kubernetes/plugins/metrics-server/metrics-server.yaml
+
+- name: Ensure that apiserver accesses the etcd cluster properly
+  shell: "{{ bin_dir }}/kubectl get ns"
+  register: etcd_status
+  until: '"kube-system" in etcd_status.stdout'
+  retries: 10
+  delay: 6
+
+- name: Deploy metrics-server
+  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server.yaml"

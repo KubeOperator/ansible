@@ -1,0 +1,15 @@
+- name: Copy dns-cache file
+  template:
+    src: iptables.yaml.j2
+    dest: /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml
+  when: kube_proxy_mode == "iptables"
+
+- name: Copy dns-cache file
+  template:
+    src: ipvs.yaml.j2
+    dest: /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml
+  when: kube_proxy_mode == "ipvs"
+
+- name: Delete dns-cache ds
+  shell: "{{ bin_dir }}/kubectl delete -f /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml"
+  ignore_errors: true

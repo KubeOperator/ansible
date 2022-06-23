@@ -1,0 +1,17 @@
+- name: Copy traefik-ingress-controller crds file
+  template:
+    src: traefik-ingress-controller/crds.yaml.j2
+    dest: /etc/kubernetes/plugins/ingress-controller/crds.yaml
+
+- name: Copy traefik-ingress-controller file
+  template:
+    src: traefik-ingress-controller/traefik-ingress-controller.yaml.j2
+    dest: /etc/kubernetes/plugins/ingress-controller/traefik-ingress-controller.yaml
+
+- name: Delete traefik-ingress-controller
+  shell: "{{ bin_dir }}/kubectl delete -f /etc/kubernetes/plugins/ingress-controller/traefik-ingress-controller.yaml"
+  ignore_errors: true
+
+- name: Delete traefik-ingress-controller crds
+  shell: "{{ bin_dir }}/kubectl delete -f /etc/kubernetes/plugins/ingress-controller/crds.yaml"
+  ignore_errors: true

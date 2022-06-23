@@ -1,0 +1,38 @@
+- name: Copy dns-cache file
+  template:
+    src: iptables.yaml.j2
+    dest: /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml
+  when: kube_proxy_mode == "iptables"
+
+- name: Copy dns-cache file
+  template:
+    src: ipvs.yaml.j2
+    dest: /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml
+  when: kube_proxy_mode == "ipvs"
+
+- name: Ensure that apiserver accesses the etcd cluster properly
+  shell: "{{ bin_dir }}/kubectl get ns"
+  register: etcd_status
+  until: '"kube-system" in etcd_status.stdout'
+  retries: 10
+  delay: 6
+
+- name: Deploy dns-cache ds
+  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml"
+
+- block:
+  - name: Modify the kubelet config file
+    lineinfile:
+      path: "/var/lib/kubelet/config.yaml"
+      regexp: '- {{ kube_dns_clusterip.stdout }}'
+      line: "- {{ pillar_local_dns }}"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+
+  - name: Restart kubelet
+    service:
+      name: kubelet
+      state: restarted
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+  when: kube_proxy_mode == "ipvs"

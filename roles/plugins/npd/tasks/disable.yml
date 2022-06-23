@@ -1,0 +1,17 @@
+- name: Copy npd config file
+  template:
+    src: npd-config.yaml.j2
+    dest: /etc/kubernetes/plugins/npd/npd-config.yaml
+
+- name: Copy npd ds file
+  template:
+    src: npd-ds.yaml.j2
+    dest: /etc/kubernetes/plugins/npd/npd-ds.yaml
+
+- name: Delete npd config
+  shell: "{{ bin_dir }}/kubectl delete -f /etc/kubernetes/plugins/npd/npd-config.yaml"
+  ignore_errors: true
+
+- name: Delete npd ds
+  shell: "{{ bin_dir }}/kubectl delete -f /etc/kubernetes/plugins/npd/npd-ds.yaml"
+  ignore_errors: true

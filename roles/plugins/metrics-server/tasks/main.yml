@@ -3,17 +3,19 @@
     path: /etc/kubernetes/plugins/metrics-server
     state: directory
 
-- name: Copy metrics-server file
-  template:
-    src: metrics-server.yaml.j2
-    dest: /etc/kubernetes/plugins/metrics-server/metrics-server.yaml
+- include_tasks: enable.yml
+  when: component_option == 'cluster-create'
 
-- name: Ensure that apiserver accesses the etcd cluster properly
-  shell: "{{ bin_dir }}/kubectl get ns"
-  register: etcd_status
-  until: '"kube-system" in etcd_status.stdout'
-  retries: 10
-  delay: 6
+- include_tasks: disable.yml
+  when:
+  - enable_metrics_server == 'disable'
 
-- name: Deploy metrics-server
-  shell: "{{ bin_dir }}/kubectl apply -f /etc/kubernetes/plugins/metrics-server/metrics-server.yaml"
+- include_tasks: disable.yml
+  when:
+  - component_option == 'default-create'
+  - enable_metrics_server == 'enable'
+
+- include_tasks: enable.yml
+  when:
+  - component_option == 'default-create'
+  - enable_metrics_server == 'enable'

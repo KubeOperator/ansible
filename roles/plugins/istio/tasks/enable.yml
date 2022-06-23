@@ -1,0 +1,47 @@
+- name: Confirm Istio exist
+  command: "{{ bin_dir }}/kubectl get ns -o name"
+  register: istio_exist
+
+- name: Copy charts
+  copy: src={{ item }} dest={{ base_dir }}/ mode=0644
+  with_items:
+  - "istio-base-1.1.0.tgz"
+  - "istio-discovery-1.2.0.tgz"
+  - "istio-ingress-1.1.0.tgz"
+  - "istio-egress-1.1.0.tgz"
+
+- name: Create Namespace istio-system
+  command: "{{ bin_dir }}/kubectl create ns istio-system"
+  when: '"namespace/istio-system" not in istio_exist.stdout'
+
+- name: ISTIO| Create istio-base
+  shell: "helm install istio-base -n istio-system {{ base_dir }}/istio-base-1.1.0.tgz -n istio-system --set global.istiod.enableAnalysis=true"
+
+- name: ISTIO| Create istio-discovery
+  shell: "helm install istio-pilot -n istio-system {{ base_dir }}/istio-discovery-1.2.0.tgz -n istio-system \
+    --set pilot.image=registry.kubeoperator.io:8082/istio/pilot:1.11.8 \
+    --set pilot.resources.limits.cpu={{ pilot_limit_cpu }} \
+    --set pilot.resources.limits.memory={{ pilot_limit_memory }} \
+    --set pilot.resources.requests.cpu={{ pilot_requests_cpu }} \
+    --set pilot.resources.requests.memory={{ pilot_requests_memory }} \
+    --set pilot.traceSampling={{ pilot_trace_sampling }}"
+
+- name: ISTIO| Create istio-ingress
+  shell: "helm install istio-ingress -n istio-system {{ base_dir }}/istio-ingress-1.1.0.tgz -n istio-system \
+    --set global.proxy.image=registry.kubeoperator.io:8082/istio/proxyv2:1.11.8 \
+    --set gateways.istio-ingressgateway.resources.limits.cpu={{ ingress_limit_cpu }} \
+    --set gateways.istio-ingressgateway.resources.limits.memory={{ ingress_limit_memory }} \
+    --set gateways.istio-ingressgateway.resources.requests.cpu={{ ingress_requests_cpu }} \
+    --set gateways.istio-ingressgateway.resources.requests.memory={{ ingress_requests_memory }} \
+    --set gateways.istio-ingressgateway.type={{ ingress_type }}"
+  when: enable_istio_ingress == 'enable'
+
+- name: ISTIO| Create istio-egress
+  shell: "helm install istio-egress -n istio-system {{ base_dir }}/istio-egress-1.1.0.tgz -n istio-system \
+    --set global.proxy.image=registry.kubeoperator.io:8082/istio/proxyv2:1.11.8 \
+    --set gateways.istio-egressgateway.resources.limits.cpu={{ egress_limit_cpu }} \
+    --set gateways.istio-egressgateway.resources.limits.memory={{ egress_limit_memory }} \
+    --set gateways.istio-egressgateway.resources.requests.cpu={{ egress_requests_cpu }} \
+    --set gateways.istio-egressgateway.resources.requests.memory={{ egress_requests_memory }} \
+    --set gateways.istio-egressgateway.type={{ egress_type }}"
+  when: enable_istio_egress == 'enable'

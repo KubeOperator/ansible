@@ -7,8 +7,40 @@
   shell: "{{ bin_dir }}/kubeadm version -o short"
   register: kubeadm_version_output
 
-- include_tasks: nginx-ingress-controller.yml
+- block:
+  - include_tasks: enable-nginx.yml
+    when: component_option == 'cluster-create'
+
+  - include_tasks: disable-nginx.yml
+    when:
+    - enable_nginx == 'disable'
+
+  - include_tasks: disable-nginx.yml
+    when:
+    - component_option == 'default-create'
+    - enable_nginx == 'enable'
+  
+  - include_tasks: enable-nginx.yml
+    when:
+    - component_option == 'default-create'
+    - enable_nginx == 'enable'
   when: ingress_controller_type == 'nginx'
 
-- include_tasks: traefik-ingress-controller.yml
+- block:
+  - include_tasks: enable-traefik.yml
+    when: component_option == 'cluster-create'
+
+  - include_tasks: disable-traefik.yml
+    when:
+    - enable_traefik == 'disable'
+
+  - include_tasks: disable-traefik.yml
+    when:
+    - component_option == 'default-create'
+    - enable_traefik == 'enable'
+  
+  - include_tasks: enable-traefik.yml
+    when:
+    - component_option == 'default-create'
+    - enable_traefik == 'enable'
   when: ingress_controller_type == 'traefik'

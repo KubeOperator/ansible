@@ -1,0 +1,7 @@
+- name: GPU| Delete NVIDIA GPU Operator
+  command: "helm uninstall ko-gpu-operator -n kube-operator"
+  ignore_errors: true
+
+- name: GPU| Delete Namespace gpu-operator-resources
+  command: "{{ bin_dir }}/kubectl delete ns gpu-operator-resources"
+  ignore_errors: true
