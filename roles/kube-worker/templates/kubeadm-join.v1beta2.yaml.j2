@@ -108,3 +108,12 @@ syncFrequency: 1m0s
 tlsCertFile: /var/lib/kubelet/pki/kubelet.crt
 tlsPrivateKeyFile: /var/lib/kubelet/pki/kubelet.key
 volumeStatsAggPeriod: 1m0s
+{% if tls_min_version is defined %}
+tlsMinVersion: {{ tls_min_version }}
+{% endif %}
+{% if tls_cipher_suites is defined %}
+tlsCipherSuites:
+{% for tls in tls_cipher_suites %}
+- {{ tls }}
+{% endfor %}
+{% endif %}

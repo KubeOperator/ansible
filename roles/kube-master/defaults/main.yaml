@@ -70,3 +70,9 @@ kube_kubeadm_scheduler_extra_args: {}
 apiserver_extra_volumes: {}
 controller_manager_extra_volumes: {}
 scheduler_extra_volumes: {}
+## Support tls min version, Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13.
+tls_min_version: "VersionTLS12"
+## Support tls cipher suites.
+tls_cipher_suites:
+  - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384

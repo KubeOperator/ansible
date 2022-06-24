@@ -94,6 +94,13 @@ apiServer:
     {{ key }}: "{{ kube_kubeadm_apiserver_extra_args[key] }}"
 {% endfor %}
 {% endif %}
+{% if tls_min_version is defined %}
+    tls-min-version: {{ tls_min_version }}
+{% endif %}
+{% if tls_cipher_suites is defined %}
+    tls-cipher-suites: {% for tls in tls_cipher_suites %}{{ tls }}{{ "," if not loop.last else "" }}{% endfor %}
+
+{% endif %}
   extraVolumes:
     - hostPath: /etc/localtime
       mountPath: /etc/localtime
@@ -158,6 +165,13 @@ controllerManager:
     {{ key }}: "{{ kube_kubeadm_controller_extra_args[key] }}"
 {% endfor %}
 {% endif %}
+{% if tls_min_version is defined %}
+    tls-min-version: {{ tls_min_version }}
+{% endif %}
+{% if tls_cipher_suites is defined %}
+    tls-cipher-suites: {% for tls in tls_cipher_suites %}{{ tls }}{{ "," if not loop.last else "" }}{% endfor %}
+
+{% endif %}
   extraVolumes:
     - hostPath: /etc/localtime
       mountPath: /etc/localtime
@@ -178,6 +192,13 @@ scheduler:
 {% for key in kube_kubeadm_scheduler_extra_args %}
     {{ key }}: "{{ kube_kubeadm_scheduler_extra_args[key] }}"
 {% endfor %}
+{% endif %}
+{% if tls_min_version is defined %}
+    tls-min-version: {{ tls_min_version }}
+{% endif %}
+{% if tls_cipher_suites is defined %}
+    tls-cipher-suites: {% for tls in tls_cipher_suites %}{{ tls }}{{ "," if not loop.last else "" }}{% endfor %}
+
 {% endif %}
   extraVolumes:
     - hostPath: /etc/localtime
@@ -279,6 +300,15 @@ syncFrequency: 1m0s
 tlsCertFile: /var/lib/kubelet/pki/kubelet.crt
 tlsPrivateKeyFile: /var/lib/kubelet/pki/kubelet.key
 volumeStatsAggPeriod: 1m0s
+{% if tls_min_version is defined %}
+tlsMinVersion: {{ tls_min_version }}
+{% endif %}
+{% if tls_cipher_suites is defined %}
+tlsCipherSuites:
+{% for tls in tls_cipher_suites %}
+- {{ tls }}
+{% endfor %}
+{% endif %}
 ---
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
