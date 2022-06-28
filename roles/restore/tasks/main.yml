@@ -44,7 +44,7 @@
     state: absent
 
 - name: Restore the data to the etcd data directory
-  shell: "cp -rf /var/lib/etcd/ /var/ko/data/backup/k8s/"
+  shell: "cp -rf {{ etcd_data_dir }} /var/ko/data/backup/k8s/"
 
 - name: Clean up etcd data directory
   file:
