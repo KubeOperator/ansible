@@ -50,10 +50,10 @@
 - name: Set system parameters
   template: 
     src: 99-sysctl-ko.conf.j2
-    dest: /etc/sysctl.d/95-k8s-sysctl.conf
+    dest: /etc/sysctl.d/99-sysctl-ko.conf
 
 - name: Effective system parameters
-  shell: "sysctl -p /etc/sysctl.d/95-k8s-sysctl.conf"
+  shell: "sysctl -p /etc/sysctl.d/99-sysctl-ko.conf"
   ignore_errors: true
 
 - name: Check whether the sysctl.conf exists
