@@ -175,7 +175,7 @@
   with_items:
   - "{{ etcd_data_dir }}"
   - /etc/cni/net.d
-  - /etc/sysctl.d/95-k8s-sysctl.conf
+  - /etc/sysctl.d/99-sysctl-ko.conf
   - /etc/modules-load.d/10-k8s-modules.conf
   - /run/flannel
   - /etc/calico
