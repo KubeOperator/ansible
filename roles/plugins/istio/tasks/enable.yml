@@ -42,6 +42,5 @@
     --set gateways.istio-egressgateway.resources.limits.cpu={{ egress_limit_cpu }} \
     --set gateways.istio-egressgateway.resources.limits.memory={{ egress_limit_memory }} \
     --set gateways.istio-egressgateway.resources.requests.cpu={{ egress_requests_cpu }} \
-    --set gateways.istio-egressgateway.resources.requests.memory={{ egress_requests_memory }} \
-    --set gateways.istio-egressgateway.type={{ egress_type }}"
+    --set gateways.istio-egressgateway.resources.requests.memory={{ egress_requests_memory }}"
   when: enable_istio_egress == 'enable'
