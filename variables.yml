@@ -58,12 +58,14 @@ huawei_csi_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}
 huawei_csi_attacher_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ huawei_csi_attacher_version }}"
 huawei_csi_node_driver_registrar_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ huawei_csi_node_driver_registrar_version }}"
 # vsphere-csi
+vsphere_csi_attacher_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-attacher:{{ vsphere_csi_attacher_version }}"
+vsphere_csi_resizer_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-resizer:{{ vsphere_csi_resizer_version }}"
 vsphere_csi_driver_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-driver:{{ vsphere_csi_version }}"
+vsphere_csi_livenessprobe_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-livenessprobe:{{ vsphere_csi_livenessprobe_version }}"
 vsphere_csi_syncer_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-syncer:{{ vsphere_csi_version }}"
-vsphere_csi_livenessprobe_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/livenessprobe:{{ vsphere_csi_livenessprobe_version }}"
-vsphere_csi_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-provisioner:{{ vsphere_csi_provisioner_version }}"
-vsphere_csi_attacher_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ vsphere_csi_attacher_version }}"
-vsphere_csi_node_driver_registrar_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-node-driver-registrar:{{ vsphere_csi_node_driver_registrar_version }}"
+vsphere_csi_provisioner_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-provisioner:{{ vsphere_csi_provisioner_version }}"
+vsphere_csi_snapshotter_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-snapshotter:{{ vsphere_csi_snapshotter_version }}"
+vsphere_csi_node_driver_registrar_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/vsphere-csi-node-driver-registrar:{{ vsphere_csi_node_driver_registrar_version }}"
 # cinder
 cinder_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scloudprovider/cinder-csi-plugin:{{ cinder_csi_version }}"
 cinder_csi_attacher_image: "{{ dns_repository_hostname }}:{{ registry_port }}/k8scsi/csi-attacher:{{ cinder_csi_attacher_version }}"

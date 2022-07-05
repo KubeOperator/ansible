@@ -68,8 +68,12 @@
       src: "{{ item }}.j2"
       dest: "{{ kube_config_dir }}/plugins/storage-plugin/vsphere/{{ item }}"
     with_items:
+    - vsphere-csi-controller-config.yml
+    - vsphere-csi-controller-deployment.yml
     - vsphere-csi-controller-rbac.yml
-    - vsphere-csi-controller-ss.yml
+    - vsphere-csi-controller-service.yml
+    - vsphere-csi-driver.yml
+    - vsphere-csi-node-rbac.yml
     - vsphere-csi-node.yml
     register: vsphere_csi_manifests
 

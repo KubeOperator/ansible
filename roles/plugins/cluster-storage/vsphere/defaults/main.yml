@@ -1,0 +1,1 @@
+csi_endpoint: '{% if vc_version >= "7.0.1" %}/csi{% else %}/var/lib/csi/sockets/pluginproxy{% endif %}'
