@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: cephfs-provisioner
+  name: {{ storage_fs_provisioner_name }}
   namespace: {{ fs_provisioner_namespace }}
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: cephfs-provisioner
+  name: {{ storage_fs_provisioner_name }}
   namespace: {{ fs_provisioner_namespace }}
 rules:
   - apiGroups: [""]
@@ -31,20 +31,20 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: cephfs-provisioner
+  name: {{ storage_fs_provisioner_name }}
 subjects:
   - kind: ServiceAccount
-    name: cephfs-provisioner
+    name: {{ storage_fs_provisioner_name }}
     namespace: {{ fs_provisioner_namespace }}
 roleRef:
   kind: ClusterRole
-  name: cephfs-provisioner
+  name: {{ storage_fs_provisioner_name }}
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: cephfs-provisioner
+  name: {{ storage_fs_provisioner_name }}
   namespace: {{ fs_provisioner_namespace }}
 rules:
   - apiGroups: [""]
@@ -57,15 +57,15 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: cephfs-provisioner
+  name: {{ storage_fs_provisioner_name }}
   namespace: {{ fs_provisioner_namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: cephfs-provisioner
+  name: {{ storage_fs_provisioner_name }}
 subjects:
 - kind: ServiceAccount
-  name: cephfs-provisioner
+  name: {{ storage_fs_provisioner_name }}
   namespace: {{ fs_provisioner_namespace }}
 ---
 apiVersion: apps/v1
@@ -80,14 +80,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cephfs-provisioner
+      app: {{ storage_fs_provisioner_name }}
       version: {{ fs_provisioner_version}}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: cephfs-provisioner
+        app: {{ storage_fs_provisioner_name }}
         version: {{ fs_provisioner_version}}
     spec:
       containers:
@@ -102,4 +102,4 @@ spec:
         - "/usr/local/bin/cephfs-provisioner"
         args:
         - "-id=cephfs-provisioner-1"
-      serviceAccount: cephfs-provisioner
+      serviceAccount: {{ storage_fs_provisioner_name }}
