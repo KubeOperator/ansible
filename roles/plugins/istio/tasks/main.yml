@@ -1,16 +1,15 @@
+- block:
+  - include_tasks: enable.yml
+    when: component_created_by == 'cluster'
+
+  - include_tasks: enable.yml
+    when: component_created_by == 'component'
+  when: enable_istio == 'enable'
+
 - include_tasks: enable.yml
-  when: component_option == 'cluster-create'
+  when: component_created_by == 'cluster'
 
 - include_tasks: disable.yml
   when:
+  - component_created_by == 'component'
   - enable_istio == 'disable'
-
-- include_tasks: disable.yml
-  when:
-  - component_option == 'default-create'
-  - enable_istio == 'enable'
-
-- include_tasks: enable.yml
-  when:
-  - component_option == 'default-create'
-  - enable_istio == 'enable'

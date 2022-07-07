@@ -8,39 +8,37 @@
   register: kubeadm_version_output
 
 - block:
-  - include_tasks: enable-nginx.yml
-    when: component_option == 'cluster-create'
+  - block:
+    - include_tasks: enable-nginx.yml
+      when: component_created_by == 'cluster'
+
+    - include_tasks: "{{ item }}"
+      with_items:
+      - disable-nginx.yml
+      - enable-nginx.yml
+      when: component_created_by == 'component'
+    when: enable_nginx == 'enable'
 
   - include_tasks: disable-nginx.yml
     when:
     - enable_nginx == 'disable'
-
-  - include_tasks: disable-nginx.yml
-    when:
-    - component_option == 'default-create'
-    - enable_nginx == 'enable'
-  
-  - include_tasks: enable-nginx.yml
-    when:
-    - component_option == 'default-create'
-    - enable_nginx == 'enable'
+    - component_created_by == 'component'
   when: ingress_controller_type == 'nginx'
 
 - block:
-  - include_tasks: enable-traefik.yml
-    when: component_option == 'cluster-create'
+  - block:
+    - include_tasks: enable-traefik.yml
+      when: component_created_by == 'cluster'
+
+    - include_tasks: "{{ item }}"
+      with_items:
+      - disable-traefik.yml
+      - enable-traefik.yml
+      when: component_created_by == 'component'
+    when: enable_traefik == 'enable'
 
   - include_tasks: disable-traefik.yml
     when:
     - enable_traefik == 'disable'
-
-  - include_tasks: disable-traefik.yml
-    when:
-    - component_option == 'default-create'
-    - enable_traefik == 'enable'
-  
-  - include_tasks: enable-traefik.yml
-    when:
-    - component_option == 'default-create'
-    - enable_traefik == 'enable'
+    - component_created_by == 'component'
   when: ingress_controller_type == 'traefik'

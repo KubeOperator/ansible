@@ -3,19 +3,18 @@
     path: /etc/kubernetes/plugins/metrics-server
     state: directory
 
-- include_tasks: enable.yml
-  when: component_option == 'cluster-create'
+- block:
+  - include_tasks: enable.yml
+    when: component_created_by == 'cluster'
+
+  - include_tasks: "{{ item }}"
+    with_items:
+    - disable.yml
+    - enable.yml
+    when: component_created_by == 'component'
+  when: enable_gpu == 'enable'
 
 - include_tasks: disable.yml
   when:
-  - enable_metrics_server == 'disable'
-
-- include_tasks: disable.yml
-  when:
-  - component_option == 'default-create'
-  - enable_metrics_server == 'enable'
-
-- include_tasks: enable.yml
-  when:
-  - component_option == 'default-create'
-  - enable_metrics_server == 'enable'
+  - enable_gpu == 'disable'
+  - component_created_by == 'component'
