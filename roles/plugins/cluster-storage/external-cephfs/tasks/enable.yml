@@ -1,0 +1,29 @@
+- block:
+  - name: Ceph | Install ceph-common
+    package:
+      name: ceph-common
+      state: present
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+    tags: add_worker
+
+  - name: FS Provisioner | Create storage-plugin directory
+    file:
+      name: "{{ kube_config_dir }}/plugins/storage-plugin/fs-provisioner"
+      state: directory
+
+  - name: FS Provisioner | Templates list
+    set_fact:
+      fs_provisioner_templates:
+        - { file: 'ceph-fs-provisioner.yaml' }
+
+  - name: FS Provisioner | Create manifests
+    template:
+      src: "{{ item.file }}.j2"
+      dest: '{{ kube_config_dir }}/plugins/storage-plugin/fs-provisioner/{{ item.file }}'
+    with_items: "{{ fs_provisioner_templates }}"
+
+  - name: FS Provisioner | Deploy manifests
+    shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/fs-provisioner/{{ item.file }}"
+    with_items: "{{ fs_provisioner_templates }}"
+  when: architectures == 'amd64'

@@ -1,0 +1,145 @@
+- block:
+  - name: OceanStor | Install iscsi-initiator-utils
+    yum:
+      name: iscsi-initiator-utils
+      state: present
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
+
+  - name: OceanStor | Install iscsi-initiator-utils
+    apt:
+      name: open-iscsi
+      state: present
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
+
+  - name: OceanStor | Enable iscsi service
+    service:
+      name: iscsi
+      enabled: yes
+  when: oceanstor_type == "iscsi"
+
+- block:
+  - name: OceanStor | Install nfs-utils
+    yum:
+      name: nfs-utils
+      state: present
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
+
+  - name: OceanStor | Install nfs-utils
+    apt:
+      name: nfs-common
+      state: present
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
+  when: oceanstor_type == "nfs"
+
+- block:
+  - name: OceanStor | CentOS | Install multipath
+    yum:
+      name:
+      - device-mapper
+      - device-mapper-multipath
+      state: present
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
+
+  - name: OceanStor | Debian | Install multipath
+    apt:
+      name:
+        - multipath-tools
+        - multipath-tools-boot
+      state: present
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
+  when:
+  - oceanstor_is_multipath == "yes"
+  - oceanstor_type != "nfs"
+
+- block:
+  - name: OceanStor | Create passwdEncrypt directory
+    file:
+      name: "{{ base_dir }}/oceanstor"
+      state: directory
+
+  - name: OceanStor | Download passwdEncrypt
+    get_url:
+      validate_certs: no
+      url: "{{ huawei_csi_passwdencrypt_download_url }}"
+      dest: "{{ base_dir }}/oceanstor"
+      timeout: "{{ download_timeout_online }}"
+
+  - name: OceanStor | Copy passwdEncrypt to the path
+    copy:
+      src: "{{ base_dir }}/oceanstor/passwdEncrypt"
+      dest: "{{ bin_dir }}/passwdEncrypt"
+      remote_src: yes
+      mode: "0755"
+
+  - name: OceanStor | Password encryption
+    shell: "{{ bin_dir }}/passwdEncrypt {{ oceanstor_password }}"
+    register: oceanstor_encryption_password
+    run_once: true
+
+  - name: OceanStor | Password encryption
+    shell: "{{ bin_dir }}/passwdEncrypt {{ oceanstor_password }}"
+    register: current_ns
+
+  - name: OceanStor | Prepare oceanstor directory
+    file:
+      name: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor"
+      state: directory
+
+  - name: OceanStor | Prepare csi-configmap
+    template:
+      src: huawei-csi-configmap.yaml.j2
+      dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-configmap.yaml"
+
+  - block:
+    - name: OceanStor | Prepare single csi-rbac
+      template:
+        src: huawei-csi-rbac.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac.yaml"
+
+    - name: OceanStor | Prepare single csi-controller
+      template:
+        src: huawei-csi-controller.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-controller.yaml"
+    when: oceanstor_controller_type == "single"
+
+  - block:
+    - name: OceanStor | Prepare multi csi-rbac
+      template:
+        src: huawei-csi-rbac-for-multi-controller.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac-for-multi-controller.yaml"
+
+    - name: OceanStor | Prepare multi csi-controller
+      template:
+        src: huawei-csi-multi-controller.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-multi-controller.yaml"
+    when: oceanstor_controller_type == "multi"
+
+  - name: OceanStor | Prepare csi-node
+    template:
+      src: huawei-csi-node.yaml.j2
+      dest: "{{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-node.yaml"
+
+  - name: OceanStor | Deploy csi-configmap
+    shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-configmap.yaml"
+
+  - block:
+    - name: OceanStor | Deploy single csi-rbac
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac.yaml"
+
+    - name: OceanStor | Deploy single csi-controller
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-controller.yaml"
+    when: oceanstor_controller_type == "single"
+
+  - block:
+    - name: OceanStor | Deploy multi csi-rbac
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-rbac-for-multi-controller.yaml"
+
+    - name: OceanStor | Deploy multi csi-controller
+      shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-multi-controller.yaml"
+    when: oceanstor_controller_type == "multi"
+
+  - name: OceanStor | Deploy csi-node
+    shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/oceanstor/huawei-csi-node.yaml"
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  when: architectures == 'amd64'
+  run_once: true

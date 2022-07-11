@@ -1,15 +1,17 @@
-- name: CentOS | Install glusterfs mount utils
-  yum:
-    name:
-    - glusterfs
-    - glusterfs-fuse
-    state: "present"
-  when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
-  tags: add_worker
+- block:
+  - name: CentOS | Install glusterfs mount utils
+    yum:
+      name:
+      - glusterfs
+      - glusterfs-fuse
+      state: "present"
+    when: ansible_distribution in [ 'CentOS','RedHat','EulerOS','openEuler','Kylin Linux Advanced Server' ]
+    tags: add_worker
 
-- name: Debian | Install glusterfs mount utils
-  apt:
-    name: glusterfs-client
-    state: "present"
-  when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
-  tags: add_worker
+  - name: Debian | Install glusterfs mount utils
+    apt:
+      name: glusterfs-client
+      state: "present"
+    when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
+    tags: add_worker
+  when: enable_gfs_provisioner == 'enable'

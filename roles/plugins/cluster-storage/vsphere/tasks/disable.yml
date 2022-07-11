@@ -1,0 +1,51 @@
+- block:
+  - name: vSphere | Create cloud-config directory
+    file:
+      name: "{{ cloud_config_dir }}"
+      state: directory
+
+  - name: vSphere | Generate CSI cloud-config
+    template:
+      src: "{{ item }}.j2"
+      dest: "{{ cloud_config_dir }}/{{ item }}"
+      mode: 0640
+    with_items:
+    - vsphere-csi-cloud-config
+
+  - name: vSphere | Prepare vSphere directory
+    file:
+      name: "{{ kube_config_dir }}/plugins/storage-plugin/vsphere"
+      state: directory
+
+  - name: vSphere | Generate Manifests
+    template:
+      src: "{{ item }}.j2"
+      dest: "{{ kube_config_dir }}/plugins/storage-plugin/vsphere/{{ item }}"
+    with_items:
+    - vsphere-csi-controller-config.yml
+    - vsphere-csi-controller-deployment.yml
+    - vsphere-csi-controller-rbac.yml
+    - vsphere-csi-controller-service.yml
+    - vsphere-csi-driver.yml
+    - vsphere-csi-node-rbac.yml
+    - vsphere-csi-node.yml
+    register: vsphere_csi_manifests
+
+  - name: vSphere | Generate a CSI secret manifest
+    command: "{{ bin_dir }}/kubectl create secret generic vsphere-config-secret --from-file=csi-vsphere.conf={{ cloud_config_dir }}/vsphere-csi-cloud-config -n kube-system --dry-run --save-config -o yaml"
+    register: vsphere_csi_secret_manifest
+    no_log: true
+
+  - name: vSphere | Delete a CSI secret manifest
+    command:
+      cmd: "{{ bin_dir }}/kubectl delete -f -"
+      stdin: "{{ vsphere_csi_secret_manifest.stdout }}"
+    no_log: true
+
+  - name: vSphere | vSphere CSI Driver | Delete Manifests
+    shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/vsphere/{{ item.item }}"
+    with_items:
+    - "{{ vsphere_csi_manifests.results }}"
+    loop_control:
+      label: "{{ item.item }}"
+  when: architectures == 'amd64'

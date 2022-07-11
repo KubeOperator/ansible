@@ -1,0 +1,14 @@
+- block:
+  - name: NFS| Prepare nfs-client directory
+    file: name={{ kube_config_dir }}/plugins/storage-plugin/nfs state=directory
+
+  - name: NFS| Prepare nfs-client file
+    template:
+      src: nfs-client-provisioner.yaml.j2
+      dest: "{{ kube_config_dir }}/plugins/storage-plugin/nfs/nfs-client-provisioner.yaml"
+
+  - name: NFS| Deploy nfs-client
+    shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/nfs/nfs-client-provisioner.yaml"
+    ignore_errors: true
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  run_once: true

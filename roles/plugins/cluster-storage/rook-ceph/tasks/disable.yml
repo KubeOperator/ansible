@@ -1,0 +1,55 @@
+- block:
+  - name: Prepare rook-ceph deploy directory
+    file: name={{ kube_config_dir }}/plugins/storage-plugin/rook-ceph state=directory
+
+  - block:
+    - name: Prepare replicapool yaml
+      template:
+        src: replicapool.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/replicapool.yaml"
+
+    - name: Delete replicapool yaml
+      shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/replicapool.yaml"
+
+    - name: Prepare filesystem yaml
+      template:
+        src: filesystem.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/filesystem.yaml"
+
+    - name: Delete filesystem yaml
+      shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/filesystem.yaml"
+
+  - block:
+    - name: Prepare cluster yaml
+      template:
+        src: cluster.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/cluster.yaml"
+
+    - name: Delete cluster yaml
+      shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/cluster.yaml"
+
+  - block:
+    - name: Prepare operator file
+      template:
+        src: operator.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/operator.yaml"
+
+    - name: Delete rook-operator
+      shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/operator.yaml"
+
+    - name: Prepare common yaml
+      template:
+        src: common.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/common.yaml"
+
+    - name: Delete common yaml
+      shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/common.yaml"
+
+    - name: Prepare crds yaml
+      template:
+        src: crds.yaml.j2
+        dest: "{{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/crds.yaml"
+
+    - name: Delete crds yaml
+      shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/crds.yaml"
+  when: architectures == 'amd64'

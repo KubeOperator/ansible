@@ -1,35 +1,5 @@
-- block:
-  - name: Ceph | Install ceph-common
-    package:
-      name: ceph-common
-      state: present
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['all'] }}"
-    tags: add_worker
+- include_tasks: enable.yml
+  when: enable_external_ceph_block_provisioner == 'enable'
 
-  - name: RBD Provisioner | Create storage-plugin directory
-    file:
-      path: "{{ kube_config_dir }}/plugins/storage-plugin/rbd-provisioner"
-      state: directory
-      owner: root
-      group: root
-      mode: 0755
-    when: inventory_hostname == groups['kube-master'][0]
-
-  - name: RBD Provisioner | Templates list
-    set_fact:
-      rbd_provisioner_templates:
-        - { file: 'ceph-rbd-provisioner.yaml' }
-
-  - name: RBD Provisioner | Create manifests
-    template:
-      src: "{{ item.file }}.j2"
-      dest: '{{ kube_config_dir }}/plugins/storage-plugin/rbd-provisioner/{{ item.file }}'
-    with_items: "{{ rbd_provisioner_templates }}"
-    when: inventory_hostname == groups['kube-master'][0]
-
-  - name: RBD Provisioner | Deploy manifests
-    shell: "{{ bin_dir }}/kubectl apply -f {{ kube_config_dir }}/plugins/storage-plugin/rbd-provisioner/{{ item.file }}"
-    with_items: "{{ rbd_provisioner_templates }}"
-    when: inventory_hostname == groups['kube-master'][0]
-  when: architectures == 'amd64'
+- include_tasks: disable.yml
+  when: enable_external_ceph_block_provisioner == 'disable'
