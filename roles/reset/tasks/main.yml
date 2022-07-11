@@ -177,11 +177,21 @@
   - /etc/cni/net.d
   - /etc/sysctl.d/99-sysctl-ko.conf
   - /etc/modules-load.d/10-k8s-modules.conf
+  - /opt/cni
+  - /run/calico
   - /run/flannel
+  - /run/kubernetes
   - /etc/calico
   - /var/run/calico
   - /var/lib/calico
+  - /var/lib/cni
+  - /var/lib/containerd
+  - /var/lib/docker
+  - /var/lib/etcd
+  - /var/lib/kubelet
   - /var/log/calico
+  - /var/log/pods
+  - /var/run/docker.sock
   - /var/run/openvswitch
   - /etc/origin/openvswitch
   - /etc/openvswitch
@@ -203,8 +213,8 @@
   - iptables -X
   - iptables -F -t nat
   - iptables -X -t nat
-  - iptables -F -t raw
-  - iptables -X -t raw
+  - iptables -F -t filter
+  - iptables -X -t filter
   - iptables -F -t mangle
   - iptables -X -t mangle
   ignore_errors: true
@@ -216,6 +226,7 @@
   with_items:
   - filter
   - nat
+  - mangle
   ignore_errors: true
 
 - name: Clean up ipvsadm
