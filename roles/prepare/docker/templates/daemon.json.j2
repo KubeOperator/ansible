@@ -15,5 +15,5 @@
   "live-restore": true,
   "bip": "{{ docker_subnet }}",
   "data-root": "{{ docker_storage_dir }}",
-  "exec-opts": ["native.cgroupdriver=cgroupfs"]
+  "exec-opts": ["native.cgroupdriver={{ cgroup_driver }}"]
 }

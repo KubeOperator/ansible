@@ -14,6 +14,7 @@ authorization:
   webhook:
     cacheAuthorizedTTL: 5m0s
     cacheUnauthorizedTTL: 30s
+cgroupDriver: {{ cgroup_driver }}
 cgroupsPerQOS: true
 clusterDNS:
 - {{ CLUSTER_DNS_SERVICE_IP }}

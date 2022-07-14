@@ -1,5 +1,5 @@
 {% if container_runtime == "docker" %}
-KUBELET_EXTRA_ARGS=--node-ip={{ CURRENT_HOST_IP }} --cgroup-driver=cgroupfs
+KUBELET_EXTRA_ARGS=--node-ip={{ CURRENT_HOST_IP }} --cgroup-driver={{ cgroup_driver }}
 {% endif %}
 {% if container_runtime == "containerd" %}
 KUBELET_EXTRA_ARGS=--node-ip={{ CURRENT_HOST_IP }} --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock
