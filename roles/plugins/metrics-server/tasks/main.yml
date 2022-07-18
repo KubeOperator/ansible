@@ -12,9 +12,9 @@
     - disable.yml
     - enable.yml
     when: component_created_by == 'component'
-  when: enable_gpu == 'enable'
+  when: enable_metrics_server == 'enable'
 
 - include_tasks: disable.yml
   when:
-  - enable_gpu == 'disable'
+  - enable_metrics_server == 'disable'
   - component_created_by == 'component'
