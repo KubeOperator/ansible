@@ -43,7 +43,7 @@
   template: src=kubelet.config.j2 dest=/etc/default/kubelet
   when: ansible_distribution in [ 'Ubuntu','Debian','Kylin' ]
 
-- name: Enable kubelet serivce
+- name: Enable kubelet service
   shell: systemctl enable kubelet
   ignore_errors: true
 
