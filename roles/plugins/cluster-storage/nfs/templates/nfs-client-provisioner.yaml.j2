@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ storage_nfs_provisioner_name }}
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 
 ---
 kind: ClusterRoleBinding
@@ -12,7 +12,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ storage_nfs_provisioner_name }}
-    namespace: kube-system
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -23,7 +23,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: {{ storage_nfs_provisioner_name }}
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
   labels:
     type: nfs
     nfsVersion: {{ storage_nfs_server_version }}

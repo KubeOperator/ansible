@@ -3,7 +3,7 @@ kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   name: huawei-csi-node
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 spec:
   selector:
     matchLabels:

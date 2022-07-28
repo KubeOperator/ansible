@@ -2,7 +2,7 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: cinder-csi-pdb
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 spec:
 {% if cinder_csi_controller_replicas is defined and cinder_csi_controller_replicas > 1 %}
   minAvailable: 1

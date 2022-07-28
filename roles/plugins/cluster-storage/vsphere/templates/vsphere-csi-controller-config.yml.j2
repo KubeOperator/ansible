@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: internal-feature-states.csi.vsphere.vmware.com
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 data:
   "csi-migration": "false"
 {% if vc_version >= "7.0" %}

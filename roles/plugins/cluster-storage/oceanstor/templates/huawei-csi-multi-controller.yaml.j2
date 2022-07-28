@@ -3,7 +3,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: huawei-csi-controller
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 spec:
   replicas: 2
   selector:

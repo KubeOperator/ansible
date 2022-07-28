@@ -1,2 +1,0 @@
-# storage-ceph-rbd
-rbd_provisioner_namespace: "kube-system"

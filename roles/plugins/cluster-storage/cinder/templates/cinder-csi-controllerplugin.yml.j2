@@ -5,7 +5,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: csi-cinder-controller-service
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
   labels:
     app: csi-cinder-controllerplugin
 spec:
@@ -20,7 +20,7 @@ kind: StatefulSet
 apiVersion: apps/v1
 metadata:
   name: csi-cinder-controllerplugin
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 spec:
   serviceName: "csi-cinder-controller-service"
   replicas: {{ cinder_csi_controller_replicas }}
@@ -41,7 +41,7 @@ spec:
             - "--timeout=3m"
 {% if cinder_csi_controller_replicas is defined and cinder_csi_controller_replicas > 1 %}
             - --leader-election
-            - --leader-election-namespace=kube-system
+            - --leader-election-namespace={{ provisioner_namespace }}
 {% endif %}
           env:
             - name: ADDRESS
@@ -58,7 +58,7 @@ spec:
 {% if cinder_csi_controller_replicas is defined and cinder_csi_controller_replicas > 1 %}
             - --enable-leader-election
             - --leader-election-type=leases
-            - --leader-election-namespace=kube-system
+            - --leader-election-namespace={{ provisioner_namespace }}
 {% endif %}
           env:
             - name: ADDRESS
@@ -74,7 +74,7 @@ spec:
             - "--timeout=3m"
 {% if cinder_csi_controller_replicas is defined and cinder_csi_controller_replicas > 1 %}
             - --leader-election
-            - --leader-election-namespace=kube-system
+            - --leader-election-namespace={{ provisioner_namespace }}
 {% endif %}
           env:
             - name: ADDRESS
@@ -90,7 +90,7 @@ spec:
             - "--csiTimeout=3m"
 {% if cinder_csi_controller_replicas is defined and cinder_csi_controller_replicas > 1 %}
             - --leader-election
-            - --leader-election-namespace=kube-system
+            - --leader-election-namespace={{ provisioner_namespace }}
 {% endif %}
           env:
             - name: ADDRESS

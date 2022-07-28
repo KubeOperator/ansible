@@ -2,7 +2,7 @@ kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   name: vsphere-csi-node
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 spec:
   selector:
     matchLabels:

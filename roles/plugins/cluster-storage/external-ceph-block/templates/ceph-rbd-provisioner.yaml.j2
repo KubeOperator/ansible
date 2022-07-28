@@ -3,13 +3,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ storage_rbd_provisioner_name }}
-  namespace: {{ rbd_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ storage_rbd_provisioner_name }}
-  namespace: {{ rbd_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
 rules:
   - apiGroups: [""]
     resources: ["persistentvolumes"]
@@ -42,7 +42,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ storage_rbd_provisioner_name }}
-    namespace: {{ rbd_provisioner_namespace }}
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ storage_rbd_provisioner_name }}
@@ -52,7 +52,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ storage_rbd_provisioner_name }}
-  namespace: {{ rbd_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
 rules:
   - apiGroups: [""]
     resources: ["secrets"]
@@ -65,11 +65,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ storage_rbd_provisioner_name }}
-  namespace: {{ rbd_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
 subjects:
   - kind: ServiceAccount
     name: {{ storage_rbd_provisioner_name }}
-    namespace: {{ rbd_provisioner_namespace }}
+    namespace: {{ provisioner_namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -119,7 +119,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ storage_rbd_provisioner_name }}
-  namespace: {{ rbd_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
   labels:
     app: {{ storage_rbd_provisioner_name }}
     version: {{ rbd_provisioner_version }}
@@ -137,7 +137,7 @@ spec:
         app: {{ storage_rbd_provisioner_name }}
         version: {{ rbd_provisioner_version }}
     spec:
-      priorityClassName: {% if rbd_provisioner_namespace == 'kube-system' %}system-cluster-critical{% else %}k8s-cluster-critical{% endif %}{{''}}
+      priorityClassName: system-cluster-critical
       serviceAccount: {{ storage_rbd_provisioner_name }}
       containers:
         - name: rbd-provisioner

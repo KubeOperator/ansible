@@ -3,7 +3,7 @@ kind: ServiceAccount
 apiVersion: v1
 metadata:
   name: huawei-csi-controller
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 
 ---
 kind: ClusterRoleBinding
@@ -13,7 +13,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: huawei-csi-controller
-    namespace: kube-system
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -27,7 +27,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: huawei-csi-controller
-    namespace: kube-system
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -38,7 +38,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: huawei-csi-node
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 
 ---
 kind: ClusterRoleBinding
@@ -48,7 +48,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: huawei-csi-node
-    namespace: kube-system
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: cluster-admin

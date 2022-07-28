@@ -3,13 +3,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ storage_fs_provisioner_name }}
-  namespace: {{ fs_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ storage_fs_provisioner_name }}
-  namespace: {{ fs_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
 rules:
   - apiGroups: [""]
     resources: ["persistentvolumes"]
@@ -35,7 +35,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ storage_fs_provisioner_name }}
-    namespace: {{ fs_provisioner_namespace }}
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ storage_fs_provisioner_name }}
@@ -45,7 +45,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ storage_fs_provisioner_name }}
-  namespace: {{ fs_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
 rules:
   - apiGroups: [""]
     resources: ["secrets"]
@@ -58,7 +58,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ storage_fs_provisioner_name }}
-  namespace: {{ fs_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -66,13 +66,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ storage_fs_provisioner_name }}
-  namespace: {{ fs_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ storage_fs_provisioner_name }}
-  namespace: {{ fs_provisioner_namespace }}
+  namespace: {{ provisioner_namespace }}
   labels:
     app: fs-provisioner
     version: {{ fs_provisioner_version}}
@@ -97,7 +97,7 @@ spec:
         - name: PROVISIONER_NAME
           value: {{ storage_fs_provisioner_name }}
         - name: PROVISIONER_SECRET_NAMESPACE
-          value: {{ fs_provisioner_namespace }}
+          value: {{ provisioner_namespace }}
         command:
         - "/usr/local/bin/cephfs-provisioner"
         args:

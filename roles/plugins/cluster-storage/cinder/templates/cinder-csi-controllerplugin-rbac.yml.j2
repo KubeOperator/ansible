@@ -5,7 +5,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: csi-cinder-controller-sa
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 
 ---
 # external attacher
@@ -36,7 +36,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: csi-cinder-controller-sa
-    namespace: kube-system
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: csi-attacher-role
@@ -82,7 +82,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: csi-cinder-controller-sa
-    namespace: kube-system
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: csi-provisioner-role
@@ -122,7 +122,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: csi-cinder-controller-sa
-    namespace: kube-system
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: csi-snapshotter-role
@@ -164,7 +164,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: csi-cinder-controller-sa
-    namespace: kube-system
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: ClusterRole
   name: csi-resizer-role
@@ -174,7 +174,7 @@ roleRef:
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
   name: external-resizer-cfg
 rules:
 - apiGroups: ["coordination.k8s.io"]
@@ -186,11 +186,11 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: csi-resizer-role-cfg
-  namespace: kube-system
+  namespace: {{ provisioner_namespace }}
 subjects:
   - kind: ServiceAccount
     name: csi-cinder-controller-sa
-    namespace: kube-system
+    namespace: {{ provisioner_namespace }}
 roleRef:
   kind: Role
   name: external-resizer-cfg
