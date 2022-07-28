@@ -8,7 +8,7 @@
   template:
     src: nginx-ingress-controller-v1.1.1.yaml.j2
     dest: /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml
-  when: "nginx_ingress_version == 'v1.1.1'"
+  when: nginx_ingress_version in [ 'v1.1.1','v1.2.1' ]
 
 - name: Delete nginx-ingress-controller
   shell: "{{ bin_dir }}/kubectl delete -f /etc/kubernetes/plugins/ingress-controller/nginx-ingress-controller.yaml"
