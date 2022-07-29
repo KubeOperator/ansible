@@ -1,6 +1,13 @@
 {
-{% if docker_mirror is defined and docker_mirror != None %}
-  "registry-mirrors": [{% for registry in docker_mirror %}"{{ registry }}"{% if not loop.last %},{% endif %}{% endfor %}],
+{% if docker_mirror_registry == "enable" %}
+  "registry-mirrors": [
+    "https://docker.mirrors.ustc.edu.cn",
+    "https://reg-mirror.qiniu.com",
+    "https://hub-mirror.c.163.com"
+  ], 
+{% endif %}
+{% if docker_remote_api == "enable" %}
+  "hosts": ["tcp://0.0.0.0:2376", "unix:///var/run/docker.sock"],
 {% endif %}
 {% if docker_insecure_registries is defined and docker_insecure_registries != None %}
   "insecure-registries": [{% for registry in docker_insecure_registries %}"{{ registry }}"{% if not loop.last %},{% endif %}{% endfor %}],
