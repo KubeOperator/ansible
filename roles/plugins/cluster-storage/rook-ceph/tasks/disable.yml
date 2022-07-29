@@ -10,6 +10,7 @@
 
     - name: Delete replicapool yaml
       shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/replicapool.yaml"
+      ignore_errors: true
 
     - name: Prepare filesystem yaml
       template:
@@ -18,6 +19,7 @@
 
     - name: Delete filesystem yaml
       shell: "{{ bin_dir }}/kubectl delete -f {{ kube_config_dir }}/plugins/storage-plugin/rook-ceph/filesystem.yaml"
+      ignore_errors: true
 
   - block:
     - name: Prepare cluster yaml
