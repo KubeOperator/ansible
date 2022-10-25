@@ -162,6 +162,7 @@
   - "/etc/kubernetes"
   - "/var/lib/kubelet"
   - "/var/run/kubelet"
+  - "/etc/sysconfig/kubelet"
   - "/usr/lib/systemd/system/kubelet.service"
   - "/usr/lib/systemd/system/kubelet.service.d/"
   - "/usr/share/bash-completion/completions/kubectl"
