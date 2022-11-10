@@ -1,4 +1,4 @@
-- name: ISTIO| Delete istio 
+- name: ISTIO | Delete istio 
   command: "helm uninstall {{ item }} --namespace istio-system"
   with_items:
   - "istio-ingress"
@@ -7,6 +7,6 @@
   - "istio-base"
   ignore_errors: true
 
-- name: ISTIO| Delete Namespace istio-system
+- name: ISTIO | Delete istio-system Namespace
   command: "{{ bin_dir }}/kubectl delete ns istio-system"
   ignore_errors: true

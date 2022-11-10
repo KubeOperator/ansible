@@ -1,0 +1,5 @@
+- include_tasks: disable.yml
+  when: enable_metallb == 'disable'
+
+- include_tasks: enable.yml
+  when: enable_metallb == 'enable'

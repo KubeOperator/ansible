@@ -14,10 +14,10 @@
   command: "{{ bin_dir }}/kubectl create ns istio-system"
   when: '"namespace/istio-system" not in istio_exist.stdout'
 
-- name: ISTIO| Create istio-base
+- name: ISTIO | Create istio-base
   shell: "helm install istio-base -n istio-system {{ base_dir }}/istio-base-1.1.0.tgz -n istio-system --set global.istiod.enableAnalysis=true"
 
-- name: ISTIO| Create istio-discovery
+- name: ISTIO | Create istio-discovery
   shell: "helm install istio-pilot -n istio-system {{ base_dir }}/istio-discovery-1.2.0.tgz -n istio-system \
     --set pilot.image=registry.kubeoperator.io:8082/istio/pilot:1.11.8 \
     --set pilot.resources.limits.cpu={{ pilot_limit_cpu }} \
@@ -26,7 +26,7 @@
     --set pilot.resources.requests.memory={{ pilot_requests_memory }} \
     --set pilot.traceSampling={{ pilot_trace_sampling }}"
 
-- name: ISTIO| Create istio-ingress
+- name: ISTIO | Create istio-ingress
   shell: "helm install istio-ingress -n istio-system {{ base_dir }}/istio-ingress-1.1.0.tgz -n istio-system \
     --set global.proxy.image=registry.kubeoperator.io:8082/istio/proxyv2:1.11.8 \
     --set gateways.istio-ingressgateway.resources.limits.cpu={{ ingress_limit_cpu }} \
@@ -36,7 +36,7 @@
     --set gateways.istio-ingressgateway.type={{ ingress_type }}"
   when: enable_istio_ingress == 'enable'
 
-- name: ISTIO| Create istio-egress
+- name: ISTIO | Create istio-egress
   shell: "helm install istio-egress -n istio-system {{ base_dir }}/istio-egress-1.1.0.tgz -n istio-system \
     --set global.proxy.image=registry.kubeoperator.io:8082/istio/proxyv2:1.11.8 \
     --set gateways.istio-egressgateway.resources.limits.cpu={{ egress_limit_cpu }} \

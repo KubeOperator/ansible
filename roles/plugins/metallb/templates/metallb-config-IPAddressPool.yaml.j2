@@ -1,0 +1,17 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: kubeoperator-ip-address-pool
+  namespace: kube-operator
+spec:
+  addresses:
+{% if metallb_cidrs is defined and metallb_cidrs %}
+{% for cidr in metallb_cidrs.split(',') %}
+  - {{ cidr }}
+{% endfor %}
+{% endif %}
+{% if metallb_ip_ranges is defined and metallb_ip_ranges %}
+{% for ip in metallb_ip_ranges.split(',') %}
+  - {{ ip }}
+{% endfor %}
+{% endif %}
