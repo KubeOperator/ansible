@@ -1,11 +1,11 @@
 - name: Delete metallb L2Advertisement
-  shell: "{{ bin_dir }}/kubectl -n kube-operator delete L2Advertisement kubeoperator-l2-advertisement"
+  shell: "{{ bin_dir }}/kubectl -n kube-system delete L2Advertisement kubeoperator-l2-advertisement"
   ignore_errors: true
 
 - name: Delete metallb IPAddressPool
-  shell: "{{ bin_dir }}/kubectl -n kube-operator delete IPAddressPool kubeoperator-ip-address-pool"
+  shell: "{{ bin_dir }}/kubectl -n kube-system delete IPAddressPool kubeoperator-ip-address-pool"
   ignore_errors: true
 
 - name: Delete metallb 
-  command: "helm uninstall kubeoperator-metallb --namespace kube-operator"
+  command: "helm uninstall kubeoperator-metallb --namespace kube-system"
   ignore_errors: true

@@ -2,7 +2,7 @@ apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
   name: kubeoperator-ip-address-pool
-  namespace: kube-operator
+  namespace: kube-system
 spec:
   addresses:
 {% if metallb_cidrs is defined and metallb_cidrs %}

@@ -8,7 +8,7 @@
 
 - name: Helm install metallb
   shell: >
-    helm install kubeoperator-metallb --namespace kube-operator \
+    helm install kubeoperator-metallb --namespace kube-system \
     --set controller.image.repository={{ dns_repository_hostname }}:{{ registry_port }}/metallb/controller \
     --set controller.image.tag={{ metallb_version }} \
     --set speaker.image.repository={{ dns_repository_hostname }}:{{ registry_port }}/metallb/speaker \
@@ -16,7 +16,7 @@
     /etc/kubernetes/plugins/metallb/metallb-0.13.7.tgz
 
 - name: Waiting for metallb-controller to ready 
-  shell: "{{ bin_dir }}/kubectl -n kube-operator get pod -o wide | grep metallb-controller | awk '{print $2}'"
+  shell: "{{ bin_dir }}/kubectl -n kube-system get pod -o wide | grep metallb-controller | awk '{print $2}'"
   register: metallb_controller_status
   until: metallb_controller_status.stdout == "1/1"
   retries: 10
