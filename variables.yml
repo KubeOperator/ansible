@@ -4,7 +4,7 @@ runc_version: "v1.1"
 pause_version: "{% if kube_version is version('v1.22.0', '<=') %}3.2{% else %}3.5{% endif %}"
 busybox_version: "1.28"
 cni_version: "v0.8.6"
-npd_versioon: "v0.8.1"
+npd_version: "v0.8.1"
 
 # ----------------------- 容器镜像地址 ---------------------
 # coredns
@@ -49,7 +49,7 @@ rook_csi_attacher_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kube
 # metrics-server image
 metrics_server_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/metrics-server:{{ metrics_server_version }}"
 # npd image 地址
-npd_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/node-problem-detector:{{ npd_versioon }}"
+npd_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/node-problem-detector:{{ npd_version }}"
 # helm2 tiller image
 tiller_image: "{{ dns_repository_hostname }}:{{ registry_port }}/kubeoperator/tiller:{{ helm_v2_version }}"
 # huawei-csi
