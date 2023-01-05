@@ -3,13 +3,34 @@
     src: iptables.yaml.j2
     dest: /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml
   when: kube_proxy_mode == "iptables"
+  ignore_errors: true
 
 - name: Copy dns-cache file
   template:
     src: ipvs.yaml.j2
     dest: /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml
   when: kube_proxy_mode == "ipvs"
+  ignore_errors: true
 
 - name: Delete dns-cache ds
   shell: "{{ bin_dir }}/kubectl delete -f /etc/kubernetes/plugins/dns-cache/nodelocaldns.yaml"
   ignore_errors: true
+
+- block:
+  - name: Modify the kubelet config file
+    lineinfile:
+      path: "/var/lib/kubelet/config.yaml"
+      regexp: '- {{ pillar_local_dns }}'
+      line: "- {{ kube_dns_clusterip.stdout }}"
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+    ignore_errors: true
+
+  - name: Restart kubelet
+    service:
+      name: kubelet
+      state: restarted
+    delegate_to: "{{ item }}"
+    with_items: "{{ groups['all'] }}"
+    ignore_errors: true
+  when: kube_proxy_mode == "ipvs"
