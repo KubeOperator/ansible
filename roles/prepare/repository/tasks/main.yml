@@ -7,7 +7,7 @@
           state: directory
 
       - name: Backup the old repository and clean yum cache
-        shell: "sudo mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1 || sudo ls /etc/yum.repos.d/ >/dev/null 2>&1 || yum clean all >/dev/null 2>&1 || rm -rf /var/cache/yum/* 2>&1"
+        shell: "sudo mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak >/dev/null 2>&1 && yum clean all >/dev/null 2>&1 && rm -rf /var/cache/yum/* 2>&1 || sudo ls /etc/yum.repos.d/ >/dev/null 2>&1"
 
       - name: Remove other repository
         file:
